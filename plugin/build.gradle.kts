@@ -8,6 +8,6 @@ dependencies {
 
 tasks {
     jar { enabled = false }
-    shadowJar { archiveFileName.set("destruction.jar") }
+    shadowJar { archiveFileName.set("plugin.jar") }
     build { dependsOn(shadowJar) }
 }
