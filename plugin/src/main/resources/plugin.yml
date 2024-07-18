@@ -1,4 +1,4 @@
-main: me.topilov.App
+main: App
 name: Plugin
 version: 1.0
 api-version: 1.13

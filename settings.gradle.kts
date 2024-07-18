@@ -5,7 +5,7 @@ pluginManagement {
     }
 }
 
-rootProject.name = "template-minecraft-plugin"
+rootProject.name = "bank-system"
 
 include(
     ":plugin",
