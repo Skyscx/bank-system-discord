@@ -1,9 +1,12 @@
+import github.scarsz.discordsrv.DiscordSRV
 import org.bukkit.plugin.java.JavaPlugin
 
 lateinit var app: App
 
-class App : JavaPlugin() {
+class App : JavaPlugin(){
     override fun onEnable() {
         app = this
+        DiscordSRV.api.subscribe()
+
     }
 }

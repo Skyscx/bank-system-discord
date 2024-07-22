@@ -13,6 +13,9 @@ allprojects {
         maven {
             url = uri("https://papermc.io/repo/repository/maven-public/")
         }
+        maven {
+            url = uri("https://nexus.scarsz.me/content/groups/public/")
+        }
     }
 }
 
