@@ -9,11 +9,9 @@ import java.io.IOException
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionException
 import java.util.concurrent.ExecutionException
 
 
@@ -45,14 +43,14 @@ class Database(dataFolder: File?, plugin: App?) {
                 "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
                 "PlayerName TEXT NOT NULL," +
                 "UUID TEXT NOT NULL," +
-                "DiscordID INTEGER NOT NULL," +
+                "DiscordID TEXT NOT NULL," +
                 "DiscordName TEXT NOT NULL," +
                 "DisplayDiscord TEXT NOT NULL," +
                 "ActivatedBank INTEGER NOT NULL," +
                 "Registration TEXT NOT NULL," +
                 "`2f Auth` INTEGER NOT NULL," +   //NOT USAGE
                 "PrivateKey TEXT NOT NULL," +    //NOT USAGE
-                "Balance INTEGER NOT NULL," +
+                "Balance INTEGER NOT NULL," + //TODO: ЗАМЕНИТЬ НА LONG либо реализовать по другому.
                 "LastOperation TEXT NOT NULL," +  //NOT USAGE
                 "Place TEXT NOT NULL," +   //NOT USAGE
                 "Credits INTEGER NOT NULL," +  //NOT USAGE
@@ -120,7 +118,6 @@ class Database(dataFolder: File?, plugin: App?) {
             }
         })
     }
-
     fun checkPlayer(uuid: UUID): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
 
@@ -142,7 +139,7 @@ class Database(dataFolder: File?, plugin: App?) {
         }
         return future
     }
-
+    /**Получение уникального идентификатора игрока**/
     fun getPlayerByUUID(uuid: UUID): Player? {
         val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
         if (offlinePlayer.isOnline) {
@@ -151,7 +148,39 @@ class Database(dataFolder: File?, plugin: App?) {
             return null
         }
     }
+    /**Получение баланса игрока из базы данных**/
+    fun getPlayerBalance(playerUUID: UUID): Int {
+        val sql = "SELECT balance FROM bank_accounts WHERE uuid = ?"
+        var balance = -1
 
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, playerUUID.toString())
+                val result = pstmt.executeQuery()
+                if (result.next()){
+                    balance = result.getInt(balance)
+                }
+                result.close()
+            }
+        } catch (e: SQLException){
+            e.printStackTrace()
+        }
+        return balance
+    }
+    /**Обновление баланса игрока в базе данных**/
+    fun setPlayerBalance(playerUUID: UUID, balance: Int) {
+        val sql = "UPDATE bank_accounts SET balance = ? WHERE uuid = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, balance)
+                pstmt.setString(2, playerUUID.toString())
+                pstmt.executeUpdate()
+            }
+        } catch (e: SQLException){
+            e.printStackTrace()
+        }
+    }
+    /**Закрытие соединения**/
     fun closeConnection() {
         try {
             if (connection != null && !connection!!.isClosed) {

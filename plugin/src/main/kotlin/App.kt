@@ -1,4 +1,7 @@
+import bank.commands.AddBalanceCommand
+import bank.commands.BalanceCommand
 import bank.commands.PayCommand
+import bank.commands.SetBalanceCommand
 import database.Database
 import discord.DiscordSRVHook
 import functions.events.PlayerConnection
@@ -32,6 +35,9 @@ class App : JavaPlugin(), Listener {
 
         //Commands
         getCommand("pay")?.setExecutor(PayCommand())
+        getCommand("balance")?.setExecutor(BalanceCommand())
+        getCommand("add-balance")?.setExecutor(AddBalanceCommand())
+        getCommand("set-balance")?.setExecutor(SetBalanceCommand())
 
         //Events
         val playerConnection = PlayerConnection(database!!)

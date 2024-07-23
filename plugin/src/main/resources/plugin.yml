@@ -7,4 +7,13 @@ softdepend:
 commands:
   pay:
     description: Отправить деньги игроку.
-    usage: /pay
+    usage: /pay <игрок> <сумма>
+  balance:
+    description: Посмотреть баланс.
+    usage: /balance
+  set-balance:
+    description: Установить значение "Баланс".
+    usage: /set-balance <игрок> <сумма>
+  add-balance:
+    description: Добавить значение к балансу.
+    usage: /add-balance <игрок> <сумма>

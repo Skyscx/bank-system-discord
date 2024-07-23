@@ -16,6 +16,10 @@ allprojects {
         maven {
             url = uri("https://nexus.scarsz.me/content/groups/public/")
         }
+        maven {
+            name = "m2-dv8tion"
+            url = uri("https://m2.dv8tion.net/releases")
+        }
     }
 }
 

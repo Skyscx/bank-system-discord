@@ -7,7 +7,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class PayCommand : CommandExecutor {
+class AddBalanceCommand : CommandExecutor {
     private val database = Database(null, null)
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
@@ -17,7 +17,7 @@ class PayCommand : CommandExecutor {
         }
 
         if (args.size != 2) {
-            sender.sendMessage("Использование: /pay <игрок> <сумма>")
+            sender.sendMessage("Использование: /add-balance <игрок> <сумма>")
             return true
         }
 
@@ -34,23 +34,19 @@ class PayCommand : CommandExecutor {
             return true
         }
 
-        val senderBalance = database.getPlayerBalance(sender.uniqueId)
-        if (senderBalance < amount) {
-            sender.sendMessage("У вас недостаточно средств.")
-            return true
-        }
-
-        val newSenderBalance = senderBalance - amount
         val newTargetBalance = database.getPlayerBalance(targetPlayer.uniqueId) + amount
 
-        database.setPlayerBalance(sender.uniqueId, newSenderBalance)
-        database.setPlayerBalance(targetPlayer.uniqueId, newTargetBalance)
+//        val senderBalance = database.getPlayerBalance(sender.uniqueId)
+//        if (senderBalance < amount) {
+//            sender.sendMessage("У вас недостаточно средств.")
+//            return true
+//        }
+        val uuidTarger = targetPlayer.uniqueId
+        database.setPlayerBalance(uuidTarger, newTargetBalance)
 
-        sender.sendMessage("Вы перевели $amount монет игроку $targetPlayerName.")
-        targetPlayer.sendMessage("Игрок ${sender.name} перевел вам $amount монет.")
+        sender.sendMessage("Вы установили $amount монет игроку $targetPlayerName.")
+        targetPlayer.sendMessage("Игрок ${sender.name} добавил вам $amount монет. Баланс: $newTargetBalance")
 
         return true
     }
-
-
 }
