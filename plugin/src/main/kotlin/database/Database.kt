@@ -1,6 +1,7 @@
 package database
 
 import App
+import discord.Functions
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.io.File
@@ -9,14 +10,17 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
 import java.sql.Timestamp
+import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
+import java.util.concurrent.ExecutionException
 
 
 class Database(dataFolder: File?, plugin: App?) {
     private var connection: Connection? = null
     private var plugin: App? = null
+    val functions = Functions()
 
     init {
         this.plugin = plugin
@@ -45,11 +49,11 @@ class Database(dataFolder: File?, plugin: App?) {
                 "DiscordName TEXT NOT NULL," +
                 "DisplayDiscord TEXT NOT NULL," +
                 "ActivatedBank INTEGER NOT NULL," +
-                "Registration TIMESTAMP NOT NULL," +
+                "Registration TEXT NOT NULL," +
                 "`2f Auth` INTEGER NOT NULL," +   //NOT USAGE
                 "PrivateKey TEXT NOT NULL," +    //NOT USAGE
                 "Balance INTEGER NOT NULL," +
-                "LastOperation TIMESTAMP NOT NULL," +  //NOT USAGE
+                "LastOperation TEXT NOT NULL," +  //NOT USAGE
                 "Place TEXT NOT NULL," +   //NOT USAGE
                 "Credits INTEGER NOT NULL," +  //NOT USAGE
                 "USDT INTEGER NOT NULL," +  //NOT USAGE
@@ -64,23 +68,29 @@ class Database(dataFolder: File?, plugin: App?) {
         val player = getPlayerByUUID(uuid) ?: return null
         val playerName = player.name
         val playerUUID = player.uniqueId.toString()
+        val discordID = functions.getPlayerDiscordID(uuid)
         plugin?.let {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
+                val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
                 val sql =
                     "INSERT INTO bank_accounts(PlayerName,UUID,DiscordID,DiscordName,DisplayDiscord,ActivatedBank,Registration,`2f Auth`,PrivateKey,Balance,LastOperation,Place,Credits,USDT,Level) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
                 try {
                     connection?.prepareStatement(sql)?.use { pstmt ->
                         pstmt.setString(1, playerName) //Пользовательское игровое имя пользователя
                         pstmt.setString(2, playerUUID) //Пользовательский игровой UUID
-                        pstmt.setInt(3, 0) /**Сюда нужно сделать получение DSID**/
+                        if (discordID != null) {                    /**Сюда нужно сделать получение DSID**/
+                            pstmt.setString(3, discordID)
+                        }else{
+                            pstmt.setString(3,null)
+                        }
                         pstmt.setInt(4, 0) /**Сюда нужно сделать получение UsernameDiscord**/
                         pstmt.setInt(5, 0) /**Сюда нужно сделать получение Отображающегося имени дискорд пользователя**/
                         pstmt.setBoolean(6, false) //Активирован ли банковский аккаунт
-                        pstmt.setTimestamp(7, Timestamp(System.currentTimeMillis())) //Время регистрации в банковской системе
+                        pstmt.setString(7, currentDate) //Время регистрации в банковской системе
                         pstmt.setBoolean(8, false) //Включено ли использование двухфакторной авторизации
                         pstmt.setString(9, "value") /**Приватный ключ пользоваться - НЕОБХОДИМО РЕАЛИЗОВАТЬ**/
                         pstmt.setInt(10, 0) //Игровой баланс игрока
-                        pstmt.setTimestamp(11, Timestamp(System.currentTimeMillis())) /**Дата последней операции**/
+                        pstmt.setString(11, currentDate) /**Дата последней операции**/
                         pstmt.setInt(12, 0) /**Место в топе**/
                         pstmt.setInt(13, 0) /**Кредиты/Займы**/
                         pstmt.setInt(14, 0) /**Реальная валюта - USDT**/
@@ -99,15 +109,18 @@ class Database(dataFolder: File?, plugin: App?) {
         val future = checkPlayer(uuid)
         Bukkit.getScheduler().runTaskAsynchronously(plugin!!, Runnable {
             try {
-                val result = future.join()
+                val result = future.get() // ждем завершения асинхронной задачи
                 if (!result) {
                     insertPlayer(uuid)
                 }
-            } catch (e: CompletionException) {
+            } catch (e: ExecutionException) {
+                e.printStackTrace()
+            } catch (e: InterruptedException) {
                 e.printStackTrace()
             }
         })
     }
+
     fun checkPlayer(uuid: UUID): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
 
@@ -117,9 +130,9 @@ class Database(dataFolder: File?, plugin: App?) {
                 try {
                     connection?.prepareStatement(sql)?.use { pstmt ->
                         pstmt.setString(1, uuid.toString())
-                        pstmt.executeQuery().use { rs ->
-                            future.complete(rs.next())
-                        }
+                        val rs = pstmt.executeQuery()
+                        future.complete(rs.next())
+                        rs.close() // не забываем закрыть ResultSet
                     }
                 } catch (e: SQLException) {
                     e.printStackTrace()

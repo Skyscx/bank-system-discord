@@ -1,7 +1,7 @@
 import bank.commands.PayCommand
 import database.Database
 import discord.DiscordSRVHook
-import events.PlayerConnection
+import functions.events.PlayerConnection
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -34,7 +34,9 @@ class App : JavaPlugin(), Listener {
         getCommand("pay")?.setExecutor(PayCommand())
 
         //Events
-        Bukkit.getPluginManager().registerEvents(PlayerConnection(database!!), this)
+        val playerConnection = PlayerConnection(database!!)
+
+        Bukkit.getPluginManager().registerEvents(playerConnection, this)
 
         //Depends
         if (server.pluginManager.getPlugin("DiscordSRV") != null){
