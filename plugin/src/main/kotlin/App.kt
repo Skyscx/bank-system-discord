@@ -4,10 +4,12 @@ import bank.commands.PayCommand
 import bank.commands.SetBalanceCommand
 import database.Database
 import discord.DiscordSRVHook
+import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
+import java.io.File
 import java.sql.SQLException
 
 
@@ -15,7 +17,7 @@ lateinit var app: App
 
 
 class App : JavaPlugin(), Listener {
-    private var database: Database? = null
+    lateinit var database: Database
     private lateinit var discordBot: DiscordBot
 
 
@@ -27,8 +29,14 @@ class App : JavaPlugin(), Listener {
         }
 
         //Database
+        val databaseFolder = File(dataFolder, "database")
+        if (!databaseFolder.exists()) {
+            databaseFolder.mkdirs()
+        }
+        val databaseFile = File(databaseFolder, "database.db")
+        val url = "jdbc:sqlite:${databaseFile.absolutePath}"
         try {
-            database = Database(dataFolder, this)
+            database = Database(url, this)
         } catch (e: SQLException) {
             e.printStackTrace()
             server.pluginManager.disablePlugin(this)
@@ -36,13 +44,13 @@ class App : JavaPlugin(), Listener {
         }
 
         //Commands
-        getCommand("pay")?.setExecutor(PayCommand())
-        getCommand("balance")?.setExecutor(BalanceCommand())
-        getCommand("add-balance")?.setExecutor(AddBalanceCommand())
-        getCommand("set-balance")?.setExecutor(SetBalanceCommand())
+        getCommand("pay")?.setExecutor(PayCommand(database))
+        getCommand("balance")?.setExecutor(BalanceCommand(database))
+        getCommand("add-balance")?.setExecutor(AddBalanceCommand(database))
+        getCommand("set-balance")?.setExecutor(SetBalanceCommand(database))
 
         //Events
-        val playerConnection = PlayerConnection(database!!)
+        val playerConnection = PlayerConnection(database)
 
         Bukkit.getPluginManager().registerEvents(playerConnection, this)
 
@@ -51,7 +59,7 @@ class App : JavaPlugin(), Listener {
             DiscordSRVHook.register()
         }
 
-        //DiscordBot
+        //discord.dsbot.DiscordBot
         discordBot = DiscordBot()
         discordBot.start("MTI2NTAwMjcyMTQ4ODkyODgyOQ.GtnVS0.QhQF26tObwGDt2EDLdNqQl5rMxMeumn6p0XXJI")
     }
@@ -61,7 +69,7 @@ class App : JavaPlugin(), Listener {
         if (server.pluginManager.getPlugin("DiscordSRV") != null){
             DiscordSRVHook.unregister()
         }
-        database?.closeConnection();
+        database.closeConnection();
     }
 
 

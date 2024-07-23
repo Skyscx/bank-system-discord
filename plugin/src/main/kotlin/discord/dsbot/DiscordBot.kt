@@ -1,4 +1,5 @@
-
+package discord.dsbot
+import discord.dsbot.commands.PayCommandDiscord
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
@@ -12,7 +13,7 @@ class DiscordBot : ListenerAdapter() {
     fun start(token: String?) {
         jda = JDABuilder.createDefault(token)
             .addEventListeners(this)
-            .addEventListeners(MyCommand())
+            .addEventListeners(PayCommandDiscord())
             .build()
 
         jda.awaitReady()
@@ -31,22 +32,13 @@ class DiscordBot : ListenerAdapter() {
     private fun updateCommands() {
         val commands: List<SlashCommandData> = listOf(
             Commands.slash("hello", "Says hello to the user"),
-            Commands.slash("mycommand", "My custom command")
+            Commands.slash("pay", "My custom command")
         )
 
         val guild = jda.getGuildById("1265001474870612068")
         guild?.updateCommands()?.addCommands(commands)?.queue()
     }
 
-    class MyCommand : ListenerAdapter() {
-        override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
-            if (event.name != "mycommand") return
 
-            val channel = event.channel as MessageChannel
-            val user = event.user
-
-            channel.sendMessage("Hello, ${user.asMention}! This is my command.").queue()
-        }
-    }
 
 }

@@ -7,9 +7,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class PayCommand : CommandExecutor {
-    private val database = Database(null, null)
-
+class PayCommand(private val database: Database) : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
             sender.sendMessage("Эту команду можно использовать только в игре.")
@@ -29,7 +27,7 @@ class PayCommand : CommandExecutor {
         }
 
         val amount = args[1].toInt()
-        if (amount == null || amount <= 0) {
+        if (amount <= 0) {
             sender.sendMessage("Неверная сумма.")
             return true
         }

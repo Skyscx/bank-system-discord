@@ -4,8 +4,6 @@ import App
 import discord.Functions
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
-import java.io.File
-import java.io.IOException
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
@@ -15,7 +13,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 
 
-class Database(dataFolder: File?, plugin: App?) {
+class Database(url: String, plugin: App?) {
     private var connection: Connection? = null
     private var plugin: App? = null
     private val dateFormat = SimpleDateFormat("dd:MM:yyyy HH:mm:ss")
@@ -23,19 +21,12 @@ class Database(dataFolder: File?, plugin: App?) {
 
     init {
         this.plugin = plugin
-        val datebaseFile = File(dataFolder, "database.db")
-        if (!datebaseFile.exists()) {
-            try {
-                datebaseFile.createNewFile()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
+        try {
+            connection = DriverManager.getConnection(url)
+            createTableAccounts()
+        } catch (e: SQLException) {
+            e.printStackTrace()
         }
-
-        val url = "jdbc:sqlite:plugins/Plugin/database.db"
-        connection = DriverManager.getConnection(url)
-
-        createTableAccounts()
     }
 
     /**
