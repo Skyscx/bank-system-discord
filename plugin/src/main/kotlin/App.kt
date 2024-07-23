@@ -16,6 +16,8 @@ lateinit var app: App
 
 class App : JavaPlugin(), Listener {
     private var database: Database? = null
+    private lateinit var discordBot: DiscordBot
+
 
     override fun onEnable() {
         //Folder
@@ -48,14 +50,18 @@ class App : JavaPlugin(), Listener {
         if (server.pluginManager.getPlugin("DiscordSRV") != null){
             DiscordSRVHook.register()
         }
+
+        //DiscordBot
+        discordBot = DiscordBot()
+        discordBot.start("MTI2NTAwMjcyMTQ4ODkyODgyOQ.GtnVS0.QhQF26tObwGDt2EDLdNqQl5rMxMeumn6p0XXJI")
     }
 
     override fun onDisable() {
+        discordBot.jda.shutdown()
         if (server.pluginManager.getPlugin("DiscordSRV") != null){
             DiscordSRVHook.unregister()
         }
         database?.closeConnection();
-
     }
 
 

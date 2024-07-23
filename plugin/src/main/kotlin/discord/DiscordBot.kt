@@ -1,24 +1,25 @@
 
-import net.dv8tion.jda.api.events.interaction.command.SlashCommandEvent
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 
 class DiscordBot : ListenerAdapter() {
-    private lateinit var jda: JDA
-
-    fun start(token: String) {
+    lateinit var jda: JDA
+    fun start(token: String?) {
         jda = JDABuilder.createDefault(token)
             .addEventListeners(this)
+            .addEventListeners(MyCommand())
             .build()
 
+        jda.awaitReady()
         updateCommands()
     }
 
-    override fun onSlashCommand(event: SlashCommandEvent) {
+    override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         if (event.name != "hello") return
 
         val channel = event.channel as MessageChannel
@@ -29,20 +30,23 @@ class DiscordBot : ListenerAdapter() {
 
     private fun updateCommands() {
         val commands: List<SlashCommandData> = listOf(
-            Commands.slash("hello", "Says hello to the user")
+            Commands.slash("hello", "Says hello to the user"),
+            Commands.slash("mycommand", "My custom command")
         )
 
-        val guild = jda.getGuildById("your guild id here") // замените на идентификатор вашего сервера
-        if (guild != null) {
-            guild.updateCommands().addCommands(commands).queue()
-        } else {
-            jda.updateCommands().addCommands(commands).queue()
+        val guild = jda.getGuildById("1265001474870612068")
+        guild?.updateCommands()?.addCommands(commands)?.queue()
+    }
+
+    class MyCommand : ListenerAdapter() {
+        override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
+            if (event.name != "mycommand") return
+
+            val channel = event.channel as MessageChannel
+            val user = event.user
+
+            channel.sendMessage("Hello, ${user.asMention}! This is my command.").queue()
         }
     }
-}
 
-fun main(args: Array<String>) {
-    val token = "your bot token here"
-    val bot = DiscordBot()
-    bot.start(token)
 }

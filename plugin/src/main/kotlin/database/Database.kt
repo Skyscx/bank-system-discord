@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutionException
 class Database(dataFolder: File?, plugin: App?) {
     private var connection: Connection? = null
     private var plugin: App? = null
+    private val dateFormat = SimpleDateFormat("dd:MM:yyyy HH:mm:ss")
     val functions = Functions()
 
     init {
@@ -31,12 +32,15 @@ class Database(dataFolder: File?, plugin: App?) {
             }
         }
 
-        val url = "jdbc:sqlite:" + datebaseFile.absolutePath
+        val url = "jdbc:sqlite:plugins/Plugin/database.db"
         connection = DriverManager.getConnection(url)
 
         createTableAccounts()
     }
-    /**Создание базы данных аккаунтов**/
+
+    /**
+     * Создание базы данных аккаунтов
+     */
     @Throws(SQLException::class)
     fun createTableAccounts() {
         val sql = "CREATE TABLE IF NOT EXISTS bank_accounts (" +
@@ -58,10 +62,13 @@ class Database(dataFolder: File?, plugin: App?) {
                 "Level INTEGER NOT NULL" +  //NOT USAGE
                 ");"
         connection!!.createStatement().use { stmt ->
-            stmt.execute(sql)
+            stmt.executeUpdate(sql)
         }
     }
-    /**Создание игрока в базе данных */
+
+    /**
+     * Создание игрока в базе данных
+     */
     fun insertPlayer(uuid: UUID): Player? {
         val player = getPlayerByUUID(uuid) ?: return null
         val playerName = player.name
@@ -102,7 +109,10 @@ class Database(dataFolder: File?, plugin: App?) {
         }
         return player
     }
-    /**Поиск игрока в базе данных**/
+
+    /**
+     * Поиск игрока в базе данных
+     */
     fun checkPlayerTask(uuid: UUID) {
         val future = checkPlayer(uuid)
         Bukkit.getScheduler().runTaskAsynchronously(plugin!!, Runnable {
@@ -118,6 +128,8 @@ class Database(dataFolder: File?, plugin: App?) {
             }
         })
     }
+
+
     fun checkPlayer(uuid: UUID): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
 
@@ -139,48 +151,62 @@ class Database(dataFolder: File?, plugin: App?) {
         }
         return future
     }
-    /**Получение уникального идентификатора игрока**/
+
+    /**
+     * Получение уникального идентификатора игрока
+     */
     fun getPlayerByUUID(uuid: UUID): Player? {
         val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
-        if (offlinePlayer.isOnline) {
-            return offlinePlayer.player
-        } else {
-            return null
-        }
+        return offlinePlayer.player
     }
-    /**Получение баланса игрока из базы данных**/
+
+    /**
+     * Получение баланса игрока из базы данных
+     */
     fun getPlayerBalance(playerUUID: UUID): Int {
-        val sql = "SELECT balance FROM bank_accounts WHERE uuid = ?"
-        var balance = -1
+        val sql = "SELECT Balance FROM bank_accounts WHERE UUID = ?"
+        var balance = 0
 
         try {
             connection?.prepareStatement(sql)?.use { pstmt ->
                 pstmt.setString(1, playerUUID.toString())
                 val result = pstmt.executeQuery()
                 if (result.next()){
-                    balance = result.getInt(balance)
+                    balance = result.getInt("Balance")
+                    println(balance)
                 }
-                result.close()
             }
         } catch (e: SQLException){
             e.printStackTrace()
         }
+
         return balance
     }
-    /**Обновление баланса игрока в базе данных**/
+
+    /**
+     * Обновление баланса игрока в базе данных
+     */
     fun setPlayerBalance(playerUUID: UUID, balance: Int) {
-        val sql = "UPDATE bank_accounts SET balance = ? WHERE uuid = ?"
-        try {
-            connection?.prepareStatement(sql)?.use { pstmt ->
-                pstmt.setInt(1, balance)
-                pstmt.setString(2, playerUUID.toString())
-                pstmt.executeUpdate()
+        val sql = "UPDATE bank_accounts SET Balance = ? WHERE UUID = ?"
+        if (connection != null && !connection!!.isClosed) {
+            try {
+                connection!!.prepareStatement(sql).use { pstmt ->
+                    pstmt.setInt(1, balance)
+                    pstmt.setString(2, playerUUID.toString())
+                    pstmt.executeUpdate()
+
+                    println(pstmt)
+                }
+
+            } catch (e: SQLException) {
+                e.printStackTrace()
             }
-        } catch (e: SQLException){
-            e.printStackTrace()
         }
     }
-    /**Закрытие соединения**/
+
+    /**
+     * Закрытие соединения
+     */
     fun closeConnection() {
         try {
             if (connection != null && !connection!!.isClosed) {
@@ -190,26 +216,4 @@ class Database(dataFolder: File?, plugin: App?) {
             e.printStackTrace()
         }
     }
-    /** Удаление игрока из базы данных - Last Update for Admin
-     *
-    fun deletePlayerLogyc(name: String, sender: CommandSender) {
-    val future = checkPlayer(name)
-    Bukkit.getScheduler().runTaskAsynchronously(plugin, Runnable {
-    System.getLogger("Scheduler ENABLED")
-    try {
-    val result = future.join()
-    if (!result) {
-    System.getLogger("!result")
-    sender.sendMessage("§3Такого игрока не существует в базе данных!")
-    } else {
-    sender.sendMessage("§3Игрок §7$name§3 удален из базы данных!")
-    deletePlayer(name)
-    System.getLogger("result")
-    }
-    } catch (e: CompletionException) {
-    e.printStackTrace()
-    }
-    })
-    }
-     **/
 }
