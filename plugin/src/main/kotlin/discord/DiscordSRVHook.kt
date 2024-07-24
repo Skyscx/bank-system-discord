@@ -1,11 +1,9 @@
 package discord
 
 import github.scarsz.discordsrv.DiscordSRV
-import github.scarsz.discordsrv.api.ListenerPriority
 import github.scarsz.discordsrv.api.Subscribe
 import github.scarsz.discordsrv.api.events.DiscordGuildMessageReceivedEvent
 import org.bukkit.Bukkit
-import java.util.*
 
 class DiscordSRVHook private constructor() {
     @Subscribe

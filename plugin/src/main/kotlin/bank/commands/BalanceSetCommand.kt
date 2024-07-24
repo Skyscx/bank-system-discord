@@ -7,7 +7,7 @@ import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class AddBalanceCommand(private val database: Database) : CommandExecutor {
+class BalanceSetCommand(private val database: Database) : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
@@ -16,7 +16,7 @@ class AddBalanceCommand(private val database: Database) : CommandExecutor {
         }
 
         if (args.size != 2) {
-            sender.sendMessage("Использование: /add-balance <игрок> <сумма>")
+            sender.sendMessage("Использование: /set-balance <игрок> <сумма>")
             return true
         }
 
@@ -33,18 +33,16 @@ class AddBalanceCommand(private val database: Database) : CommandExecutor {
             return true
         }
 
-        val newTargetBalance = database.getPlayerBalance(targetPlayer.uniqueId.toString()) + amount
-
 //        val senderBalance = database.getPlayerBalance(sender.uniqueId)
 //        if (senderBalance < amount) {
 //            sender.sendMessage("У вас недостаточно средств.")
 //            return true
 //        }
         val uuidTarger = targetPlayer.uniqueId.toString()
-        database.setPlayerBalance(uuidTarger, newTargetBalance)
+        database.setPlayerBalance(uuidTarger, amount)
 
         sender.sendMessage("Вы установили $amount монет игроку $targetPlayerName.")
-        targetPlayer.sendMessage("Игрок ${sender.name} добавил вам $amount монет. Баланс: $newTargetBalance")
+        targetPlayer.sendMessage("Игрок ${sender.name} установил вам $amount монет.")
 
         return true
     }

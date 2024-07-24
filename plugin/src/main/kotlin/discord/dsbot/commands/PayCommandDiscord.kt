@@ -5,10 +5,11 @@ import discord.Functions
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
+import org.bukkit.configuration.file.FileConfiguration
 
-class PayCommandDiscord (private val database: Database) : ListenerAdapter() {
-    val functions = Functions()
-
+class PayCommandDiscord (private val database: Database, config: FileConfiguration) : ListenerAdapter() {
+    private val functions = Functions()
+    private val allowedСhannelId = config.getLong("allowed-channel-id-for-bank-commands")
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         if (event.name != "pay") return
 
@@ -16,8 +17,8 @@ class PayCommandDiscord (private val database: Database) : ListenerAdapter() {
         val user = event.user
 
         // проверяем ID канала
-        if (channel.idLong != ALLOWED_CHANNEL_ID) {
-            event.reply("Эту команду можно использовать только в <#$ALLOWED_CHANNEL_ID> канале.").queue()
+        if (channel.idLong != allowedСhannelId) {
+            event.reply("Эту команду можно использовать только в <#$allowedСhannelId> канале.").queue()
             return
         }
 
@@ -81,9 +82,5 @@ class PayCommandDiscord (private val database: Database) : ListenerAdapter() {
             }
         }
 
-    }
-    companion object {
-        val ALLOWED_CHANNEL_ID: Long
-            get() = config.getLong("allowed_channel_id_for_bank_commands")
     }
 }

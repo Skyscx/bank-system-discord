@@ -1,11 +1,10 @@
-import bank.commands.AddBalanceCommand
-import bank.commands.BalanceCommand
-import bank.commands.PayCommand
-import bank.commands.SetBalanceCommand
+
+import bank.commands.*
 import database.Database
 import discord.DiscordSRVHook
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
+import gui.сonfirmations.OpenAccountInventoryEvent
 import org.bukkit.Bukkit
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.event.Listener
@@ -53,13 +52,14 @@ class App : JavaPlugin(), Listener {
         //Commands
         getCommand("pay")?.setExecutor(PayCommand(database))
         getCommand("balance")?.setExecutor(BalanceCommand(database))
-        getCommand("add-balance")?.setExecutor(AddBalanceCommand(database))
-        getCommand("set-balance")?.setExecutor(SetBalanceCommand(database))
+        getCommand("add-balance")?.setExecutor(BalanceAddCommand(database))
+        getCommand("set-balance")?.setExecutor(BalanceSetCommand(database))
+        getCommand("open-account")?.setExecutor(AccountOpenCommand())
+        getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
 
         //Events
-        val playerConnection = PlayerConnection(database)
-
-        Bukkit.getPluginManager().registerEvents(playerConnection, this)
+        Bukkit.getPluginManager().registerEvents(PlayerConnection(database), this)
+        Bukkit.getPluginManager().registerEvents(OpenAccountInventoryEvent(database), this)
 
         //Depends
         if (server.pluginManager.getPlugin("DiscordSRV") != null){
@@ -67,7 +67,7 @@ class App : JavaPlugin(), Listener {
         }
 
         //DiscordBot
-        discordBot = DiscordBot(database)
+        discordBot = DiscordBot(database, config)
         val token = config.getString("bot-token")
         discordBot.start(token)
     }

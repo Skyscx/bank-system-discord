@@ -17,3 +17,9 @@ commands:
   add-balance:
     description: Добавить значение к балансу.
     usage: /add-balance <игрок> <сумма>
+  open-account:
+    description: Открыть кошелек.
+    usage: /open-account
+  account-set-name:
+    description: Установить визуальное имя кошелька.
+    usage: /account-set-name <id> <name>
