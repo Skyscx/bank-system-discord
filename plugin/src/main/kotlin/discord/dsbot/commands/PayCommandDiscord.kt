@@ -1,11 +1,13 @@
 package discord.dsbot.commands
 
 import database.Database
+import discord.Functions
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 class PayCommandDiscord (private val database: Database) : ListenerAdapter() {
+    val functions = Functions()
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         if (event.name != "pay") return
@@ -36,46 +38,52 @@ class PayCommandDiscord (private val database: Database) : ListenerAdapter() {
         val discordIDTarget = targetMember.id
         println("DIDTarget - $discordIDTarget")
 
-        val uuidSender = database.getUUIDforDiscordID(discordIDSender)
-        if (uuidSender == null) {
-            event.reply("У вас нет привязанного UUID.").queue()
-            return
-        }
-        println("UUID S - $uuidSender")
-        val uuidTarget = database.getUUIDforDiscordID(discordIDTarget)
-        if (uuidTarget == null) {
-            event.reply("У целевого игрока нет привязанного UUID.").queue()
-            return
-        }
-        println("UUID T - $uuidTarget")
+        val uuidSenderFuture = database.getUUIDbyDiscordID(discordIDSender)
+        val uuidTargetFuture = database.getUUIDbyDiscordID(discordIDTarget)
 
-        val senderBalance = database.getPlayerBalance(uuidSender)
-        println("S BALANCE - $senderBalance")
-        if (senderBalance < amount) {
-            user.openPrivateChannel().queue { channel ->
-                event.reply("У вас недостаточно средств.").queue()
+        uuidSenderFuture.thenAccept { uuidSender ->
+            if (uuidSender == null) {
+                event.reply("Ваш игровой аккаунт не привязан к учетной записи банка.").queue()
+                return@thenAccept
             }
-            return
-        }
+            uuidTargetFuture.thenAccept { uuidTarget ->
+                if (uuidTarget == null) {
+                    event.reply("Игровой аккаунт получателя не привязан к учетной записи банка.").queue()
+                    return@thenAccept
+                }
+                val senderBalance = database.getPlayerBalance(uuidSender)
+                if (senderBalance < amount) {
+                    user.openPrivateChannel().queue { channel ->
+                        event.reply("У вас недостаточно средств.").queue()
+                    }
+                    return@thenAccept
+                }
+                val newSenderBalance = senderBalance - amount
+                val newTargetBalance = database.getPlayerBalance(uuidTarget) + amount
+                database.setPlayerBalance(uuidSender, newSenderBalance.toInt())
+                database.setPlayerBalance(uuidTarget, newTargetBalance.toInt())
+                user.openPrivateChannel().queue { channel ->
+                    channel.sendMessage("Вы перевели $amount монет игроку ${targetMember.asMention}.").queue()
+                }
+                targetMember.user.openPrivateChannel().queue { channel ->
+                    channel.sendMessage("Игрок ${user.asMention} перевел вам $amount монет.").queue()
+                }
+                if (functions.isPlayerOnline(uuidSender)){
+                    val player = functions.getPlayerByUUID(uuidSender)
+                    if (player != null) { functions.sendMessagePlayer(player, "Sender") }
+                }
+                if (functions.isPlayerOnline(uuidTarget)){
+                    val player = functions.getPlayerByUUID(uuidTarget)
+                    if (player != null) { functions.sendMessagePlayer(player, "Target") }
+                }
 
-        val newSenderBalance = senderBalance - amount
-        println("N S B - $newSenderBalance")
-        val newTargetBalance = database.getPlayerBalance(uuidTarget) + amount
-        println("N T B - $newTargetBalance")
-
-
-        database.setPlayerBalance(uuidSender, newSenderBalance.toInt())
-        database.setPlayerBalance(uuidTarget, newTargetBalance.toInt())
-        user.openPrivateChannel().queue { channel ->
-            channel.sendMessage("Вы перевели $amount монет игроку ${targetMember.asMention}.").queue()
+                event.reply("Команда выполнена успешно.").queue()
+            }
         }
-        targetMember.user.openPrivateChannel().queue { channel ->
-            channel.sendMessage("Игрок ${user.asMention} перевел вам $amount монет.").queue()
-        }
-        event.reply("Команда выполнена успешно.").queue()
 
     }
     companion object {
-        const val ALLOWED_CHANNEL_ID = 1265343553614250078
+        val ALLOWED_CHANNEL_ID: Long
+            get() = config.getLong("allowed_channel_id_for_bank_commands")
     }
 }

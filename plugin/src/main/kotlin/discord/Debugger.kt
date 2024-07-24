@@ -1,4 +1,5 @@
 package discord
 
 class Debugger {
+
 }
