@@ -142,6 +142,29 @@ class Database(url: String, plugin: App?) {
         }
         return future
     }
+    fun getUUIDforDiscordID(id: String?): String? {
+        val future = CompletableFuture<Boolean>()
+        var uuid: String? = null
+        plugin?.let {
+            Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
+                val sql = "SELECT UUID FROM bank_accounts WHERE DiscordID = ?"
+                try {
+                    connection?.prepareStatement(sql)?.use { pstmt ->
+                        pstmt.setString(1, id)
+                        val rs = pstmt.executeQuery()
+                        future.complete(rs.next())
+                        uuid = rs.getString("UUID")
+                        rs.close()
+
+                    }
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                    future.complete(false)
+                }
+            })
+        }
+        return uuid
+    }
 
     /**
      * Получение уникального идентификатора игрока
@@ -154,7 +177,7 @@ class Database(url: String, plugin: App?) {
     /**
      * Получение баланса игрока из базы данных
      */
-    fun getPlayerBalance(playerUUID: UUID): Int {
+    fun getPlayerBalance(playerUUID: String?): Int {
         val sql = "SELECT Balance FROM bank_accounts WHERE UUID = ?"
         var balance = 0
 
@@ -177,7 +200,7 @@ class Database(url: String, plugin: App?) {
     /**
      * Обновление баланса игрока в базе данных
      */
-    fun setPlayerBalance(playerUUID: UUID, balance: Int) {
+    fun setPlayerBalance(playerUUID: String?, balance: Int) {
         val sql = "UPDATE bank_accounts SET Balance = ? WHERE UUID = ?"
         if (connection != null && !connection!!.isClosed) {
             try {

@@ -32,17 +32,17 @@ class PayCommand(private val database: Database) : CommandExecutor {
             return true
         }
 
-        val senderBalance = database.getPlayerBalance(sender.uniqueId)
+        val senderBalance = database.getPlayerBalance(sender.uniqueId.toString())
         if (senderBalance < amount) {
             sender.sendMessage("У вас недостаточно средств.")
             return true
         }
 
         val newSenderBalance = senderBalance - amount
-        val newTargetBalance = database.getPlayerBalance(targetPlayer.uniqueId) + amount
+        val newTargetBalance = database.getPlayerBalance(targetPlayer.uniqueId.toString()) + amount
 
-        database.setPlayerBalance(sender.uniqueId, newSenderBalance)
-        database.setPlayerBalance(targetPlayer.uniqueId, newTargetBalance)
+        database.setPlayerBalance(sender.uniqueId.toString(), newSenderBalance)
+        database.setPlayerBalance(targetPlayer.uniqueId.toString(), newTargetBalance)
 
         sender.sendMessage("Вы перевели $amount монет игроку $targetPlayerName.")
         targetPlayer.sendMessage("Игрок ${sender.name} перевел вам $amount монет.")

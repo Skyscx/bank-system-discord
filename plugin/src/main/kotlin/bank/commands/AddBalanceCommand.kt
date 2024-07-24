@@ -33,14 +33,14 @@ class AddBalanceCommand(private val database: Database) : CommandExecutor {
             return true
         }
 
-        val newTargetBalance = database.getPlayerBalance(targetPlayer.uniqueId) + amount
+        val newTargetBalance = database.getPlayerBalance(targetPlayer.uniqueId.toString()) + amount
 
 //        val senderBalance = database.getPlayerBalance(sender.uniqueId)
 //        if (senderBalance < amount) {
 //            sender.sendMessage("У вас недостаточно средств.")
 //            return true
 //        }
-        val uuidTarger = targetPlayer.uniqueId
+        val uuidTarger = targetPlayer.uniqueId.toString()
         database.setPlayerBalance(uuidTarger, newTargetBalance)
 
         sender.sendMessage("Вы установили $amount монет игроку $targetPlayerName.")

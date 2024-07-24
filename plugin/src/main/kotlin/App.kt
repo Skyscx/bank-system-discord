@@ -60,7 +60,7 @@ class App : JavaPlugin(), Listener {
         }
 
         //discord.dsbot.DiscordBot
-        discordBot = DiscordBot()
+        discordBot = DiscordBot(database)
         discordBot.start("MTI2NTAwMjcyMTQ4ODkyODgyOQ.GtnVS0.QhQF26tObwGDt2EDLdNqQl5rMxMeumn6p0XXJI")
     }
 

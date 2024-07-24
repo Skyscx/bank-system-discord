@@ -13,7 +13,7 @@ class BalanceCommand(private val database: Database) : CommandExecutor {
             sender.sendMessage("Эту команду можно использовать только в игре.")
             return true
         }
-        val uuid = sender.uniqueId
+        val uuid = sender.uniqueId.toString()
         val balance = database.getPlayerBalance(uuid)
         sender.sendMessage("Ваш баланс: $balance")
         return true

@@ -38,7 +38,7 @@ class SetBalanceCommand(private val database: Database) : CommandExecutor {
 //            sender.sendMessage("У вас недостаточно средств.")
 //            return true
 //        }
-        val uuidTarger = targetPlayer.uniqueId
+        val uuidTarger = targetPlayer.uniqueId.toString()
         database.setPlayerBalance(uuidTarger, amount)
 
         sender.sendMessage("Вы установили $amount монет игроку $targetPlayerName.")
