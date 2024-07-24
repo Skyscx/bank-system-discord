@@ -7,7 +7,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-class Functions {
+class FunctionsDiscord {
     fun getPlayerDiscordID(uuid: UUID): String? {
         val discordId = DiscordSRV.getPlugin().accountLinkManager.getDiscordId(uuid)
         return discordId
@@ -39,6 +39,37 @@ class Functions {
     }
     fun isNumber(arg: String?): Boolean {
         return arg?.toIntOrNull() != null
+    }
+    fun takeItem(player: Player, itemType: Material, amount: Int) {
+        val inventory = player.inventory
+        var count = 0
+        for (item in inventory.contents) {
+            if (item != null && item.type == itemType) {
+                count += item.amount
+                if (count >= amount) {
+                    inventory.removeItem(ItemStack(itemType, amount))
+                    player.sendMessage("Вы потратили $amount x ${itemType.name}.")
+                }else{
+                    player.sendMessage("У вас недостаточно ${itemType.name}.")
+                }
+            }
+        }
+    }
+
+    fun giveItem(player: Player, item: ItemStack, amount: Int) {
+        val inventory = player.inventory
+        val freeSpace = inventory.firstEmpty()
+
+        if (freeSpace == -1) {
+            player.sendMessage("У вас недостаточно места в инвентаре.")
+            return
+        }
+
+        val newItem = item.clone()
+        newItem.amount = amount
+
+        inventory.addItem(newItem)
+        player.sendMessage("Вы получили $amount x ${item.type.name}.")
     }
 
 

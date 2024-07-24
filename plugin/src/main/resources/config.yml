@@ -2,4 +2,7 @@
 bot-token: your-bot-token-here
 # Category for BANK
 category-bank-id: your-category-bank-id-here
-
+#comment
+allowed-channel-id-for-bank-commands: your-allowed-channel-id-for-bank-commands-here
+#comment
+checker-banker: false

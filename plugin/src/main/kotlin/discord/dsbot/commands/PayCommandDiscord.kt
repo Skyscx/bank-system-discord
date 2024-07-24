@@ -1,14 +1,14 @@
 package discord.dsbot.commands
 
 import database.Database
-import discord.Functions
+import discord.FunctionsDiscord
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.bukkit.configuration.file.FileConfiguration
 
 class PayCommandDiscord (private val database: Database, config: FileConfiguration) : ListenerAdapter() {
-    private val functions = Functions()
+    private val functionsDiscord = FunctionsDiscord()
     private val allowedСhannelId = config.getLong("allowed-channel-id-for-bank-commands")
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         if (event.name != "pay") return
@@ -69,13 +69,13 @@ class PayCommandDiscord (private val database: Database, config: FileConfigurati
                 targetMember.user.openPrivateChannel().queue { channel ->
                     channel.sendMessage("Игрок ${user.asMention} перевел вам $amount монет.").queue()
                 }
-                if (functions.isPlayerOnline(uuidSender)){
-                    val player = functions.getPlayerByUUID(uuidSender)
-                    if (player != null) { functions.sendMessagePlayer(player, "Sender") }
+                if (functionsDiscord.isPlayerOnline(uuidSender)){
+                    val player = functionsDiscord.getPlayerByUUID(uuidSender)
+                    if (player != null) { functionsDiscord.sendMessagePlayer(player, "Sender") }
                 }
-                if (functions.isPlayerOnline(uuidTarget)){
-                    val player = functions.getPlayerByUUID(uuidTarget)
-                    if (player != null) { functions.sendMessagePlayer(player, "Target") }
+                if (functionsDiscord.isPlayerOnline(uuidTarget)){
+                    val player = functionsDiscord.getPlayerByUUID(uuidTarget)
+                    if (player != null) { functionsDiscord.sendMessagePlayer(player, "Target") }
                 }
 
                 event.reply("Команда выполнена успешно.").queue()

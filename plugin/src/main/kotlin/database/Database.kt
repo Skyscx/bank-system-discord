@@ -1,7 +1,7 @@
 package database
 
 import App
-import discord.Functions
+import discord.FunctionsDiscord
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.sql.Connection
@@ -17,7 +17,7 @@ class Database(url: String, plugin: App?) {
     private var connection: Connection? = null
     private var plugin: App? = null
     //private val dateFormat = SimpleDateFormat("dd:MM:yyyy HH:mm:ss")
-    val functions = Functions()
+    val functionsDiscord = FunctionsDiscord()
     init {
         this.plugin = plugin
         try {
@@ -64,7 +64,9 @@ class Database(url: String, plugin: App?) {
                 "PrivateKey TEXT NOT NULL," +    //NOT USAGE                                                              //TODO: Подумать о его реализации
                 "Balance INTEGER NOT NULL," + //TODO: ЗАМЕНИТЬ НА LONG либо реализовать по другому.
                 "Currency TEXT NOT NULL," +
-                "Name TEXT NOT NULL" +
+                "Name TEXT NOT NULL," +
+                "Verification INTEGER NOT NULL," +
+                "Deposit INTEGER NOT NULL" +
                 ");"
         connection!!.createStatement().use { stmt ->
             stmt.executeUpdate(sql)
@@ -77,7 +79,7 @@ class Database(url: String, plugin: App?) {
         val player = getPlayerByUUID(uuid) ?: return null
         val playerName = player.name
         val playerUUID = player.uniqueId.toString()
-        val discordID = functions.getPlayerDiscordID(uuid)
+        val discordID = functionsDiscord.getPlayerDiscordID(uuid)
         plugin?.let {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
                 val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
@@ -88,16 +90,11 @@ class Database(url: String, plugin: App?) {
                         pstmt.setString(1, playerName) //Пользовательское игровое имя пользователя
                         pstmt.setString(2, playerUUID) //Пользовательский игровой UUID
                         if (discordID != null) { pstmt.setString(3, discordID) }else{ pstmt.setString(3,null) } //Дискорд Айди привязанного аккаунта
-                        //pstmt.setInt(4, 0) /**Сюда нужно сделать получение UsernameDiscord**/
-                        //pstmt.setInt(5, 0) /**Сюда нужно сделать получение Отображающегося имени дискорд пользователя**/
                         pstmt.setBoolean(4, false) //Активирован ли банковский аккаунт
                         pstmt.setString(5, currentDate) //Время регистрации в банковской системе
                         pstmt.setBoolean(6, false) //Включено ли использование двухфакторной авторизации
                         pstmt.setString(7, "value") /**Приватный ключ пользоваться - НЕОБХОДИМО РЕАЛИЗОВАТЬ**/
-                        //pstmt.setInt(10, 0) //Игровой баланс игрока
                         pstmt.setString(8, currentDate) /**Дата последней операции**/
-                        //pstmt.setInt(12, 0) /**Место в топе**/
-                        //pstmt.setInt(13, 0) /**Кредиты/Займы**/
                         pstmt.setInt(9, 0) /**Реальная валюта - USDT**/
                         pstmt.setInt(10, 0) /**Уровень**/
                         pstmt.executeUpdate()
@@ -114,12 +111,12 @@ class Database(url: String, plugin: App?) {
      */
     fun insertAccount(player: Player, currency: String){
         val playerUUID = player.uniqueId
-        val discordID = functions.getPlayerDiscordID(playerUUID)
+        val discordID = functionsDiscord.getPlayerDiscordID(playerUUID)
         plugin?.let {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
                 val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
                 val sql =
-                    "INSERT INTO bank_accounts(UUID,DiscordID,Registration,PrivateKey,Balance,Currency,Name) VALUES(?,?,?,?,?,?,?)"
+                    "INSERT INTO bank_accounts(UUID,DiscordID,Registration,PrivateKey,Balance,Currency,Name,Verification,Deposit) VALUES(?,?,?,?,?,?,?,?,?)"
                 try {
                     connection?.prepareStatement(sql)?.use { pstmt ->
                         pstmt.setString(1, playerUUID.toString())
@@ -129,6 +126,8 @@ class Database(url: String, plugin: App?) {
                         pstmt.setInt(5, 0)
                         pstmt.setString(6, currency)
                         pstmt.setString(7, "null")
+                        pstmt.setInt(8,0)
+                        pstmt.setInt(9,0)
                         pstmt.executeUpdate()
                     }
                 } catch (e: SQLException) {
@@ -271,6 +270,10 @@ class Database(url: String, plugin: App?) {
 
         return count
     }
+
+    /**
+     * Установка имени к кошельку игрока
+     */
     fun setAccountName(uuid: String?, name: String, id: String){
         val sql = "UPDATE bank_accounts SET Name = ? WHERE UUID = ? AND id = ?"
         if (connection != null && !connection!!.isClosed) {
@@ -287,7 +290,168 @@ class Database(url: String, plugin: App?) {
             }
         }
     }
+    fun getUnverifiedAccounts(): List<String> {
+        val unverifiedAccounts = mutableListOf<String>()
 
+        val sql = "SELECT * FROM bank_accounts WHERE Verification = 0 ORDER BY id ASC LIMIT 5"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                val result = pstmt.executeQuery()
+                while (result.next()) {
+                    val id = result.getInt("id")
+                    unverifiedAccounts.add(id.toString())
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return unverifiedAccounts
+    }
+    fun getPlayerDataById(id: Int): String? {
+        var playerData: String? = null
+
+        val sql = "SELECT UUID FROM bank_accounts WHERE id = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, id)
+                val result = pstmt.executeQuery()
+                if (result.next()) {
+                    val uuid = result.getString("UUID")
+                    val playerDataSql = "SELECT PlayerName, DiscordID, Registration, `2f Auth`, USDT, Level FROM bank_users WHERE UUID = ?"
+                    try {
+                        connection?.prepareStatement(playerDataSql)?.use { pstmt2 ->
+                            pstmt2.setString(1, uuid)
+                            val result2 = pstmt2.executeQuery()
+                            if (result2.next()) {
+                                val playerName = result2.getString("PlayerName")
+                                val discordId = result2.getString("DiscordID")
+                                val registration = result2.getString("Registration")
+                                val usdt = result2.getInt("USDT")
+                                val level = result2.getInt("Level")
+                                playerData = "id: $id $playerName : $discordId : $registration : $usdt : $level"
+                            }
+                        }
+                    } catch (e: SQLException) {
+                        e.printStackTrace()
+                    }
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return playerData
+    }
+    fun getVerification(id: Int): Int {
+        var verification = 0
+
+        val sql = "SELECT Verification FROM bank_accounts WHERE id = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, id)
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    verification = resultSet.getInt("Verification")
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return verification
+    }
+    fun setVerification(id: Int, verification: Int): Boolean {
+        var result = false
+
+        val sql = "UPDATE bank_accounts SET Verification = ? WHERE id = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, verification)
+                pstmt.setInt(2, id)
+                pstmt.executeUpdate()
+                result = true
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return result
+    }
+    fun isDepositAvailable(id: Int): Boolean {
+        var deposit: String? = null
+        val verification = getVerification(id)
+
+        if (verification == -1) {
+            val sql = "SELECT Deposit FROM user_accounts WHERE id = ?"
+            try {
+                connection?.prepareStatement(sql)?.use { pstmt ->
+                    pstmt.setInt(1, id)
+                    val resultSet = pstmt.executeQuery()
+                    if (resultSet.next()) {
+                        deposit = resultSet.getString("Deposit")
+                    }
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            }
+        }
+
+        return deposit != null
+    }
+    fun getDepositIdsByUUID(uuid: String): List<Int> {
+        val depositIds = mutableListOf<Int>()
+
+        val sql = "SELECT id FROM user_accounts WHERE UUID = ? AND Verification = -1"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, uuid)
+                val resultSet = pstmt.executeQuery()
+                while (resultSet.next()) {
+                    val id = resultSet.getInt("id")
+                    depositIds.add(id)
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return depositIds
+    }
+    fun deleteUserAccount(id: Int): Boolean {
+        var result = false
+
+        val sql = "DELETE FROM user_accounts WHERE id = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, id)
+                pstmt.executeUpdate()
+                result = true
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return result
+    }
+    fun getDeposit(id: Int): Int? {
+        var deposit: Int? = null
+
+        val sql = "SELECT Deposit FROM user_accounts WHERE id = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, id)
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    deposit = resultSet.getInt("Deposit")
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return deposit
+    }
     /**
      * Закрытие соединения
      */

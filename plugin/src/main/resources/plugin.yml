@@ -22,4 +22,7 @@ commands:
     usage: /open-account
   account-set-name:
     description: Установить визуальное имя кошелька.
-    usage: /account-set-name <id> <name>
+    usage: /account-set-name <name> <id>
+  account-verify:
+    description: Верифицировать кошелек игрока.
+    usage: /account-verify <id> <true/false>

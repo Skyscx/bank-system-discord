@@ -1,5 +1,6 @@
 
 import bank.commands.*
+import bank.commands.banker.AccountVerificationCommand
 import database.Database
 import discord.DiscordSRVHook
 import discord.dsbot.DiscordBot
@@ -56,6 +57,7 @@ class App : JavaPlugin(), Listener {
         getCommand("set-balance")?.setExecutor(BalanceSetCommand(database))
         getCommand("open-account")?.setExecutor(AccountOpenCommand())
         getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
+        getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
 
         //Events
         Bukkit.getPluginManager().registerEvents(PlayerConnection(database), this)
