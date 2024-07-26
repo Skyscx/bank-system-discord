@@ -49,7 +49,10 @@ class App : JavaPlugin(), Listener {
         saveDefaultConfig()
         reloadConfig()
         config = getConfig()
-
+        //DiscordBot
+        discordBot = DiscordBot(database, config)
+        val token = config.getString("bot-token")
+        discordBot.start(token)
         //Commands
         getCommand("pay")?.setExecutor(PayCommand(database))
         getCommand("balance")?.setExecutor(BalanceCommand(database))
@@ -58,20 +61,27 @@ class App : JavaPlugin(), Listener {
         getCommand("open-account")?.setExecutor(AccountOpenCommand())
         getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
+        getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
+
+        //accounts-list
+        //transfer-account-id
+        //transfer-account-name
+        //transfer-account-default
+        //account-set-default
+        //account-history
+        //bank-history
+        //account-close
 
         //Events
         Bukkit.getPluginManager().registerEvents(PlayerConnection(database), this)
-        Bukkit.getPluginManager().registerEvents(OpenAccountInventoryEvent(database), this)
+        Bukkit.getPluginManager().registerEvents(OpenAccountInventoryEvent(database, config, discordBot), this)
 
         //Depends
         if (server.pluginManager.getPlugin("DiscordSRV") != null){
             DiscordSRVHook.register()
         }
 
-        //DiscordBot
-        discordBot = DiscordBot(database, config)
-        val token = config.getString("bot-token")
-        discordBot.start(token)
+
     }
     //
 
@@ -94,6 +104,7 @@ class App : JavaPlugin(), Listener {
             saveResource("config.yml", false)
         }
     }
+
 
 
 }

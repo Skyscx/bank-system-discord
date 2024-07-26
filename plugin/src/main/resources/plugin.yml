@@ -26,3 +26,6 @@ commands:
   account-verify:
     description: Верифицировать кошелек игрока.
     usage: /account-verify <id> <true/false>
+  bank-reload-plugin:
+    description: Перезагрузить плагин.
+    usage: /bank-reload-plugin

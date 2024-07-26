@@ -14,12 +14,12 @@ class DiscordBot (private val database: Database, private val config: FileConfig
     fun start(token: String?) {
         jda = JDABuilder.createDefault(token)
             .addEventListeners(PayCommandDiscord(database, config))
- //           .addEventListeners(CommandAccountBinder(database, config))
- //           .addEventListeners(ModalListener(database,config))
+            .addEventListeners(DiscordNotifierEvents(database))
+ //           .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
             .build()
-
         jda.awaitReady()
         updateCommands()
+
     }
 
     private fun updateCommands() {
@@ -33,7 +33,9 @@ class DiscordBot (private val database: Database, private val config: FileConfig
         val guild = jda.getGuildById("1265001474870612068")
         guild?.updateCommands()?.addCommands(commands)?.queue()
     }
-
+    fun getJDA(): JDA {
+        return jda
+    }
 
 
 }

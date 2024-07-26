@@ -1,8 +1,21 @@
-# Bot token
+# Токен от бота дискорд
 bot-token: your-bot-token-here
-# Category for BANK
+# Айди категории, в которой будут создаваться тикеты
 category-bank-id: your-category-bank-id-here
-#comment
+# Айди канала, в котором будут работать команды банка
+# При значении '-1' будет работать во всех каналах
 allowed-channel-id-for-bank-commands: your-allowed-channel-id-for-bank-commands-here
-#comment
+# Проводить банковские операции через банкира
+# При 'false' любые операции будут автоматически подтверждаться
+# При 'true' любые операции должны подтверждаться банкирами
 checker-banker: false
+# Айди канала, предназначенный для банкира
+channel-id-banker: your-channel-id-for-banker
+# Максимальное количество кошельков создаваемых за блоки
+count-free-accounts: 10
+# Название блока для оплаты, формат: DIAMOND_ORE
+currency-block-default: DIAMOND_ORE
+# Максимальное количество кошельков, создаваемых за реальную валюту.
+count-donate-accounts: 0
+# Стоимость создания кошелька, от 1 до 2304
+price-account: 15

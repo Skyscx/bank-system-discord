@@ -7,7 +7,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
 
-class FunctionsDiscord {
+class FunctionsDiscord() {
     fun getPlayerDiscordID(uuid: UUID): String? {
         val discordId = DiscordSRV.getPlugin().accountLinkManager.getDiscordId(uuid)
         return discordId

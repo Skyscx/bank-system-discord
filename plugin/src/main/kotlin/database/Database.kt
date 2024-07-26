@@ -109,7 +109,7 @@ class Database(url: String, plugin: App?) {
     /**
      *Создание счета в базе данных
      */
-    fun insertAccount(player: Player, currency: String){
+    fun insertAccount(player: Player, currency: String, amount: Int, verificationInt: Int){
         val playerUUID = player.uniqueId
         val discordID = functionsDiscord.getPlayerDiscordID(playerUUID)
         plugin?.let {
@@ -126,8 +126,8 @@ class Database(url: String, plugin: App?) {
                         pstmt.setInt(5, 0)
                         pstmt.setString(6, currency)
                         pstmt.setString(7, "null")
-                        pstmt.setInt(8,0)
-                        pstmt.setInt(9,0)
+                        pstmt.setInt(8,verificationInt)
+                        pstmt.setInt(9,amount)
                         pstmt.executeUpdate()
                     }
                 } catch (e: SQLException) {
@@ -275,7 +275,7 @@ class Database(url: String, plugin: App?) {
      * Установка имени к кошельку игрока
      */
     fun setAccountName(uuid: String?, name: String, id: String){
-        val sql = "UPDATE bank_accounts SET Name = ? WHERE UUID = ? AND id = ?"
+        val sql = "UPDATE bank_accounts SET Name = ? WHERE UUID = ? AND ID = ?"
         if (connection != null && !connection!!.isClosed) {
             try {
                 connection!!.prepareStatement(sql).use { pstmt ->
@@ -346,7 +346,7 @@ class Database(url: String, plugin: App?) {
     fun getVerification(id: Int): Int {
         var verification = 0
 
-        val sql = "SELECT Verification FROM bank_accounts WHERE id = ?"
+        val sql = "SELECT Verification FROM bank_accounts WHERE ID = ?"
         try {
             connection?.prepareStatement(sql)?.use { pstmt ->
                 pstmt.setInt(1, id)
@@ -364,7 +364,7 @@ class Database(url: String, plugin: App?) {
     fun setVerification(id: Int, verification: Int): Boolean {
         var result = false
 
-        val sql = "UPDATE bank_accounts SET Verification = ? WHERE id = ?"
+        val sql = "UPDATE bank_accounts SET Verification = ? WHERE ID = ?"
         try {
             connection?.prepareStatement(sql)?.use { pstmt ->
                 pstmt.setInt(1, verification)
@@ -383,7 +383,7 @@ class Database(url: String, plugin: App?) {
         val verification = getVerification(id)
 
         if (verification == -1) {
-            val sql = "SELECT Deposit FROM user_accounts WHERE id = ?"
+            val sql = "SELECT Deposit FROM bank_accounts WHERE ID = ?"
             try {
                 connection?.prepareStatement(sql)?.use { pstmt ->
                     pstmt.setInt(1, id)
@@ -399,16 +399,29 @@ class Database(url: String, plugin: App?) {
 
         return deposit != null
     }
+    fun setDeposit(id: Int, deposit: String) {
+        val sql = "UPDATE bank_accounts SET Deposit = ? WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, deposit)
+                pstmt.setInt(2, id)
+                pstmt.executeUpdate()
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+    }
+
     fun getDepositIdsByUUID(uuid: String): List<Int> {
         val depositIds = mutableListOf<Int>()
 
-        val sql = "SELECT id FROM user_accounts WHERE UUID = ? AND Verification = -1"
+        val sql = "SELECT id FROM bank_accounts WHERE UUID = ? AND Verification = -1"
         try {
             connection?.prepareStatement(sql)?.use { pstmt ->
                 pstmt.setString(1, uuid)
                 val resultSet = pstmt.executeQuery()
                 while (resultSet.next()) {
-                    val id = resultSet.getInt("id")
+                    val id = resultSet.getInt("ID")
                     depositIds.add(id)
                 }
             }
@@ -421,7 +434,7 @@ class Database(url: String, plugin: App?) {
     fun deleteUserAccount(id: Int): Boolean {
         var result = false
 
-        val sql = "DELETE FROM user_accounts WHERE id = ?"
+        val sql = "DELETE FROM bank_accounts WHERE ID = ?"
         try {
             connection?.prepareStatement(sql)?.use { pstmt ->
                 pstmt.setInt(1, id)
@@ -437,7 +450,7 @@ class Database(url: String, plugin: App?) {
     fun getDeposit(id: Int): Int? {
         var deposit: Int? = null
 
-        val sql = "SELECT Deposit FROM user_accounts WHERE id = ?"
+        val sql = "SELECT Deposit FROM bank_accounts WHERE ID = ?"
         try {
             connection?.prepareStatement(sql)?.use { pstmt ->
                 pstmt.setInt(1, id)
@@ -451,6 +464,24 @@ class Database(url: String, plugin: App?) {
         }
 
         return deposit
+    }
+    fun getLastID(): Int?{
+        var lastId: Int? = null
+        val sql = "SELECT MAX(ID) FROM bank_accounts"
+
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    lastId = resultSet.getInt(1)+1
+                }
+                resultSet.close()
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return lastId
     }
     /**
      * Закрытие соединения
