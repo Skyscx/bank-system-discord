@@ -17,7 +17,6 @@ class Database(url: String, plugin: App?) {
     private var connection: Connection? = null
     private var plugin: App? = null
     //private val dateFormat = SimpleDateFormat("dd:MM:yyyy HH:mm:ss")
-    private val functionsDiscord = FunctionsDiscord(plugin!!.getDiscordBot())
     init {
         this.plugin = plugin
         try {
@@ -28,6 +27,7 @@ class Database(url: String, plugin: App?) {
             e.printStackTrace()
         }
     }
+    private val functionsDiscord = FunctionsDiscord(plugin!!.getDiscordBot())
 
     /**
      * Создание базы данных аккаунтов
@@ -79,6 +79,7 @@ class Database(url: String, plugin: App?) {
         val player = getPlayerByUUID(uuid) ?: return null
         val playerName = player.name
         val playerUUID = player.uniqueId.toString()
+
         val discordID = functionsDiscord.getPlayerDiscordID(uuid)
         plugin?.let {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
