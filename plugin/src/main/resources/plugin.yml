@@ -29,3 +29,6 @@ commands:
   bank-reload-plugin:
     description: Перезагрузить плагин.
     usage: /bank-reload-plugin
+  account-remove:
+    description: Закрыть счет.
+    usage: /account-remove <id> <true/false>

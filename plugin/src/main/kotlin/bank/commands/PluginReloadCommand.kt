@@ -22,16 +22,21 @@ class PluginReloadCommand(private val app: App) : CommandExecutor {
         val plugin = pluginManager.getPlugin("Plugin")
 
         if (plugin != null) {
-            pluginManager.disablePlugin(plugin)
             object : BukkitRunnable() {
                 override fun run() {
-                    try {
-                        pluginManager.enablePlugin(plugin)
-                    } catch (e: Exception) {
-                        app.logger.severe("Ошибка при перезагрузке плагина: ${e.message}")
-                    }
+                    pluginManager.disablePlugin(plugin)
+                    // Асинхронное включение плагина с задержкой
+                    object : BukkitRunnable() {
+                        override fun run() {
+                            try {
+                                pluginManager.enablePlugin(plugin)
+                            } catch (e: Exception) {
+                                app.logger.severe("Ошибка при перезагрузке плагина: ${e.message}")
+                            }
+                        }
+                    }.runTaskLater(app, 20L) // Задержка в 1 секунду (20 тиков)
                 }
-            }.runTaskLater(app, 20L) // Задержка в 1 секунду (20 тиков)
+            }.runTask(app)
         } else {
             app.logger.severe("Плагин не найден!")
         }

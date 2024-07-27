@@ -1,14 +1,14 @@
 package bank.commands.banker
 
 import database.Database
-import discord.FunctionsDiscord
+import functions.Functions
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class AccountVerificationCommand(private val database: Database) : CommandExecutor {
-    val functionsDiscord = FunctionsDiscord()
+    private val function = Functions()
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
             sender.sendMessage("Эту команду можно использовать только в игре.")
@@ -24,7 +24,7 @@ class AccountVerificationCommand(private val database: Database) : CommandExecut
         }
         if (args.size > 2 || args.size <= 1) return false
         val id = args[0]
-        if (!(functionsDiscord.isNumber(id))) return false
+        if (!(function.isNumber(id))) return false
         val bool = args[1].toBoolean()
         val verif = database.getVerification(id.toInt())
 

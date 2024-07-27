@@ -1,5 +1,11 @@
 
-import bank.commands.*
+import bank.accounts.commands.AccountOpenCommand
+import bank.accounts.commands.AccountRemoveCommand
+import bank.accounts.commands.AccountSetNameCommand
+import bank.commands.BalanceAddCommand
+import bank.commands.BalanceCommand
+import bank.commands.BalanceSetCommand
+import bank.commands.PayCommand
 import bank.commands.banker.AccountVerificationCommand
 import database.Database
 import discord.DiscordSRVHook
@@ -61,7 +67,8 @@ class App : JavaPlugin(), Listener {
         getCommand("open-account")?.setExecutor(AccountOpenCommand())
         getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
-        getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
+        getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
+        //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
 
         //accounts-list
         //transfer-account-id
@@ -104,7 +111,9 @@ class App : JavaPlugin(), Listener {
             saveResource("config.yml", false)
         }
     }
-
+    fun getDiscordBot(): DiscordBot {
+        return discordBot
+    }
 
 
 }

@@ -1,7 +1,7 @@
 package functions.events
 
 import database.Database
-import discord.FunctionsDiscord
+import functions.Functions
 import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack
 
 
 class PlayerConnection(private val database: Database) : Listener{
-    val functionsDiscord = FunctionsDiscord()
+    private val functions = Functions()
     @EventHandler
     fun onPlayerConnect(event: PlayerJoinEvent){
         val player = event.player
@@ -22,7 +22,7 @@ class PlayerConnection(private val database: Database) : Listener{
                 val deposit = database.getDeposit(id)
                 val item = ItemStack(Material.DIAMOND_ORE) // TODO:Брать из конфигурации
                 //val amount = 15 //TODO: Брать из конфигурации.
-                functionsDiscord.giveItem(player, item, deposit!!)
+                functions.giveItem(player, item, deposit!!)
                 database.deleteUserAccount(id)
             }
         }

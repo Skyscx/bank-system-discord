@@ -17,7 +17,7 @@ class Database(url: String, plugin: App?) {
     private var connection: Connection? = null
     private var plugin: App? = null
     //private val dateFormat = SimpleDateFormat("dd:MM:yyyy HH:mm:ss")
-    val functionsDiscord = FunctionsDiscord()
+    private val functionsDiscord = FunctionsDiscord(plugin!!.getDiscordBot())
     init {
         this.plugin = plugin
         try {

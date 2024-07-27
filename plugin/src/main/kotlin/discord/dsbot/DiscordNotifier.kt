@@ -9,7 +9,7 @@ class DiscordNotifier(private val jda: JDA) {
         val channel = jda.getTextChannelById(channelId)
         if (channel != null) {
             channel.sendMessage(message).queue(
-                { println("Сообщение отправлено: \$message") },
+                { println("Сообщение отправлено: $message") },
                 { it.printStackTrace() }
             )
         } else {
