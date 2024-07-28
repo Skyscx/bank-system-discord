@@ -27,6 +27,7 @@ class Database private constructor(url: String, plugin: App?) {
                 instance ?: Database(url, plugin).also { instance = it }
             }
     }
+
     init {
         this.plugin = plugin
         try {
@@ -37,8 +38,6 @@ class Database private constructor(url: String, plugin: App?) {
             e.printStackTrace()
         }
     }
-
-    //private val functionsDiscord = FunctionsDiscord()
 
     /**
      * Создание базы данных аккаунтов
@@ -62,6 +61,7 @@ class Database private constructor(url: String, plugin: App?) {
             stmt.executeUpdate(sql)
         }
     }
+
     /**
      * Создание базы данных счетов
      */
@@ -72,17 +72,20 @@ class Database private constructor(url: String, plugin: App?) {
                 "UUID TEXT NOT NULL," +
                 "DiscordID TEXT NOT NULL," +
                 "Registration TEXT NOT NULL," +
-                "PrivateKey TEXT NOT NULL," +    //NOT USAGE                                                              //TODO: Подумать о его реализации
+                "PrivateKey TEXT NOT NULL," +    //NOT USAGE
                 "Balance INTEGER NOT NULL," + //TODO: ЗАМЕНИТЬ НА LONG либо реализовать по другому.
                 "Currency TEXT NOT NULL," +
                 "Name TEXT NOT NULL," +
                 "Verification INTEGER NOT NULL," +
-                "Deposit INTEGER NOT NULL" +
+                "Deposit INTEGER NOT NULL," +
+                "Inspector TEXT NOT NULL," +
+                "VerificationDate TEXT NOT NULL" +
                 ");"
         connection!!.createStatement().use { stmt ->
             stmt.executeUpdate(sql)
         }
     }
+
     /**
      * Создание игрока в базе данных
      */
@@ -101,11 +104,11 @@ class Database private constructor(url: String, plugin: App?) {
                     connection?.prepareStatement(sql)?.use { pstmt ->
                         pstmt.setString(1, playerName) //Пользовательское игровое имя пользователя
                         pstmt.setString(2, playerUUID) //Пользовательский игровой UUID
-                        if (discordID != null) { pstmt.setString(3, discordID) }else{ pstmt.setString(3,null) } //Дискорд Айди привязанного аккаунта
+                        if (discordID != null) { pstmt.setString(3, discordID) } else { pstmt.setString(3, null) } //Дискорд Айди привязанного аккаунта
                         pstmt.setBoolean(4, false) //Активирован ли банковский аккаунт
                         pstmt.setString(5, currentDate) //Время регистрации в банковской системе
                         pstmt.setBoolean(6, false) //Включено ли использование двухфакторной авторизации
-                        pstmt.setString(7, "value") /**Приватный ключ пользоваться - НЕОБХОДИМО РЕАЛИЗОВАТЬ**/
+                        pstmt.setString(7, "value") /**Приватный ключ пользователя - НЕОБХОДИМО РЕАЛИЗОВАТЬ**/
                         pstmt.setString(8, currentDate) /**Дата последней операции**/
                         pstmt.setInt(9, 0) /**Реальная валюта - USDT**/
                         pstmt.setInt(10, 0) /**Уровень**/
@@ -118,28 +121,31 @@ class Database private constructor(url: String, plugin: App?) {
         }
         return player
     }
+
     /**
-     *Создание счета в базе данных
+     * Создание счета в базе данных
      */
-    fun insertAccount(player: Player, currency: String, amount: Int, verificationInt: Int){
+    fun insertAccount(player: Player, currency: String, amount: Int, verificationInt: Int) {
         val playerUUID = player.uniqueId
         val discordID = functionsDiscord.getPlayerDiscordID(playerUUID)
         plugin?.let {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
                 val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
                 val sql =
-                    "INSERT INTO bank_accounts(UUID,DiscordID,Registration,PrivateKey,Balance,Currency,Name,Verification,Deposit) VALUES(?,?,?,?,?,?,?,?,?)"
+                    "INSERT INTO bank_accounts(UUID,DiscordID,Registration,PrivateKey,Balance,Currency,Name,Verification,Deposit,Inspector,VerificationDate) VALUES(?,?,?,?,?,?,?,?,?,?,?)"
                 try {
                     connection?.prepareStatement(sql)?.use { pstmt ->
                         pstmt.setString(1, playerUUID.toString())
                         pstmt.setString(2, discordID)
                         pstmt.setString(3, currentDate)
                         pstmt.setString(4, "value")
-                        pstmt.setInt(5, 0)
+                        pstmt.setInt(5, amount)
                         pstmt.setString(6, currency)
                         pstmt.setString(7, "null")
-                        pstmt.setInt(8,verificationInt)
-                        pstmt.setInt(9,amount)
+                        pstmt.setInt(8, verificationInt)
+                        pstmt.setInt(9, amount)
+                        pstmt.setString(10, "null")
+                        pstmt.setString(11, "null")
                         pstmt.executeUpdate()
                     }
                 } catch (e: SQLException) {
@@ -148,6 +154,7 @@ class Database private constructor(url: String, plugin: App?) {
             })
         }
     }
+
     /**
      * Поиск игрока в базе данных
      */
@@ -166,6 +173,7 @@ class Database private constructor(url: String, plugin: App?) {
             }
         })
     }
+
     fun checkPlayer(uuid: UUID): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
 
@@ -187,6 +195,7 @@ class Database private constructor(url: String, plugin: App?) {
         }
         return future
     }
+
     /**
      * Получение UUID по DiscordID пользователя
      */
@@ -214,6 +223,7 @@ class Database private constructor(url: String, plugin: App?) {
         }
         return future
     }
+
     /**
      * Получение игрока по UUID
      */
@@ -221,6 +231,7 @@ class Database private constructor(url: String, plugin: App?) {
         val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
         return offlinePlayer.player
     }
+
     /**
      * Получение баланса игрока из базы данных
      */
@@ -232,17 +243,18 @@ class Database private constructor(url: String, plugin: App?) {
             connection?.prepareStatement(sql)?.use { pstmt ->
                 pstmt.setString(1, playerUUID.toString())
                 val result = pstmt.executeQuery()
-                if (result.next()){
+                if (result.next()) {
                     balance = result.getInt("Balance")
                     println(balance)
                 }
             }
-        } catch (e: SQLException){
+        } catch (e: SQLException) {
             e.printStackTrace()
         }
 
         return balance
     }
+
     /**
      * Обновление баланса игрока в базе данных
      */
@@ -261,6 +273,7 @@ class Database private constructor(url: String, plugin: App?) {
             }
         }
     }
+
     /**
      * Счетчик счетов игрока по UUID
      */
@@ -286,7 +299,7 @@ class Database private constructor(url: String, plugin: App?) {
     /**
      * Установка имени к кошельку игрока
      */
-    fun setAccountName(uuid: String?, name: String, id: String){
+    fun setAccountName(uuid: String?, name: String, id: String) {
         val sql = "UPDATE bank_accounts SET Name = ? WHERE UUID = ? AND ID = ?"
         if (connection != null && !connection!!.isClosed) {
             try {
@@ -302,6 +315,7 @@ class Database private constructor(url: String, plugin: App?) {
             }
         }
     }
+
     fun getUnverifiedAccounts(): List<String> {
         val unverifiedAccounts = mutableListOf<String>()
 
@@ -320,6 +334,7 @@ class Database private constructor(url: String, plugin: App?) {
 
         return unverifiedAccounts
     }
+
     fun getPlayerDataById(id: Int): String? {
         var playerData: String? = null
 
@@ -355,6 +370,7 @@ class Database private constructor(url: String, plugin: App?) {
 
         return playerData
     }
+
     fun getVerification(id: Int): Int {
         var verification = 0
 
@@ -373,6 +389,7 @@ class Database private constructor(url: String, plugin: App?) {
 
         return verification
     }
+
     fun setVerification(id: Int, verification: Int): Boolean {
         var result = false
 
@@ -390,6 +407,60 @@ class Database private constructor(url: String, plugin: App?) {
 
         return result
     }
+
+    fun setInspectorAccount(id: Int, inspector: String) {
+        val sql = "UPDATE bank_accounts SET Inspector = ? WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, inspector)
+                pstmt.setInt(2, id)
+                pstmt.executeUpdate()
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+    }
+
+    fun getInspectorAccount(id: Int): String? {
+        var inspectorID: String? = null
+        val sql = "SELECT Inspector FROM bank_accounts WHERE ID = ?"
+        connection?.prepareStatement(sql)?.use { pstmt ->
+            pstmt.setInt(1, id)
+            pstmt.executeQuery().use { resultSet ->
+                if (resultSet.next()) {
+                    inspectorID = resultSet.getString("Inspector")
+                }
+            }
+        }
+        return inspectorID
+    }
+    fun setVerificationDate(id: Int) {
+        val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
+        val sql = "UPDATE bank_accounts SET VerificationDate = ? WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, currentDate)
+                pstmt.setInt(2, id)
+                pstmt.executeUpdate()
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+    }
+    fun getVerificationDate(id: Int) : String{
+        val sql = "SELECT VerificationDate FROM bank_accounts WHERE ID = ?"
+        var date = "Нету"
+        connection?.prepareStatement(sql)?.use { pstmt ->
+            pstmt.setInt(1, id)
+            pstmt.executeQuery().use { resultSet ->
+                if (resultSet.next()) {
+                    date = resultSet.getString("VerificationDate")
+                }
+            }
+        }
+        return date
+    }
+
     fun isDepositAvailable(id: Int): Boolean {
         var deposit: String? = null
         val verification = getVerification(id)
@@ -411,6 +482,7 @@ class Database private constructor(url: String, plugin: App?) {
 
         return deposit != null
     }
+
     fun setDeposit(id: Int, deposit: String) {
         val sql = "UPDATE bank_accounts SET Deposit = ? WHERE ID = ?"
         try {
@@ -443,6 +515,7 @@ class Database private constructor(url: String, plugin: App?) {
 
         return depositIds
     }
+
     fun deleteUserAccount(id: Int): Boolean {
         var result = false
 
@@ -459,6 +532,7 @@ class Database private constructor(url: String, plugin: App?) {
 
         return result
     }
+
     fun getDeposit(id: Int): Int? {
         var deposit: Int? = null
 
@@ -477,7 +551,8 @@ class Database private constructor(url: String, plugin: App?) {
 
         return deposit
     }
-    fun getLastID(): Int?{
+
+    fun getLastID(): Int? {
         var lastId: Int? = null
         val sql = "SELECT MAX(ID) FROM bank_accounts"
 
@@ -485,7 +560,7 @@ class Database private constructor(url: String, plugin: App?) {
             connection?.prepareStatement(sql)?.use { pstmt ->
                 val resultSet = pstmt.executeQuery()
                 if (resultSet.next()) {
-                    lastId = resultSet.getInt(1)+1
+                    lastId = resultSet.getInt(1) + 1
                 }
                 resultSet.close()
             }
@@ -495,7 +570,8 @@ class Database private constructor(url: String, plugin: App?) {
 
         return lastId
     }
-    fun getDiscordIDbyUUID(uuid: String?, connection: Connection?): String? {
+
+    fun getDiscordIDbyUUID(uuid: String?): String? {
         val sql = "SELECT DiscordID FROM bank_users WHERE UUID = ?"
         var discordID: String? = null
 
@@ -514,6 +590,7 @@ class Database private constructor(url: String, plugin: App?) {
 
         return discordID
     }
+
     /**
      * Закрытие соединения
      */

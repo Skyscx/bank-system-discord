@@ -40,25 +40,28 @@ class OpenAccountInventoryEvent(private val database: Database, config: FileConf
                                 //TODO:Добавить зачисление price куда-то пока не знаю куда.
                             }else{
                                 val lastID = database.getLastID().toString()
-                                val discordID = database.getUUIDbyDiscordID(player.uniqueId.toString())
-                                val mention = discordBot.mentionUserById(discordID.toString())
+                                val discordID = database.getDiscordIDbyUUID(player.uniqueId.toString())
+                                val mention = discordBot.getMentionUser(discordID.toString())
+                                if (discordID != null){
+                                    discordNotifier.sendMessageChannel(
+                                        channelIdBankerNotifier.toString(),
+                                        "/././././././././././././././././\n" +
+                                                "Пришел новый запрос на открытие кошелька!\n" +
+                                                "Пользователь - `${player.name}`\n" +
+                                                "Дискорд - $mention\n" +
+                                                "Номер кошелька - `$lastID`\n" +
+                                                "/././././././././././././././././"
+                                    )
 
-                                //val mention = functionsDiscord.mentionUserById(uuidPlayer)
-                                discordNotifier.sendMessageChannel(
-                                    channelIdBankerNotifier.toString(),
-                                    "/././././././././././././././././\n" +
-                                            "Пришел новый запрос на открытие кошелька!\n" +
-                                            "Пользователь - ${player.name}\n" +
-                                            "Дискорд - $mention'\n" +
-                                            "Номер кошелька - $lastID\n" +
-                                            "/././././././././././././././././"
-                                )
-
-                                discordNotifier.sendMessageWithButtons(
-                                    channelIdBankerNotifier.toString(),
-                                    "Вам необходимо подтвердить или отклонить запрос.",
-                                    lastID
-                                )
+                                    discordNotifier.sendMessageWithButtons(
+                                        channelIdBankerNotifier.toString(),
+                                        "Вам необходимо подтвердить или отклонить запрос.",
+                                        lastID
+                                    )
+                                }else {
+                                    // Обработка случая, когда discordID == null
+                                    functions.sendMessagePlayer(player, "Не удалось найти идентификатор Discord.")
+                                }
                             }
                             database.insertAccount(player,currencyAccountConfig!!, price, verificationInt)
                             functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
