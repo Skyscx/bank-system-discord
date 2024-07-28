@@ -14,7 +14,6 @@ import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
 import gui.сonfirmations.OpenAccountInventoryEvent
 import org.bukkit.Bukkit
-import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -26,7 +25,7 @@ lateinit var app: App
 
 class App : JavaPlugin(), Listener {
     companion object {
-        lateinit var config: Config
+        lateinit var configPlugin: Config
         lateinit var discordBot: DiscordBot
         lateinit var database: Database
     }
@@ -40,8 +39,8 @@ class App : JavaPlugin(), Listener {
             pluginFolder.mkdirs()
         }
         // Config
-        config = Config.getInstance(this)
-        config.loadConfig()
+        configPlugin = Config.getInstance(this)
+        configPlugin.loadConfig()
         //Database
         val databaseFolder = File(dataFolder, "data")
         if (!databaseFolder.exists()) {

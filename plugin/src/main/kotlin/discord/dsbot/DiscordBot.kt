@@ -1,21 +1,20 @@
 package discord.dsbot
-import data.Config
 import data.Database
 import discord.dsbot.commands.PayCommandDiscord
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
-import net.dv8tion.jda.api.hooks.ListenerAdapter
+import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.interactions.commands.OptionType
 import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.bukkit.configuration.file.FileConfiguration
 
-class DiscordBot private constructor(private val database: Database, private val config: Config) : ListenerAdapter() {
+class DiscordBot private constructor(private val database: Database, private val config: FileConfiguration) {
     companion object {
         @Volatile
         private var instance: DiscordBot? = null
 
-        fun getInstance(database: Database, config: Config): DiscordBot =
+        fun getInstance(database: Database, config: FileConfiguration): DiscordBot =
             instance ?: synchronized(this) {
                 instance ?: DiscordBot(database, config).also { instance = it }
             }
@@ -25,7 +24,7 @@ class DiscordBot private constructor(private val database: Database, private val
 
     fun start(token: String?) {
         jda = JDABuilder.createDefault(token)
-            .addEventListeners(PayCommandDiscord(database, Config.getConfig))
+            .addEventListeners(PayCommandDiscord(database, config))
             .addEventListeners(DiscordNotifierEvents(database))
             // .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
             .build()
@@ -45,11 +44,16 @@ class DiscordBot private constructor(private val database: Database, private val
         guild?.updateCommands()?.addCommands(commands)?.queue()
     }
 
-    fun getJDA(): JDA {
-        return jda
+    fun mentionUserById(userId: String): User? {
+        return try {
+            val userIdLong = userId.toLong()
+            jda.getUserById(userIdLong)
+        } catch (e: NumberFormatException) {
+            null
+        }
     }
 
-    fun mentionUserById(userId: String): String? {
-        return jda.getUserById(userId)?.asMention
+    fun getJDA(): JDA {
+        return jda
     }
 }

@@ -11,10 +11,10 @@ import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 
-class OpenAccountInventoryEvent(private val database: Database, config: FileConfiguration, discordBot: DiscordBot) : Listener {
+class OpenAccountInventoryEvent(private val database: Database, config: FileConfiguration,private val discordBot: DiscordBot) : Listener {
     private val functions = Functions()
     //private val functionsDiscord = FunctionsDiscord(discordBot)
-    private val discordBot = DiscordBot.getInstance(database, config)
+    //private val discordBot = DiscordBot.getInstance(database, config)
     private val discordNotifier = DiscordNotifier(discordBot.getJDA())
     private val countAccountConfig = config.getInt("count-free-accounts")
     private val priceAccountConfig = config.getInt("price-account")
@@ -42,6 +42,7 @@ class OpenAccountInventoryEvent(private val database: Database, config: FileConf
                                 val lastID = database.getLastID().toString()
                                 val discordID = database.getUUIDbyDiscordID(player.uniqueId.toString())
                                 val mention = discordBot.mentionUserById(discordID.toString())
+
                                 //val mention = functionsDiscord.mentionUserById(uuidPlayer)
                                 discordNotifier.sendMessageChannel(
                                     channelIdBankerNotifier.toString(),
