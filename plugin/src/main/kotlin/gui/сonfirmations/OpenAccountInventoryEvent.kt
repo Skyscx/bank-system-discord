@@ -1,7 +1,6 @@
 package gui.сonfirmations
 
 import database.Database
-import discord.FunctionsDiscord
 import discord.dsbot.DiscordBot
 import discord.dsbot.DiscordNotifier
 import functions.Functions
@@ -14,7 +13,8 @@ import org.bukkit.event.inventory.InventoryType
 
 class OpenAccountInventoryEvent(private val database: Database, config: FileConfiguration, discordBot: DiscordBot) : Listener {
     private val functions = Functions()
-    private val functionsDiscord = FunctionsDiscord(discordBot)
+    //private val functionsDiscord = FunctionsDiscord(discordBot)
+    private val discordBot = DiscordBot.getInstance(database, config)
     private val discordNotifier = DiscordNotifier(discordBot.getJDA())
     private val countAccountConfig = config.getInt("count-free-accounts")
     private val priceAccountConfig = config.getInt("price-account")
@@ -40,7 +40,9 @@ class OpenAccountInventoryEvent(private val database: Database, config: FileConf
                                 //TODO:Добавить зачисление price куда-то пока не знаю куда.
                             }else{
                                 val lastID = database.getLastID().toString()
-                                val mention = functionsDiscord.mentionUserById(uuidPlayer)
+                                val discordID = database.getUUIDbyDiscordID(player.uniqueId.toString())
+                                val mention = discordBot.mentionUserById(discordID.toString())
+                                //val mention = functionsDiscord.mentionUserById(uuidPlayer)
                                 discordNotifier.sendMessageChannel(
                                     channelIdBankerNotifier.toString(),
                                     "/././././././././././././././././\n" +

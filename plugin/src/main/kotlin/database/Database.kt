@@ -27,7 +27,7 @@ class Database(url: String, plugin: App?) {
             e.printStackTrace()
         }
     }
-    private val functionsDiscord = FunctionsDiscord(plugin!!.getDiscordBot())
+    private val functionsDiscord = FunctionsDiscord()
 
     /**
      * Создание базы данных аккаунтов
@@ -483,6 +483,25 @@ class Database(url: String, plugin: App?) {
         }
 
         return lastId
+    }
+    fun getDiscordIDbyUUID(uuid: String?, connection: Connection?): String? {
+        val sql = "SELECT DiscordID FROM bank_users WHERE UUID = ?"
+        var discordID: String? = null
+
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, uuid.toString())
+                pstmt.executeQuery().use { rs ->
+                    if (rs.next()) {
+                        discordID = rs.getString("DiscordID")
+                    }
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return discordID
     }
     /**
      * Закрытие соединения

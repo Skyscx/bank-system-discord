@@ -24,9 +24,9 @@ lateinit var app: App
 
 
 class App : JavaPlugin(), Listener {
-    lateinit var database: Database
-    private lateinit var discordBot: DiscordBot
     private lateinit var config: FileConfiguration
+    lateinit var database: Database
+    private val discordBot = DiscordBot.getInstance(database, config)
 
 
 
@@ -36,7 +36,10 @@ class App : JavaPlugin(), Listener {
         if (!pluginFolder.exists()) {
             pluginFolder.mkdirs()
         }
-
+        //Config
+        saveDefaultConfig()
+        reloadConfig()
+        config = getConfig()
         //Database
         val databaseFolder = File(dataFolder, "database")
         if (!databaseFolder.exists()) {
@@ -51,12 +54,9 @@ class App : JavaPlugin(), Listener {
             server.pluginManager.disablePlugin(this)
             return
         }
-        //Config
-        saveDefaultConfig()
-        reloadConfig()
-        config = getConfig()
+
         //DiscordBot
-        discordBot = DiscordBot(database, config)
+        val discordBot = DiscordBot.getInstance(database, config)
         val token = config.getString("bot-token")
         discordBot.start(token)
         //Commands
