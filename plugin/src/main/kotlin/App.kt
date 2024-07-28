@@ -7,7 +7,8 @@ import bank.commands.BalanceCommand
 import bank.commands.BalanceSetCommand
 import bank.commands.PayCommand
 import bank.commands.banker.AccountVerificationCommand
-import database.Database
+import data.Config
+import data.Database
 import discord.DiscordSRVHook
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
@@ -24,9 +25,11 @@ lateinit var app: App
 
 
 class App : JavaPlugin(), Listener {
-    private lateinit var config: FileConfiguration
-    lateinit var database: Database
-    private val discordBot = DiscordBot.getInstance(database, config)
+    companion object {
+        lateinit var config: Config
+        lateinit var discordBot: DiscordBot
+        lateinit var database: Database
+    }
 
 
 
@@ -36,19 +39,18 @@ class App : JavaPlugin(), Listener {
         if (!pluginFolder.exists()) {
             pluginFolder.mkdirs()
         }
-        //Config
-        saveDefaultConfig()
-        reloadConfig()
-        config = getConfig()
+        // Config
+        config = Config.getInstance(this)
+        config.loadConfig()
         //Database
-        val databaseFolder = File(dataFolder, "database")
+        val databaseFolder = File(dataFolder, "data")
         if (!databaseFolder.exists()) {
             databaseFolder.mkdirs()
         }
         val databaseFile = File(databaseFolder, "database.db")
         val url = "jdbc:sqlite:${databaseFile.absolutePath}"
         try {
-            database = Database(url, this)
+            database = Database.getInstance(url,this)
         } catch (e: SQLException) {
             e.printStackTrace()
             server.pluginManager.disablePlugin(this)

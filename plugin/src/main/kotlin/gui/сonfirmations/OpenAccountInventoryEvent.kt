@@ -1,6 +1,6 @@
 package gui.сonfirmations
 
-import database.Database
+import data.Database
 import discord.dsbot.DiscordBot
 import discord.dsbot.DiscordNotifier
 import functions.Functions

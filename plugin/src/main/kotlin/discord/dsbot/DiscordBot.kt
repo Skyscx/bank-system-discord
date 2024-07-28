@@ -1,5 +1,6 @@
 package discord.dsbot
-import database.Database
+import data.Config
+import data.Database
 import discord.dsbot.commands.PayCommandDiscord
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
@@ -9,12 +10,12 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.bukkit.configuration.file.FileConfiguration
 
-class DiscordBot private constructor(private val database: Database, private val config: FileConfiguration) : ListenerAdapter() {
+class DiscordBot private constructor(private val database: Database, private val config: Config) : ListenerAdapter() {
     companion object {
         @Volatile
         private var instance: DiscordBot? = null
 
-        fun getInstance(database: Database, config: FileConfiguration): DiscordBot =
+        fun getInstance(database: Database, config: Config): DiscordBot =
             instance ?: synchronized(this) {
                 instance ?: DiscordBot(database, config).also { instance = it }
             }
@@ -24,7 +25,7 @@ class DiscordBot private constructor(private val database: Database, private val
 
     fun start(token: String?) {
         jda = JDABuilder.createDefault(token)
-            .addEventListeners(PayCommandDiscord(database, config))
+            .addEventListeners(PayCommandDiscord(database, Config.getConfig))
             .addEventListeners(DiscordNotifierEvents(database))
             // .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
             .build()

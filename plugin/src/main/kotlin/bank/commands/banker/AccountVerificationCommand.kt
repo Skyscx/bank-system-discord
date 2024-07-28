@@ -1,6 +1,6 @@
 package bank.commands.banker
 
-import database.Database
+import data.Database
 import functions.Functions
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor

@@ -1,6 +1,6 @@
 package functions.events
 
-import database.Database
+import data.Database
 import functions.Functions
 import org.bukkit.Material
 import org.bukkit.event.EventHandler

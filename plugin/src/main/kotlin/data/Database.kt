@@ -1,4 +1,4 @@
-package database
+package data
 
 import App
 import discord.FunctionsDiscord
@@ -13,10 +13,20 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 
 
-class Database(url: String, plugin: App?) {
+class Database private constructor(url: String, plugin: App?) {
     private var connection: Connection? = null
     private var plugin: App? = null
-    //private val dateFormat = SimpleDateFormat("dd:MM:yyyy HH:mm:ss")
+    private val functionsDiscord = FunctionsDiscord()
+
+    companion object {
+        @Volatile
+        private var instance: Database? = null
+
+        fun getInstance(url: String, plugin: App?): Database =
+            instance ?: synchronized(this) {
+                instance ?: Database(url, plugin).also { instance = it }
+            }
+    }
     init {
         this.plugin = plugin
         try {
@@ -27,7 +37,8 @@ class Database(url: String, plugin: App?) {
             e.printStackTrace()
         }
     }
-    private val functionsDiscord = FunctionsDiscord()
+
+    //private val functionsDiscord = FunctionsDiscord()
 
     /**
      * Создание базы данных аккаунтов

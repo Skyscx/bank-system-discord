@@ -1,6 +1,6 @@
 package discord.dsbot.commands
 
-import database.Database
+import data.Database
 import functions.Functions
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
