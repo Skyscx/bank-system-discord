@@ -37,6 +37,7 @@ class Database private constructor(url: String, plugin: App?) {
             connection = DriverManager.getConnection(url)
             createTableUsers()
             createTableAccounts()
+            createTableHistory()
         } catch (e: SQLException) {
             e.printStackTrace()
         }
@@ -58,7 +59,8 @@ class Database private constructor(url: String, plugin: App?) {
                 "PrivateKey TEXT NOT NULL," +    //NOT USAGE
                 "LastOperation TEXT NOT NULL," +  //NOT USAGE
                 "USDT INTEGER NOT NULL," +  //NOT USAGE
-                "Level INTEGER NOT NULL" +  //NOT USAGE
+                "Level INTEGER NOT NULL," +
+                "DefaultWalletID INTEGER NOT NULL" +  //NOT USAGE
                 ");"
         connection!!.createStatement().use { stmt ->
             stmt.executeUpdate(sql)
@@ -90,6 +92,46 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
+     * Создание таблицы истории банка
+     */
+    @Throws(SQLException::class)
+    fun createTableHistory() {
+        val sql = "CREATE TABLE IF NOT EXISTS bank_accounts (" +
+                "ID INTEGER PRIMARY KEY AUTOINCREMENT," +
+                "SenderIdAccount INTEGER NOT NULL," +
+                "TargetIdAccount INTEGER NOT NULL," +
+                "Amount INTEGER NOT NULL," +
+                "Currency TEXT NOT NULL," +
+                "SenderName TEXT NOT NULL," +
+                "SenderUUID TEXT NOT NULL," +
+                "SenderDiscordID TEXT NOT NULL," +
+                "TargetName TEXT NOT NULL," +
+                "TargetUUID TEXT NOT NULL," +
+                "TargetDiscordID TEXT NOT NULL," +
+                "Date TEXT NOT NULL," +
+                "Status INTEGER NOT NULL" +
+                ");"
+        connection!!.createStatement().use { stmt ->
+            stmt.executeUpdate(sql)
+        }
+    }
+
+    /**
+     * Полное удаление всех кошельков в таблице кошельков.
+     */
+    fun clearBankAccountsTable() {
+        val sql = "DELETE FROM bank_accounts"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.executeUpdate()
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+        createTableAccounts()
+    }
+
+    /**
      * Создание пользователя в таблице пользователей
      */
     private fun insertPlayer(uuid: UUID) {
@@ -103,7 +145,19 @@ class Database private constructor(url: String, plugin: App?) {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
                 val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
                 val sql =
-                    "INSERT INTO bank_users(PlayerName,UUID,DiscordID,ActivatedBank,Registration,`2f Auth`,PrivateKey,LastOperation,USDT,Level) VALUES(?,?,?,?,?,?,?,?,?,?)"
+                    "INSERT INTO bank_users(" +
+                            "PlayerName," +
+                            "UUID," +
+                            "DiscordID," +
+                            "ActivatedBank," +
+                            "Registration," +
+                            "`2f Auth`," +
+                            "PrivateKey," +
+                            "LastOperation," +
+                            "USDT," +
+                            "Level," +
+                            "DefaultWalletID" +
+                            ") VALUES(?,?,?,?,?,?,?,?,?,?,?)"
                 try {
                     connection?.prepareStatement(sql)?.use { pstmt ->
                         pstmt.setString(1, playerName) //Пользовательское игровое имя пользователя
@@ -116,6 +170,7 @@ class Database private constructor(url: String, plugin: App?) {
                         pstmt.setString(8, currentDate) /**Дата последней операции**/
                         pstmt.setInt(9, 0) /**Реальная валюта - USDT**/
                         pstmt.setInt(10, 0) /**Уровень**/
+                        pstmt.setInt(11, 0) /**Номер кошелька по умолчанию**/
                         pstmt.executeUpdate()
                     }
                 } catch (e: SQLException) {
@@ -136,7 +191,19 @@ class Database private constructor(url: String, plugin: App?) {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
                 val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
                 val sql =
-                    "INSERT INTO bank_accounts(UUID,DiscordID,Registration,PrivateKey,Balance,Currency,Name,Verification,Deposit,Inspector,VerificationDate) VALUES(?,?,?,?,?,?,?,?,?,?,?)"
+                    "INSERT INTO bank_accounts(" +
+                            "UUID," +
+                            "DiscordID," +
+                            "Registration," +
+                            "PrivateKey," +
+                            "Balance," +
+                            "Currency," +
+                            "Name," +
+                            "Verification," +
+                            "Deposit," +
+                            "Inspector," +
+                            "VerificationDate" +
+                            ") VALUES(?,?,?,?,?,?,?,?,?,?,?)"
                 try {
                     connection?.prepareStatement(sql)?.use { pstmt ->
                         pstmt.setString(1, playerUUID.toString())
@@ -150,6 +217,51 @@ class Database private constructor(url: String, plugin: App?) {
                         pstmt.setInt(9, amount)
                         pstmt.setString(10, "null")
                         pstmt.setString(11, "null")
+                        pstmt.executeUpdate()
+                    }
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                }
+            })
+        }
+    }
+
+    /**
+     * Создание записи о проделанной операции в таблицу с историей.
+     */
+    private fun insertBankHistory(sender: Player, target: Player, senderIdAccount: Int, targetIdAccount:Int, amount: Int, currency: String, status: Int){
+        plugin?.let {
+            Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
+                val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
+                val sql =
+                    "INSERT INTO bank_accounts(" +
+                            "SenderIdAccount," +
+                            "TargetIdAccount," +
+                            "Amount," +
+                            "Currency," +
+                            "SenderName," +
+                            "SenderUUID," +
+                            "SenderDiscordID," +
+                            "TargetName," +
+                            "TargetUUID," +
+                            "TargetDiscordID," +
+                            "Date," +
+                            "Status" +
+                            ") VALUES(?,?,?,?,?,?,?,?,?,?,?)"
+                try {
+                    connection?.prepareStatement(sql)?.use { pstmt ->
+                        pstmt.setInt(1, senderIdAccount)
+                        pstmt.setInt(2, targetIdAccount)
+                        pstmt.setInt(3, amount)
+                        pstmt.setString(4, currency)
+                        pstmt.setString(5, sender.name)
+                        pstmt.setString(6, sender.uniqueId.toString())
+                        pstmt.setString(7, getDiscordIDbyUUID(sender.uniqueId.toString()))
+                        pstmt.setString(8, target.name)
+                        pstmt.setString(9, target.uniqueId.toString())
+                        pstmt.setString(10, getDiscordIDbyUUID(target.uniqueId.toString()))
+                        pstmt.setString(11, currentDate)
+                        pstmt.setInt(12, status)
                         pstmt.executeUpdate()
                     }
                 } catch (e: SQLException) {
@@ -232,6 +344,26 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
+     * Получение UUID по ID WALLET из таблицы кошельков.
+     */
+    fun getPlayerByWalletID(walletID: Int): Player? {
+        var uuid: String? = null
+        val sql = "SELECT UUID FROM bank_accounts WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, walletID)
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    uuid = resultSet.getString("UUID")
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return uuid?.let { Bukkit.getPlayer(java.util.UUID.fromString(it)) }
+    }
+    /**
      * Получение баланса игрока из базы данных (NOW: Неактуальный метод, необходимо переделать)
      */
     fun getPlayerBalance(playerUUID: String?): Int {
@@ -274,6 +406,68 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
+     * Обновление баланса кошелька по ID кошелька. (NEW)
+     */
+    private fun updateAccountBalance(accountId: Int, amount: Int) {
+        val sql = "UPDATE bank_accounts SET balance = balance + ? WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, amount)
+                pstmt.setInt(2, accountId)
+                pstmt.executeUpdate()
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Метод перевода со счета на счет.
+     */
+    fun transferFunds(
+        sender: Player,
+        target: Player,
+        senderIdAccount: Int,
+        targetIdAccount: Int,
+        amount: Int,
+        currency: String,
+        status: Int
+    ) {
+        val senderBalanceSql = "SELECT balance FROM bank_accounts WHERE ID = ?"
+        var senderBalance: Int? = null
+        try {
+            connection?.prepareStatement(senderBalanceSql)?.use { pstmt ->
+                pstmt.setInt(1, senderIdAccount)
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    senderBalance = resultSet.getInt("balance")
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        if (senderBalance == null || senderBalance!! < amount) {
+            println("Недостаточно средств на счете отправителя")
+            return
+        }
+
+        // Обновление баланса отправителя и получателя
+        updateAccountBalance(senderIdAccount, -amount)
+        updateAccountBalance(targetIdAccount, amount)
+
+        // Вставка записи в таблицу bank_history
+        insertBankHistory(
+            sender,
+            target,
+            senderIdAccount,
+            targetIdAccount,
+            amount,
+            currency,
+            status
+        )
+    }
+    /**
      * Счетчик количества кошельков пользователя по UUID в таблице кошельков
      */
     fun getAccountCount(uuid: String?): Int {
@@ -315,6 +509,31 @@ class Database private constructor(url: String, plugin: App?) {
                 e.printStackTrace()
             }
         }
+    }
+
+    /**
+     * Получение ID кошелька по имени кошелька.
+     */
+    fun getIdByAccountName(name: String): Int? {
+        var id: Int? = null
+
+        val sql = "SELECT ID FROM bank_accounts WHERE Name = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, name)
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    id = resultSet.getInt("ID")
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return id
+    }
+    fun getWalletID(identifier: String, uuid: String): Int? {
+        return identifier.toIntOrNull() ?: getIdByAccountName(identifier)
     }
 
     /**
@@ -579,7 +798,87 @@ class Database private constructor(url: String, plugin: App?) {
 
         return depositIds
     }
+    /**
+     * Получение списка с ID кошельками, которые существуют у пользователя с идентичным UUID
+     */
+    fun getIdsOwnerByUUID(uuid: String): List<Int> {
+        val depositIds = mutableListOf<Int>()
 
+        val sql = "SELECT ID FROM bank_accounts WHERE UUID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, uuid)
+                val resultSet = pstmt.executeQuery()
+                while (resultSet.next()) {
+                    val id = resultSet.getInt("ID")
+                    depositIds.add(id)
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return depositIds
+    }
+
+    /**
+     * Сохранение номера кошелька как основного кошелька для транзакций.
+     */
+    fun setDefaultWalletID(uuid: String?, walletID: Int) {
+        val sql = "UPDATE bank_users SET DefaultWalletID = ? WHERE UUID = ?"
+        if (connection != null && !connection!!.isClosed) {
+            try {
+                connection!!.prepareStatement(sql).use { pstmt ->
+                    pstmt.setInt(1, walletID)
+                    pstmt.setString(2, uuid.toString())
+                    pstmt.executeUpdate()
+                }
+
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    /**
+     * Получение основного кошелька для транзакций по UUID
+     */
+    fun getDefaultWalletIDByUUID(uuid: String): Int? {
+        var defaultWalletID: Int? = null
+        val sql = "SELECT DefaultWalletID FROM bank_users WHERE UUID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, uuid)
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    defaultWalletID = resultSet.getInt("DefaultWalletID")
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+        return defaultWalletID
+    }
+
+    /**
+     * Получение валюты кошелька по Wallet ID.
+     */
+    fun getWalletCurrency(walletID: Int): String? {
+        var currency: String? = null
+        val sql = "SELECT Currency FROM bank_accounts WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, walletID)
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    currency = resultSet.getString("Currency")
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+        return currency
+    }
     /**
      * Удаление кошелька из таблицы кошельков по ID кошельку.
      */
@@ -620,6 +919,24 @@ class Database private constructor(url: String, plugin: App?) {
         }
 
         return lastId
+    }
+
+    /**
+     * Проверка существует ли данный ID кошелек в таблице кошельков.
+     */
+    fun doesIdExistAccount(id: Int): Boolean {
+        var exists = false
+        val sql = "SELECT 1 FROM bank_accounts WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, id)
+                val resultSet = pstmt.executeQuery()
+                exists = resultSet.next()
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+        return exists
     }
 
     /**

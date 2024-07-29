@@ -1,11 +1,9 @@
 
 import bank.accounts.commands.AccountOpenCommand
 import bank.accounts.commands.AccountRemoveCommand
+import bank.accounts.commands.AccountSetDefaultWalletCommand
 import bank.accounts.commands.AccountSetNameCommand
-import bank.commands.BalanceAddCommand
-import bank.commands.BalanceCommand
-import bank.commands.BalanceSetCommand
-import bank.commands.PayCommand
+import bank.commands.*
 import bank.commands.banker.AccountVerificationCommand
 import data.Config
 import data.Database
@@ -68,7 +66,10 @@ class App : JavaPlugin(), Listener {
         getCommand("open-account")?.setExecutor(AccountOpenCommand())
         getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
-        getCommand("account-remove-id")?.setExecutor(AccountRemoveCommand(database))
+        getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
+        getCommand("transfer")?.setExecutor(TransferCommand(database))
+        getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
+
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
 
         //accounts-list

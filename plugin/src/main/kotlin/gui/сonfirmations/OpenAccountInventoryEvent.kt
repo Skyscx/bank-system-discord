@@ -50,7 +50,7 @@ class OpenAccountInventoryEvent(private val database: Database, config: FileConf
                                             "/././././././././././././././././\n" +
                                                     "Пришел новый запрос на открытие кошелька!\n" +
                                                     "Пользователь - `${player.name}`\n" +
-                                                    "Дискорд - `$mention`\n" +
+                                                    "Дискорд - $mention\n" +
                                                     "Номер кошелька - `$lastID`\n" +
                                                     "/././././././././././././././././"
                                         )

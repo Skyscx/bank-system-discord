@@ -1,82 +1,155 @@
 package bank.accounts.commands
 
 import data.Database
+import gui.accountmenu.removeaccount.AccountRemoveInventory
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class AccountRemoveCommand(private val database: Database) : CommandExecutor {
+    val accountRemoveInventory = AccountRemoveInventory()
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
             sender.sendMessage("Эту команду можно использовать только в игре.")
             return true
         }
         if (args.isEmpty()) return false
-        when(args[0].lowercase()){
+        val uuid = sender.uniqueId.toString()
+        val isAdmin = sender.hasPermission("skybank.banker") //TODO: Проверить права
+        when (args[0].lowercase()) {
             // Удаление кошелька по ID
             "id" -> {
-
-            }
-            // Удаление кошелька по имени
-            "name" -> {
-
-            }
-            // Удаление всех кошельков
-            "all" -> {
-
-            }
-            // Принудительное удаление кошелька (Админ/Банкир команда)
-            "force" -> {
-                when(args[1].lowercase()){
-                    // Принудительное удаление кошелька по ID
-                    "id" ->{
-
-                    }
-                    // Принудительное удаление кошелька по имени
-                    "name" ->{
-
-                    }
-                    // Принудительное удаление всех кошельков
-                    "all" ->{
-                        when(args[2].lowercase()){
-                            // Принудительное удаление всех кошельков по UUID
-                            "uuid" ->{
-
-                            }
-                            // Принудительное удаление всех кошельков по DiscordID
-                            "discordID" -> {
-
-                            }
-                            // Принудительное удаление всех кошельков созданных в таблице кошельков
-                            "server" ->{
-
-                            }
-                        }
+                if (args.size != 3) return false
+                val walletID = args[1].toIntOrNull() ?: return false
+                val bool = args[2].toBoolean()
+                val idOwner = database.getIdsOwnerByUUID(uuid)
+                if (walletID in idOwner) {
+                    if (bool) database.deleteUserAccount(walletID)
+                    else return false
+                } else {
+                    if (bool) {
+                        sender.sendMessage("Вы не владелец")
+                    } else {
+                        return false
                     }
                 }
             }
+            // Удаление кошелька по имени
+            "name" -> {
+                if (args.size != 3) return false
+                val walletName = args[1]
+                val bool = args[2].toBoolean()
+                val walletID = database.getIdByAccountName(walletName) ?: return false
+                val idOwner = database.getIdsOwnerByUUID(uuid)
+                if (walletID in idOwner) {
+                    if (bool) database.deleteUserAccount(walletID)
+                    else return false
+                } else {
+                    if (bool) {
+                        sender.sendMessage("Вы не владелец")
+                    } else {
+                        return false
+                    }
+                }
+            }
+            // Удаление всех кошельков
+            "all" -> {
+                if (args.size != 2) return false
+                val bool = args[1].toBoolean()
+                val idOwner = database.getIdsOwnerByUUID(uuid)
+                if (bool) {
+                    for (id in idOwner) {
+                        database.deleteUserAccount(id)
+                    }
+                } else {
+                    return false
+                }
+            }
+            // Принудительное удаление кошелька (Админ/Банкир команда)
+            "force" -> {
+                if (!isAdmin || !sender.isOp)
+                    when (args[1].lowercase()) {
+                        // Принудительное удаление кошелька по ID
+                        "id" -> {
+                            if (args.size != 4) return false
+                            val walletID = args[2].toIntOrNull() ?: return false
+                            val bool = args[3].toBoolean()
+                            if (database.doesIdExistAccount(walletID)) {
+                                if (bool) database.deleteUserAccount(walletID)
+                                else return false
+                            } else {
+                                sender.sendMessage("Кошелек #$walletID не существует!")
+                            }
+                        }
+                        // Принудительное удаление кошелька по имени
+                        "name" -> {
+                            if (args.size != 4) return false
+                            val walletName = args[2]
+                            val bool = args[3].toBoolean()
+                            val walletID = database.getIdByAccountName(walletName) ?: return false
+//                        if (walletID == null) {
+//                            player.sendMessage("Кошелек '$walletName' не существует!")
+//                            return true
+//                        }
+                            if (database.doesIdExistAccount(walletID)) {
+                                if (bool) database.deleteUserAccount(walletID)
+                                else return false
+                            } else {
+                                sender.sendMessage("Кошелек '$walletName' не существует!")
+                            }
+                        }
+                        // Принудительное удаление всех кошельков
+                        "all" -> {
+                            if (args.size != 5) return false
+                            val bool = args[4].toBoolean()
+                            when (args[2].lowercase()) {
+                                // Принудительное удаление всех кошельков по UUID
+                                "uuid" -> {
+                                    val targetUUID = args[3]
+                                    val idOwnerList = database.getIdsOwnerByUUID(targetUUID)
+                                    if (bool) {
+                                        for (id in idOwnerList) {
+                                            database.deleteUserAccount(id)
+                                        }
+                                    } else {
+                                        return false
+                                    }
+                                }
+                                // Принудительное удаление всех кошельков по DiscordID
+                                "discordID" -> {
+                                    val targetDiscordID = args[3]
+                                    val targetUUID = database.getUUIDbyDiscordID(targetDiscordID)
+                                    val idOwnerList = database.getIdsOwnerByUUID(targetUUID.toString())
+                                    if (bool) {
+                                        for (id in idOwnerList) {
+                                            database.deleteUserAccount(id)
+                                        }
+                                    } else {
+                                        return false
+                                    }
+                                }
+                                // Принудительное удаление всех кошельков созданных в таблице кошельков
+                                "server" -> {
+                                    if (bool) {
+                                        database.clearBankAccountsTable()
+                                        sender.sendMessage("Вы удалили все кошельки на сервер")
+                                    } else {
+                                        return false
+                                    }
+                                }
+                            }
+                        }
+                    }
+            }
+
             else -> {
-                return false //TODO: Можно реализовать открытие GUI
+                accountRemoveInventory.removeAccountMenu(sender)
+                return true //TODO: Можно реализовать открытие GUI
             }
         }
         return true
 
-//
-//        if (sender !is Player) {
-//            sender.sendMessage("Эту команду можно использовать только в игре.")
-//            return true
-//        }
-//        if (args.size > 2 || args.size <= 1) return false
-//        val id = args[0].toInt()
-//        val bool = args[1].toBoolean()
-//
-//        //TODO: СДЕЛАТЬ ПРОВЕРКУ УДАЛЕНИЯ СЧЕТА - ЕСЛИ ВЛАДЕЛЦ - ТО ОК, ЕСЛИ НЕ ВЛАДЕЛЕЦ - ТО ТОЛЬКО ИГРОК С ПРАВОМ МОЖЕТ УДАЛИТЬ
-//
-//        if (bool){
-//            database.deleteUserAccount(id)
-//        }
-//        return true
     }
 
 }

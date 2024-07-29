@@ -1,4 +1,4 @@
-package gui.accountsmenu
+package gui.accountmenu
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
