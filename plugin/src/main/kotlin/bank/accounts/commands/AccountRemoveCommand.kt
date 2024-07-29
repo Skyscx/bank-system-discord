@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class AccountRemoveCommand(private val database: Database) : CommandExecutor {
-    val accountRemoveInventory = AccountRemoveInventory()
+    private val accountRemoveInventory = AccountRemoveInventory()
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
             sender.sendMessage("Эту команду можно использовать только в игре.")
@@ -68,7 +68,7 @@ class AccountRemoveCommand(private val database: Database) : CommandExecutor {
             }
             // Принудительное удаление кошелька (Админ/Банкир команда)
             "force" -> {
-                if (!isAdmin || !sender.isOp)
+                if (isAdmin || sender.isOp)
                     when (args[1].lowercase()) {
                         // Принудительное удаление кошелька по ID
                         "id" -> {
