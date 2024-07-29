@@ -68,7 +68,7 @@ class App : JavaPlugin(), Listener {
         getCommand("open-account")?.setExecutor(AccountOpenCommand())
         getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
-        getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
+        getCommand("account-remove-id")?.setExecutor(AccountRemoveCommand(database))
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
 
         //accounts-list

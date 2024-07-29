@@ -21,12 +21,15 @@ class Database private constructor(url: String, plugin: App?) {
     companion object {
         @Volatile
         private var instance: Database? = null
-
         fun getInstance(url: String, plugin: App?): Database =
             instance ?: synchronized(this) {
                 instance ?: Database(url, plugin).also { instance = it }
             }
     }
+
+    /**
+     * Инициализация базы данных
+     */
 
     init {
         this.plugin = plugin
@@ -40,7 +43,7 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
-     * Создание базы данных аккаунтов
+     * Создание таблицы пользователей
      */
     @Throws(SQLException::class)
     fun createTableUsers() {
@@ -63,7 +66,7 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
-     * Создание базы данных счетов
+     * Создание таблицы кошельков
      */
     @Throws(SQLException::class)
     fun createTableAccounts() {
@@ -87,10 +90,11 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
-     * Создание игрока в базе данных
+     * Создание пользователя в таблице пользователей
      */
-    private fun insertPlayer(uuid: UUID): Player? {
-        val player = getPlayerByUUID(uuid) ?: return null
+    private fun insertPlayer(uuid: UUID) {
+        val player = Bukkit.getOfflinePlayer(uuid)
+
         val playerName = player.name
         val playerUUID = player.uniqueId.toString()
 
@@ -119,11 +123,11 @@ class Database private constructor(url: String, plugin: App?) {
                 }
             })
         }
-        return player
+
     }
 
     /**
-     * Создание счета в базе данных
+     * Создание кошелька в таблице кошельков
      */
     fun insertAccount(player: Player, currency: String, amount: Int, verificationInt: Int) {
         val playerUUID = player.uniqueId
@@ -156,13 +160,13 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
-     * Поиск игрока в базе данных
+     * Поиск пользователя в таблице пользователей по UUID (Необходим для создания пользователя в таблице пользователей)
      */
     fun checkPlayerTask(uuid: UUID) {
         val future = checkPlayer(uuid)
         Bukkit.getScheduler().runTaskAsynchronously(plugin!!, Runnable {
             try {
-                val result = future.get() // ждем завершения асинхронной задачи
+                val result = future.get()
                 if (!result) {
                     insertPlayer(uuid)
                 }
@@ -174,7 +178,10 @@ class Database private constructor(url: String, plugin: App?) {
         })
     }
 
-    fun checkPlayer(uuid: UUID): CompletableFuture<Boolean> {
+    /**
+     * Проверка на существование пользователя в таблице пользователей по UUID (Возвращение boolean)
+     */
+    private fun checkPlayer(uuid: UUID): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
 
         plugin?.let {
@@ -185,7 +192,7 @@ class Database private constructor(url: String, plugin: App?) {
                         pstmt.setString(1, uuid.toString())
                         val rs = pstmt.executeQuery()
                         future.complete(rs.next())
-                        rs.close() // не забываем закрыть ResultSet
+                        rs.close()
                     }
                 } catch (e: SQLException) {
                     e.printStackTrace()
@@ -197,7 +204,7 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
-     * Получение UUID по DiscordID пользователя
+     * Получение UUID по DiscordID пользователя из таблицы пользователей
      */
     fun getUUIDbyDiscordID(id: String?): CompletableFuture<String?> {
         val future = CompletableFuture<String?>()
@@ -225,15 +232,7 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
-     * Получение игрока по UUID
-     */
-    fun getPlayerByUUID(uuid: UUID): Player? {
-        val offlinePlayer = Bukkit.getOfflinePlayer(uuid)
-        return offlinePlayer.player
-    }
-
-    /**
-     * Получение баланса игрока из базы данных
+     * Получение баланса игрока из базы данных (NOW: Неактуальный метод, необходимо переделать)
      */
     fun getPlayerBalance(playerUUID: String?): Int {
         val sql = "SELECT Balance FROM bank_users WHERE UUID = ?"
@@ -256,7 +255,7 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
-     * Обновление баланса игрока в базе данных
+     * Обновление баланса игрока в базе данных (NOW: Неактуальный метод, необходимо переделать)
      */
     fun setPlayerBalance(playerUUID: String?, balance: Int) {
         val sql = "UPDATE bank_users SET Balance = ? WHERE UUID = ?"
@@ -275,7 +274,7 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
-     * Счетчик счетов игрока по UUID
+     * Счетчик количества кошельков пользователя по UUID в таблице кошельков
      */
     fun getAccountCount(uuid: String?): Int {
         val sql = "SELECT * FROM bank_accounts WHERE UUID = ?"
@@ -297,7 +296,9 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
-     * Установка имени к кошельку игрока
+     * Присвоение уникального имени кошелька пользователя по ID кошелька.
+     *
+     * TODO: Необходимо сделать проверку на занятость имени кошелька.
      */
     fun setAccountName(uuid: String?, name: String, id: String) {
         val sql = "UPDATE bank_accounts SET Name = ? WHERE UUID = ? AND ID = ?"
@@ -316,6 +317,11 @@ class Database private constructor(url: String, plugin: App?) {
         }
     }
 
+    /**
+     * Генерация списка из ID кошельков в размере 5 записей, поиск осуществляется по таблице кошельков по статусу верификации.
+     *
+     * Необходим для визуального отображения о процессе верификации кошельков
+     */
     fun getUnverifiedAccounts(): List<String> {
         val unverifiedAccounts = mutableListOf<String>()
 
@@ -335,6 +341,9 @@ class Database private constructor(url: String, plugin: App?) {
         return unverifiedAccounts
     }
 
+    /**
+     * Генерация строки с необходимыми данными о статусе верификации кошелька по ID кошельку из таблицы кошельков.
+     */
     fun getPlayerDataById(id: Int): String? {
         var playerData: String? = null
 
@@ -371,6 +380,11 @@ class Database private constructor(url: String, plugin: App?) {
         return playerData
     }
 
+    /**
+     * Получение статуса верификации кошелька в таблице кошельков
+     *
+     * 1 - одобрен || 0 - ожидание || -1 - отказан
+     */
     fun getVerification(id: Int): Int {
         var verification = 0
 
@@ -390,6 +404,11 @@ class Database private constructor(url: String, plugin: App?) {
         return verification
     }
 
+    /**
+     * Присвоение статуса верификации кошелька в таблице кошельков
+     *
+     * 1 - одобрен || 0 - ожидание || -1 - отказан
+     */
     fun setVerification(id: Int, verification: Int): Boolean {
         var result = false
 
@@ -408,32 +427,9 @@ class Database private constructor(url: String, plugin: App?) {
         return result
     }
 
-    fun setInspectorAccount(id: Int, inspector: String) {
-        val sql = "UPDATE bank_accounts SET Inspector = ? WHERE ID = ?"
-        try {
-            connection?.prepareStatement(sql)?.use { pstmt ->
-                pstmt.setString(1, inspector)
-                pstmt.setInt(2, id)
-                pstmt.executeUpdate()
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-    }
-
-    fun getInspectorAccount(id: Int): String? {
-        var inspectorID: String? = null
-        val sql = "SELECT Inspector FROM bank_accounts WHERE ID = ?"
-        connection?.prepareStatement(sql)?.use { pstmt ->
-            pstmt.setInt(1, id)
-            pstmt.executeQuery().use { resultSet ->
-                if (resultSet.next()) {
-                    inspectorID = resultSet.getString("Inspector")
-                }
-            }
-        }
-        return inspectorID
-    }
+    /**
+     * Присвоение записи даты верификации в формате dd:MM:yyyy HH:mm:ss по ID кошельку в таблице кошельков.
+     */
     fun setVerificationDate(id: Int) {
         val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
         val sql = "UPDATE bank_accounts SET VerificationDate = ? WHERE ID = ?"
@@ -447,6 +443,10 @@ class Database private constructor(url: String, plugin: App?) {
             e.printStackTrace()
         }
     }
+
+    /**
+     * Получение даты верификации в формате dd:MM:yyyy HH:mm:ss по ID кошельку в таблице кошельков.
+     */
     fun getVerificationDate(id: Int) : String{
         val sql = "SELECT VerificationDate FROM bank_accounts WHERE ID = ?"
         var date = "Нету"
@@ -461,6 +461,42 @@ class Database private constructor(url: String, plugin: App?) {
         return date
     }
 
+    /**
+     * Присвоение записи о проверяющей в виде DiscordID в таблице кошельков по ID.
+     */
+    fun setInspectorAccount(id: Int, inspector: String) {
+        val sql = "UPDATE bank_accounts SET Inspector = ? WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, inspector)
+                pstmt.setInt(2, id)
+                pstmt.executeUpdate()
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+    }
+
+    /**
+     * Получение DiscordID проверяющего по ID в таблице кошельков.
+     */
+    fun getInspectorAccount(id: Int): String? {
+        var inspectorID: String? = null
+        val sql = "SELECT Inspector FROM bank_accounts WHERE ID = ?"
+        connection?.prepareStatement(sql)?.use { pstmt ->
+            pstmt.setInt(1, id)
+            pstmt.executeQuery().use { resultSet ->
+                if (resultSet.next()) {
+                    inspectorID = resultSet.getString("Inspector")
+                }
+            }
+        }
+        return inspectorID
+    }
+
+    /**
+     * Проверка по ID есть ли у пользователя доступный депозит для вывода (Возвращение boolean)
+     */
     fun isDepositAvailable(id: Int): Boolean {
         var deposit: String? = null
         val verification = getVerification(id)
@@ -483,6 +519,9 @@ class Database private constructor(url: String, plugin: App?) {
         return deposit != null
     }
 
+    /**
+     * Установление значения депозита в таблице кошельков по ID кошелька.
+     */
     fun setDeposit(id: Int, deposit: String) {
         val sql = "UPDATE bank_accounts SET Deposit = ? WHERE ID = ?"
         try {
@@ -496,43 +535,9 @@ class Database private constructor(url: String, plugin: App?) {
         }
     }
 
-    fun getDepositIdsByUUID(uuid: String): List<Int> {
-        val depositIds = mutableListOf<Int>()
-
-        val sql = "SELECT id FROM bank_accounts WHERE UUID = ? AND Verification = -1"
-        try {
-            connection?.prepareStatement(sql)?.use { pstmt ->
-                pstmt.setString(1, uuid)
-                val resultSet = pstmt.executeQuery()
-                while (resultSet.next()) {
-                    val id = resultSet.getInt("ID")
-                    depositIds.add(id)
-                }
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-
-        return depositIds
-    }
-
-    fun deleteUserAccount(id: Int): Boolean {
-        var result = false
-
-        val sql = "DELETE FROM bank_accounts WHERE ID = ?"
-        try {
-            connection?.prepareStatement(sql)?.use { pstmt ->
-                pstmt.setInt(1, id)
-                pstmt.executeUpdate()
-                result = true
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-
-        return result
-    }
-
+    /**
+     * Получение значение депозита по ID кошельку из таблицы кошельков.
+     */
     fun getDeposit(id: Int): Int? {
         var deposit: Int? = null
 
@@ -552,6 +557,52 @@ class Database private constructor(url: String, plugin: App?) {
         return deposit
     }
 
+    /**
+     * Получение списка с ID кошельками, которые не одобрили, из таблицы кошельков.
+     */
+    fun getIDsReturnDepositByUUID(uuid: String): List<Int> {
+        val depositIds = mutableListOf<Int>()
+
+        val sql = "SELECT id FROM bank_accounts WHERE UUID = ? AND Verification = -1"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, uuid)
+                val resultSet = pstmt.executeQuery()
+                while (resultSet.next()) {
+                    val id = resultSet.getInt("ID")
+                    depositIds.add(id)
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return depositIds
+    }
+
+    /**
+     * Удаление кошелька из таблицы кошельков по ID кошельку.
+     */
+    fun deleteUserAccount(id: Int): Boolean {
+        var result = false
+
+        val sql = "DELETE FROM bank_accounts WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, id)
+                pstmt.executeUpdate()
+                result = true
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return result
+    }
+
+    /**
+     * Получение последнего не использованного ID кошелька.
+     */
     fun getLastID(): Int? {
         var lastId: Int? = null
         val sql = "SELECT MAX(ID) FROM bank_accounts"
@@ -571,6 +622,9 @@ class Database private constructor(url: String, plugin: App?) {
         return lastId
     }
 
+    /**
+     * Получение DiscordID по UUID пользователя по таблице пользователей.
+     */
     fun getDiscordIDbyUUID(uuid: String?): String? {
         val sql = "SELECT DiscordID FROM bank_users WHERE UUID = ?"
         var discordID: String? = null
@@ -589,6 +643,28 @@ class Database private constructor(url: String, plugin: App?) {
         }
 
         return discordID
+    }
+
+    /**
+     * Получение UUID пользователя по ID пользователю из таблицы кошельков.
+     */
+    fun getUUID(id: Int): String? {
+        var uuid: String? = null
+
+        val sql = "SELECT UUID FROM bank_accounts WHERE ID = ?"
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, id)
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    uuid = resultSet.getString("UUID")
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return uuid
     }
 
     /**

@@ -16,7 +16,7 @@ class PlayerConnection(private val database: Database) : Listener{
         val player = event.player
         val playerUUID = player.uniqueId
         database.checkPlayerTask(playerUUID)
-        val idList = database.getDepositIdsByUUID(playerUUID.toString())
+        val idList = database.getIDsReturnDepositByUUID(playerUUID.toString())
         for (id in idList){
             if (database.isDepositAvailable(id)) {
                 val deposit = database.getDeposit(id)

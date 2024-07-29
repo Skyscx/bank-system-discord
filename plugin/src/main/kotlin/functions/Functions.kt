@@ -11,6 +11,19 @@ class Functions {
         val player = Bukkit.getPlayer(UUID.fromString(uuid))
         return player != null && player.isOnline
     }
+    fun sendMessageIsPlayerOnline(uuid: String, message: String){
+        if (isPlayerOnline(uuid)){
+            getPlayerByUUID(uuid)?.sendMessage(message)
+        }
+    }
+    fun sendMessageIsPlayerHavePermission(uuid: String, permission: String, message: String){ //TODO: Переделать логику под список из тех кто может видеть сообщение
+        if (isPlayerOnline(uuid)){
+            val player = getPlayerByUUID(uuid)
+            if (player!!.hasPermission(permission) || player.isOp){
+                player.sendMessage(message)
+            }
+        }
+    }
     fun getPlayerByUUID(uuid: String): Player? {
         val player = Bukkit.getPlayer(UUID.fromString(uuid))
         return player
@@ -18,7 +31,7 @@ class Functions {
     fun sendMessagePlayer(player: Player, message: String){
         player.sendMessage(message)
     }
-    fun hasDiamondOre(player: Player): Boolean {
+    fun hasDiamondOre(player: Player): Boolean { //TODO:Переделать на метод ниже takeItem
         val inventory = player.inventory
         var count = 0
         for (item in inventory.contents) {
