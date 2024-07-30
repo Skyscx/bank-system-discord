@@ -1,6 +1,6 @@
 package discord.dsbot
 import data.Database
-import discord.dsbot.commands.PayCommandDiscord
+//import discord.dsbot.commands.PayCommandDiscord
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.UserSnowflake
@@ -24,7 +24,7 @@ class DiscordBot private constructor(private val database: Database, private val
 
     fun start(token: String?) {
         jda = JDABuilder.createDefault(token)
-            .addEventListeners(PayCommandDiscord(database, config))
+            //.addEventListeners(PayCommandDiscord(database, config))
             .addEventListeners(DiscordNotifierEvents(database, this))
             // .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
             .build()

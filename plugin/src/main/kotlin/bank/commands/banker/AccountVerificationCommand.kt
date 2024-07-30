@@ -19,9 +19,9 @@ class AccountVerificationCommand(private val database: Database) : CommandExecut
         if (args.isEmpty()) return false
         when(args[0].lowercase()){
             "list" -> {
-                val list = database.getUnverifiedAccounts()
+                val list = database.getUnverifiedWallets()
                 for (id in list){
-                    val playerData = database.getPlayerDataById(id.toInt())
+                    val playerData = database.getPlayerDataByID(id.toInt())
                     sender.sendMessage(playerData ?: "Список пуст!")
                 }
             }
@@ -29,19 +29,19 @@ class AccountVerificationCommand(private val database: Database) : CommandExecut
                 if (args.size != 2) return false
                 val id = args[0].toIntOrNull() ?: return false
                 val bool = args[1].toBooleanStrictOrNull() ?: return false
-                val verification = database.getVerification(id)
+                val verification = database.getVerificationWallet(id)
                 val inspector = functionDiscord.getPlayerDiscordID(sender.uniqueId).toString()
                 when(verification){
                     0 ->{
                         if (bool){
-                            database.setVerification(id,1)
+                            database.setVerificationWallet(id,1)
                             sender.sendMessage("Вы открыли счет игроку \$information.")
                         } else {
-                            database.setVerification(id,-1)
+                            database.setVerificationWallet(id,-1)
                             sender.sendMessage("Вы отклонили счет игроку \$information")
                         }
-                        database.setInspectorAccount(id, inspector)
-                        database.setVerificationDate(id)
+                        database.setInspectorWallet(id, inspector)
+                        database.setVerificationWalletDate(id)
                     }
                     1 -> sender.sendMessage("Счет уже открыт!")
                     -1 -> sender.sendMessage("Счет уже отклонен!")

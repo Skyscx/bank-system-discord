@@ -1,7 +1,6 @@
 package bank.commands
 
 import data.Database
-import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
@@ -12,38 +11,36 @@ class BalanceSetCommand(private val database: Database) : CommandExecutor {
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
             sender.sendMessage("Эту команду можно использовать только в игре.")
+            //tODO: по возможности сделать консольной командой
             return true
         }
-
-        if (args.size != 2) {
-            sender.sendMessage("Использование: /set-balance <игрок> <сумма>")
+        if (args.isEmpty()) return false
+        val isBanker = sender.hasPermission("skybank.banker") //TODO: Проверить права
+        if (!isBanker || !sender.isOp) {
+            sender.sendMessage("Нет прав!")
             return true
         }
-
-        val targetPlayerName = args[0]
-        val targetPlayer = Bukkit.getPlayer(targetPlayerName)
-        if (targetPlayer == null) {
-            sender.sendMessage("Игрок $targetPlayerName не найден.")
+        if (args.size != 2) return false
+        val walletID= database.getWalletID(args[0])
+        if (walletID == null) {
+            sender.sendMessage("Кошелек не найден.")
             return true
         }
-
         val amount = args[1].toInt()
         if (amount <= 0) {
             sender.sendMessage("Неверная сумма.")
             return true
         }
-
-//        val senderBalance = database.getPlayerBalance(sender.uniqueId)
-//        if (senderBalance < amount) {
-//            sender.sendMessage("У вас недостаточно средств.")
-//            return true
-//        }
-        val uuidTarger = targetPlayer.uniqueId.toString()
-        database.setPlayerBalance(uuidTarger, amount)
-
-        sender.sendMessage("Вы установили $amount монет игроку $targetPlayerName.")
-        targetPlayer.sendMessage("Игрок ${sender.name} установил вам $amount монет.")
-
+        val isSet = database.setWalletBalance(walletID, amount)
+        if (isSet){
+            sender.sendMessage("Вы установили $amount валюты на кошелек #$walletID")
+            //TODO: Сообщение для получателя в игре
+            //TODO: Сообщение для получателя в боте
+            //TODO: Сообщение для логирования.
+            //TODO: Сделать логирование(Хотя бы в консоль (не через println))
+        } else {
+            sender.sendMessage("Ошибка выполнения операции.")
+        }
         return true
     }
 }

@@ -1,3 +1,4 @@
+/*
 package bank.commands
 
 import data.Database
@@ -52,3 +53,5 @@ class PayCommand(private val database: Database) : CommandExecutor {
 
 
 }
+
+ */

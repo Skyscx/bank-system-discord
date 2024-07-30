@@ -25,13 +25,13 @@ class AccountSetDefaultWalletCommand(private val database: Database): CommandExe
             "name" ->{
                 if (args.size != 2) return false
                 val walletName = args[1]
-                val walletID = database.getIdByAccountName(walletName)?: return false
+                val walletID = database.getIDByWalletName(walletName)?: return false
                 val uuid = sender.uniqueId.toString()
 //                        if (walletID == null) {
 //                            player.sendMessage("Кошелек '$walletName' не существует!")
 //                            return true
 //                        }
-                if (database.doesIdExistAccount(walletID)){
+                if (database.doesIdExistWallet(walletID)){
                     database.setDefaultWalletID(uuid, walletID)
                 } else {
                     sender.sendMessage("Кошелек '$walletName' не существует!")

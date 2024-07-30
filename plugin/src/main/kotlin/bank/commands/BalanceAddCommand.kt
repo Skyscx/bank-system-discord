@@ -1,3 +1,4 @@
+/*
 package bank.commands
 
 import data.Database
@@ -49,3 +50,5 @@ class BalanceAddCommand(private val database: Database) : CommandExecutor {
         return true
     }
 }
+
+ */

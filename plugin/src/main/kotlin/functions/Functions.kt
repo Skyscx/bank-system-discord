@@ -38,7 +38,7 @@ class Functions {
             if (item != null && item.type == Material.DIAMOND_ORE) {
                 count += item.amount
                 if (count >= 15) {
-                    inventory.removeItem(ItemStack(Material.DIAMOND_ORE, 15))
+                    //inventory.removeItem(ItemStack(Material.DIAMOND_ORE, 15))
                     return true
                 }
             }
@@ -48,19 +48,35 @@ class Functions {
     fun isNumber(arg: String?): Boolean {
         return arg?.toIntOrNull() != null
     }
-    fun takeItem(player: Player, itemType: Material, amount: Int) {
+    fun takeItem(player: Player, itemType: String?, amount: Int) {
+        if (itemType == null) {
+            player.sendMessage("Неверный тип предмета.")
+            return
+        }
+
+        val material: Material
+        try {
+            material = Material.valueOf(itemType)
+        } catch (e: IllegalArgumentException) {
+            player.sendMessage("Неверный тип предмета.")
+            return
+        }
+
         val inventory = player.inventory
         var count = 0
         for (item in inventory.contents) {
-            if (item != null && item.type == itemType) {
+            if (item != null && item.type == material) {
                 count += item.amount
                 if (count >= amount) {
-                    inventory.removeItem(ItemStack(itemType, amount))
-                    player.sendMessage("Вы потратили $amount x ${itemType.name}.")
-                }else{
-                    player.sendMessage("У вас недостаточно ${itemType.name}.")
+                    inventory.removeItem(ItemStack(material, amount))
+                    player.sendMessage("Вы потратили $amount x ${material.name}.")
+                    return
                 }
             }
+        }
+
+        if (count < amount) {
+            player.sendMessage("У вас недостаточно ${material.name}.")
         }
     }
 

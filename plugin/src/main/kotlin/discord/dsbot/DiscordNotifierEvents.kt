@@ -13,7 +13,7 @@ class DiscordNotifierEvents(private val database: Database, private val discordB
             val parts = componentId.split(":")
             val action = parts[0]
             val walletId = parts[1].toInt()
-            val verificationDatabase = database.getVerification(walletId)
+            val verificationDatabase = database.getVerificationWallet(walletId)
             val discordUserID = event.user.id
             val uuid = database.getUUID(walletId).toString()
             val bankerPermission = "skybank.banker"
@@ -34,18 +34,18 @@ class DiscordNotifierEvents(private val database: Database, private val discordB
             val message = when (action) {
                 "acceptAccount" -> {
                     if (verificationDatabase == 0) {
-                        database.setVerification(walletId, 1)
-                        database.setDeposit(walletId, "0")
-                        database.setInspectorAccount(walletId,discordUserID)
-                        database.setVerificationDate(walletId)
+                        database.setVerificationWallet(walletId, 1)
+                        database.setDepositWallet(walletId, "0")
+                        database.setInspectorWallet(walletId,discordUserID)
+                        database.setVerificationWalletDate(walletId)
                         functions.sendMessageIsPlayerOnline(uuid, "Ваш запрос одобрили!")
                         functions.sendMessageIsPlayerHavePermission(uuid, bankerPermission, "Кошелек $walletId одобрил \${event.user.name}")
                         //TODO: event.user.name - переделать под игровой ник, а не дс
                         "Запрос был одобрен! (ID MESSAGE: `${event.messageId}`, ID ACCOUNT: `$walletId`)"
                     } else {
-                        val discordIDInspector = database.getInspectorAccount(walletId) ?: return
+                        val discordIDInspector = database.getInspectorWallet(walletId) ?: return
                         val mentionInspector = discordBot.getMentionUser(discordIDInspector)
-                        val verificationDate = database.getVerificationDate(walletId)
+                        val verificationDate = database.getVerificationWalletDate(walletId)
                         "Данный запрос уже был рассмотрен в игре! \n" +
                                 "Рассмотрел - $mentionInspector\n" +
                                 "Дата рассмотрения - `$verificationDate`"
@@ -53,15 +53,15 @@ class DiscordNotifierEvents(private val database: Database, private val discordB
                 }
                 "rejectAccount" -> {
                     if (verificationDatabase == 0) {
-                        database.setVerification(walletId, -1)
-                        database.setInspectorAccount(walletId,event.user.id)
-                        database.setVerificationDate(walletId)
+                        database.setVerificationWallet(walletId, -1)
+                        database.setInspectorWallet(walletId,event.user.id)
+                        database.setVerificationWalletDate(walletId)
                         functions.sendMessageIsPlayerOnline(database.getUUID(walletId).toString(), "Ваш запрос отклонили!")
                         "Запрос был отклонен! (ID MESSAGE: `${event.messageId}`, ID ACCOUNT: `$walletId`)"
                     } else {
-                        val discordIDInspector = database.getInspectorAccount(walletId) ?: return
+                        val discordIDInspector = database.getInspectorWallet(walletId) ?: return
                         val mentionInspector = discordBot.getMentionUser(discordIDInspector)
-                        val verificationDate = database.getVerificationDate(walletId)
+                        val verificationDate = database.getVerificationWalletDate(walletId)
                         "Данный запрос уже был рассмотрен в игре! \n" +
                                 "Рассмотрел - $mentionInspector\n" +
                                 "Дата рассмотрения - `$verificationDate`"

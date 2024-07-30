@@ -32,7 +32,7 @@ class OpenAccountInventoryEvent(private val database: Database, config: FileConf
                     if (e.currentItem!!.itemMeta.displayName == "Подтвердить!") {
                         if (functions.hasDiamondOre(player)){
                             val uuidPlayer = player.uniqueId.toString()
-                            val countAccounts = database.getAccountCount(uuidPlayer)
+                            val countAccounts = database.getWalletsCount(uuidPlayer)
                             if (countAccounts < countAccountConfig){
                                 var price = priceAccountConfig
                                 var verificationInt = 0
@@ -41,7 +41,7 @@ class OpenAccountInventoryEvent(private val database: Database, config: FileConf
                                     price = 0
                                     //TODO:Добавить зачисление price куда-то пока не знаю куда.
                                 }else{
-                                    val lastID = database.getLastID().toString()
+                                    val lastID = database.getLastIDWalletFree().toString()
                                     val discordID = database.getDiscordIDbyUUID(player.uniqueId.toString())
                                     val mention = discordBot.getMentionUser(discordID.toString())
                                     if (discordID != null){
@@ -65,7 +65,14 @@ class OpenAccountInventoryEvent(private val database: Database, config: FileConf
                                         functions.sendMessagePlayer(player, "Не удалось найти идентификатор Discord.")
                                     }
                                 }
-                                database.insertAccount(player,currencyAccountConfig!!, price, verificationInt)
+                                database.insertWallet(player, currencyAccountConfig!!, price, verificationInt).thenAccept { isCreate ->
+                                    if (isCreate) {
+                                        functions.takeItem(player, currencyAccountConfig, priceAccountConfig)
+                                        functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
+                                    } else {
+                                        functions.sendMessagePlayer(player, "Не удалось создать банковский счет.")
+                                    }
+                                }
                                 functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
                             }else{
                                 functions.sendMessagePlayer(player, "У вас уже максимальное количество счетов!")

@@ -1,3 +1,4 @@
+/*
 package discord.dsbot.commands
 
 import data.Database
@@ -84,3 +85,5 @@ class PayCommandDiscord (private val database: Database, config: FileConfigurati
 
     }
 }
+
+ */

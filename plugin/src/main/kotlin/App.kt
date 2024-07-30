@@ -3,7 +3,8 @@ import bank.accounts.commands.AccountOpenCommand
 import bank.accounts.commands.AccountRemoveCommand
 import bank.accounts.commands.AccountSetDefaultWalletCommand
 import bank.accounts.commands.AccountSetNameCommand
-import bank.commands.*
+import bank.commands.BalanceSetCommand
+import bank.commands.TransferCommand
 import bank.commands.banker.AccountVerificationCommand
 import data.Config
 import data.Database
@@ -59,9 +60,9 @@ class App : JavaPlugin(), Listener {
         val token = config.getString("bot-token")
         discordBot.start(token)
         //Commands
-        getCommand("pay")?.setExecutor(PayCommand(database))
-        getCommand("balance")?.setExecutor(BalanceCommand(database))
-        getCommand("add-balance")?.setExecutor(BalanceAddCommand(database))
+        //getCommand("pay")?.setExecutor(PayCommand(database))
+        //getCommand("balance")?.setExecutor(BalanceCommand(database))
+        //getCommand("add-balance")?.setExecutor(BalanceAddCommand(database))
         getCommand("set-balance")?.setExecutor(BalanceSetCommand(database))
         getCommand("open-account")?.setExecutor(AccountOpenCommand())
         getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))

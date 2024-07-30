@@ -19,7 +19,7 @@ class AccountSetNameCommand(private val database: Database) : CommandExecutor{
         val id = args[1]
         if (!(function.isNumber(id))) return false
         val player = sender.player
-        database.setAccountName(player?.uniqueId.toString(), name, id)
+        database.setWalletName(player?.uniqueId.toString(), name, id)
         player?.sendMessage("Счет #$id был назван $name.")
         return true
     }

@@ -16,14 +16,14 @@ class PlayerConnection(private val database: Database) : Listener{
         val player = event.player
         val playerUUID = player.uniqueId
         database.checkPlayerTask(playerUUID)
-        val idList = database.getIDsReturnDepositByUUID(playerUUID.toString())
+        val idList = database.getIdsWalletsReturnDepositByUUID(playerUUID.toString())
         for (id in idList){
-            if (database.isDepositAvailable(id)) {
-                val deposit = database.getDeposit(id)
+            if (database.isDepositWalletAvailable(id)) {
+                val deposit = database.getDepositWallet(id)
                 val item = ItemStack(Material.DIAMOND_ORE) // TODO:Брать из конфигурации
                 //val amount = 15 //TODO: Брать из конфигурации.
                 functions.giveItem(player, item, deposit!!)
-                database.deleteUserAccount(id)
+                database.deleteUserWallet(id)
             }
         }
 

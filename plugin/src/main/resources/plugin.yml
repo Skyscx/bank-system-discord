@@ -5,9 +5,9 @@ api-version: 1.13
 softdepend:
   - DiscordSRV
 commands:
-  pay:
-    description: Отправить деньги игроку.
-    usage: /pay <игрок> <сумма>
+  #pay:
+  #  description: Отправить деньги игроку.
+  #  usage: /pay <игрок> <сумма>
   balance:
     description: Посмотреть баланс.
     usage: /balance
