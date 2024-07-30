@@ -4,7 +4,7 @@ import bank.accounts.commands.AccountRemoveCommand
 import bank.accounts.commands.AccountSetDefaultWalletCommand
 import bank.accounts.commands.AccountSetNameCommand
 import bank.commands.BalanceSetCommand
-import bank.commands.TransferCommand
+import bank.commands.NewTransferCommand
 import bank.commands.banker.AccountVerificationCommand
 import data.Config
 import data.Database
@@ -68,7 +68,7 @@ class App : JavaPlugin(), Listener {
         getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
         getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
-        getCommand("transfer")?.setExecutor(TransferCommand(database))
+        getCommand("transfer")?.setExecutor(NewTransferCommand(database))
         getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
 
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))

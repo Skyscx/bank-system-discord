@@ -29,6 +29,10 @@ class AccountVerificationCommand(private val database: Database) : CommandExecut
                 if (args.size != 2) return false
                 val id = args[0].toIntOrNull() ?: return false
                 val bool = args[1].toBooleanStrictOrNull() ?: return false
+                if (!database.doesIdExistWallet(id)){
+                    sender.sendMessage("Такого кошелька не существует!")
+                    return true
+                }
                 val verification = database.getVerificationWallet(id)
                 val inspector = functionDiscord.getPlayerDiscordID(sender.uniqueId).toString()
                 when(verification){

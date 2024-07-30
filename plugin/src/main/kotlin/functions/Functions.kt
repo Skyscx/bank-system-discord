@@ -48,6 +48,9 @@ class Functions {
     fun isNumber(arg: String?): Boolean {
         return arg?.toIntOrNull() != null
     }
+    fun isWalletNameValid(walletName: String): Boolean {
+        return walletName.length in 5..32 && walletName.matches(Regex("^[a-zA-Z][a-zA-Z0-9]*\$"))
+    }
     fun takeItem(player: Player, itemType: String?, amount: Int) {
         if (itemType == null) {
             player.sendMessage("Неверный тип предмета.")

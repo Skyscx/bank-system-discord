@@ -17,6 +17,11 @@ class DiscordNotifierEvents(private val database: Database, private val discordB
             val discordUserID = event.user.id
             val uuid = database.getUUID(walletId).toString()
             val bankerPermission = "skybank.banker"
+            val status = when (verificationDatabase) {
+                1 -> "Запрос был одобрен."
+                -1 -> "Запрос был отклонен."
+                else -> "Статус запроса неизвестен."
+            }
             println("Verification status for wallet ID \$walletId: \$verificationDatabase")
 
             // Проверка, было ли взаимодействие уже подтверждено
@@ -48,7 +53,9 @@ class DiscordNotifierEvents(private val database: Database, private val discordB
                         val verificationDate = database.getVerificationWalletDate(walletId)
                         "Данный запрос уже был рассмотрен в игре! \n" +
                                 "Рассмотрел - $mentionInspector\n" +
-                                "Дата рассмотрения - `$verificationDate`"
+                                "Дата рассмотрения - `$verificationDate`" +
+                                "\n" +
+                                status
                     }
                 }
                 "rejectAccount" -> {
@@ -64,7 +71,9 @@ class DiscordNotifierEvents(private val database: Database, private val discordB
                         val verificationDate = database.getVerificationWalletDate(walletId)
                         "Данный запрос уже был рассмотрен в игре! \n" +
                                 "Рассмотрел - $mentionInspector\n" +
-                                "Дата рассмотрения - `$verificationDate`"
+                                "Дата рассмотрения - `$verificationDate`" +
+                                "\n" +
+                                status
                     }
                 }
                 else -> return

@@ -1,3 +1,4 @@
+/*
 package bank.commands
 
 import data.Database
@@ -220,3 +221,5 @@ class TransferCommand(private val database: Database) : CommandExecutor {
         return true
     }
 }
+
+ */

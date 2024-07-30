@@ -68,7 +68,7 @@ class OpenAccountInventoryEvent(private val database: Database, config: FileConf
                                 database.insertWallet(player, currencyAccountConfig!!, price, verificationInt).thenAccept { isCreate ->
                                     if (isCreate) {
                                         functions.takeItem(player, currencyAccountConfig, priceAccountConfig)
-                                        functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
+                                        //functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
                                     } else {
                                         functions.sendMessagePlayer(player, "Не удалось создать банковский счет.")
                                     }
