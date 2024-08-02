@@ -898,9 +898,25 @@ class Database private constructor(url: String, plugin: App?) {
      */
     fun deleteUserWallet(id: Int): Boolean {
         var boolean = false
-        val sql = "UPDATE bank_wallets SET Name = 'NULL', Status = 0 WHERE ID = ?"
+        val sqlUpdateWallet = "UPDATE bank_wallets SET Name = 'NULL', Status = 0 WHERE ID = ?"
+        val sqlUpdateUser = "UPDATE bank_users SET DefaultWalletID = 0 WHERE DefaultWalletID = ?"
+
         try {
-            connection?.prepareStatement(sql)?.use { pstmt ->
+            // Получаем UUID по ID
+            val uuid = getUUID(id)
+            if (uuid != null) {
+                // Получаем DefaultIDWallet по UUID
+                val defaultIDWallet = getDefaultWalletIDByUUID(uuid)
+                if (defaultIDWallet != null && defaultIDWallet == id) {
+                    // Обновляем DefaultIDWallet в таблице bank_users
+                    connection?.prepareStatement(sqlUpdateUser)?.use { pstmt ->
+                        pstmt.setInt(1, id)
+                        pstmt.executeUpdate()
+                    }
+                }
+            }
+
+            connection?.prepareStatement(sqlUpdateWallet)?.use { pstmt ->
                 pstmt.setInt(1, id)
                 val rowsAffected = pstmt.executeUpdate()
                 if (rowsAffected > 0) boolean = true
@@ -995,6 +1011,10 @@ class Database private constructor(url: String, plugin: App?) {
 
         return uuid
     }
+
+    /**
+     * Получение пользовательского UUID по имени пользователя по базе данных
+     */
     fun getUUIDbyPlayerName(playerName: String): String? {
         val sql = "SELECT UUID FROM bank_users WHERE PlayerName = ?"
         var uuid: String? = null
@@ -1011,6 +1031,7 @@ class Database private constructor(url: String, plugin: App?) {
         }
         return uuid
     }
+
     /**
      * Проверка существования UUID в таблице кошельков
      */
@@ -1031,6 +1052,10 @@ class Database private constructor(url: String, plugin: App?) {
         }
         return boolean
     }
+
+    /**
+     * Проверка на отключенный кошелек.
+     */
     fun isWalletStatusZero(walletID: Int): Boolean {
         val sql = "SELECT Status FROM bank_wallets WHERE ID = ?"
         var status: Int? = null
@@ -1070,6 +1095,47 @@ class Database private constructor(url: String, plugin: App?) {
         return count == 0
     }
 
+    /**
+     * Получение имени кошелька по ID WALLET
+     */
+    fun getNameWalletByIDWallet(id: Int): String {
+        val sql = "SELECT Name FROM bank_wallets WHERE ID = ?"
+        var name = ""
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, id)
+                val result = pstmt.executeQuery()
+                if (result.next()) {
+                    name = result.getString("Name")
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+
+        return name
+    }
+
+    /**
+     * Присвоение нового имени кошелька по ID WALLET
+     */
+    fun setNameWalletByIDWallet(name: String?, id: Int): Boolean {
+        val sql = "UPDATE bank_wallets SET Name = ? WHERE ID = ?"
+        var success = false
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setString(1, name)
+                pstmt.setInt(2, id)
+                val rowsAffected = pstmt.executeUpdate()
+                if (rowsAffected > 0) {
+                    success = true
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+        return success
+    }
     /**
      * Закрытие соединения
      */

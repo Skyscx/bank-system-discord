@@ -38,3 +38,6 @@ commands:
   transfer:
     description: Перевести валюту.
     usage: /transfer [t=id|name] [s=id|name]* [amount]
+  account-renaming:
+    description: Переименовать кошелек.
+    usage: /account-renaming <ID wallet>

@@ -1,8 +1,5 @@
 
-import bank.accounts.commands.AccountOpenCommand
-import bank.accounts.commands.AccountRemoveCommand
-import bank.accounts.commands.AccountSetDefaultWalletCommand
-import bank.accounts.commands.AccountSetNameCommand
+import bank.accounts.commands.*
 import bank.commands.BalanceSetCommand
 import bank.commands.NewTransferCommand
 import bank.commands.banker.AccountVerificationCommand
@@ -11,6 +8,8 @@ import data.Database
 import discord.DiscordSRVHook
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
+import gui.accountmenu.renamingaccount.RenamingAccountInventory
+import gui.accountmenu.renamingaccount.RenamingAccountInventoryEvent
 import gui.сonfirmations.OpenAccountInventoryEvent
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
@@ -27,6 +26,7 @@ class App : JavaPlugin(), Listener {
         lateinit var configPlugin: Config
         lateinit var discordBot: DiscordBot
         lateinit var database: Database
+        lateinit var renamingAccountInventory: RenamingAccountInventory
     }
 
 
@@ -59,6 +59,10 @@ class App : JavaPlugin(), Listener {
         val discordBot = DiscordBot.getInstance(database, config)
         val token = config.getString("bot-token")
         discordBot.start(token)
+        //Classes
+        renamingAccountInventory = RenamingAccountInventory(database)
+
+
         //Commands
         //getCommand("pay")?.setExecutor(PayCommand(database))
         //getCommand("balance")?.setExecutor(BalanceCommand(database))
@@ -70,7 +74,7 @@ class App : JavaPlugin(), Listener {
         getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
         getCommand("transfer")?.setExecutor(NewTransferCommand(database))
         getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
-
+        getCommand("account-renaming")?.setExecutor(AccountRenamingCommand(database))
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
 
         //accounts-list
@@ -85,6 +89,7 @@ class App : JavaPlugin(), Listener {
         //Events
         Bukkit.getPluginManager().registerEvents(PlayerConnection(database), this)
         Bukkit.getPluginManager().registerEvents(OpenAccountInventoryEvent(database, config, discordBot), this)
+        Bukkit.getPluginManager().registerEvents(RenamingAccountInventoryEvent(database, renamingAccountInventory), this)
 
         //Depends
         if (server.pluginManager.getPlugin("DiscordSRV") != null){
