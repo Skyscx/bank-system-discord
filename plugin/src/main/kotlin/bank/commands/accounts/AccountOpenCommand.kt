@@ -1,4 +1,4 @@
-package bank.accounts.commands
+package bank.commands.accounts
 
 import gui.сonfirmations.OpenAccountInventory
 import org.bukkit.command.Command
@@ -14,7 +14,7 @@ class AccountOpenCommand: CommandExecutor {
             return true
         }
         val player = sender.player
-        openAccountInventory.openAccountMenu(player!!)
+        //openAccountInventory.openAccountMenu(player!!)
         return true
     }
 }

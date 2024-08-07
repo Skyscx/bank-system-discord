@@ -1,4 +1,4 @@
-package bank.accounts.commands
+package bank.commands.accounts
 
 class AccountsListPlayerCommand {
 }

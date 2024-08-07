@@ -2,6 +2,7 @@ package functions
 
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import java.util.*
@@ -10,6 +11,13 @@ class Functions {
     fun isPlayerOnline(uuid: String): Boolean {
         val player = Bukkit.getPlayer(UUID.fromString(uuid))
         return player != null && player.isOnline
+    }
+    fun senderIsPlayer(sender: CommandSender): Pair<String, Boolean>{
+        return if (sender is Player) {
+            Pair("", true)
+        } else {
+            Pair("localisation.messages.out.sender-is-not-player", false)
+        }
     }
     fun sendMessageIsPlayerOnline(uuid: String, message: String){
         if (isPlayerOnline(uuid)){
@@ -30,6 +38,9 @@ class Functions {
     }
     fun sendMessagePlayer(player: Player, message: String){
         player.sendMessage(message)
+    }
+    fun unknownCommand(sender: CommandSender){
+        sender.sendMessage("localisation.messages.out.unknown-command")
     }
     fun hasDiamondOre(player: Player): Boolean { //TODO:Переделать на метод ниже takeItem
         val inventory = player.inventory

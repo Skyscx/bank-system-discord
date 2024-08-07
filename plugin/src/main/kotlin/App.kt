@@ -1,5 +1,9 @@
 
-import bank.accounts.commands.*
+
+import bank.commands.accounts.AccountOpenCommand
+import bank.commands.accounts.AccountRemoveCommand
+import bank.commands.accounts.AccountSetDefaultWalletCommand
+import bank.commands.accounts.AccountSetNameCommand
 import bank.commands.BalanceSetCommand
 import bank.commands.NewTransferCommand
 import bank.commands.banker.AccountVerificationCommand
@@ -8,8 +12,6 @@ import data.Database
 import discord.DiscordSRVHook
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
-import gui.accountmenu.renamingaccount.RenamingAccountInventory
-import gui.accountmenu.renamingaccount.RenamingAccountInventoryEvent
 import gui.сonfirmations.OpenAccountInventoryEvent
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
@@ -26,7 +28,6 @@ class App : JavaPlugin(), Listener {
         lateinit var configPlugin: Config
         lateinit var discordBot: DiscordBot
         lateinit var database: Database
-        lateinit var renamingAccountInventory: RenamingAccountInventory
     }
 
 
@@ -60,7 +61,7 @@ class App : JavaPlugin(), Listener {
         val token = config.getString("bot-token")
         discordBot.start(token)
         //Classes
-        renamingAccountInventory = RenamingAccountInventory(database)
+
 
 
         //Commands
@@ -74,7 +75,8 @@ class App : JavaPlugin(), Listener {
         getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
         getCommand("transfer")?.setExecutor(NewTransferCommand(database))
         getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
-        getCommand("account-renaming")?.setExecutor(AccountRenamingCommand(database))
+        //getCommand("account-renaming")?.setExecutor(Events())
+
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
 
         //accounts-list
@@ -86,10 +88,12 @@ class App : JavaPlugin(), Listener {
         //bank-history
         //account-close
 
-        //Events
+        //gui.accountmenu.renamingaccount.anviltest.Events
         Bukkit.getPluginManager().registerEvents(PlayerConnection(database), this)
         Bukkit.getPluginManager().registerEvents(OpenAccountInventoryEvent(database, config, discordBot), this)
-        Bukkit.getPluginManager().registerEvents(RenamingAccountInventoryEvent(database, renamingAccountInventory), this)
+
+
+        //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)
 
         //Depends
         if (server.pluginManager.getPlugin("DiscordSRV") != null){

@@ -1,4 +1,4 @@
-package bank.accounts.commands
+package bank.commands.accounts
 
 import data.Database
 import org.bukkit.command.Command

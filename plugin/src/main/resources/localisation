@@ -1,0 +1,27 @@
+localisation:
+localisation.title:
+localisation.language:
+localisation.languageTAG:
+localisation.description:
+localisation.messages.
+
+
+  title: "Банковская система"
+  language: "Russian"
+  languageTAG: "[RU]"
+  description: "" #Описание плагина
+  messages:
+    information:
+    notification:
+    usage:
+  items:
+    accept:
+      title:
+
+
+
+localisation.messages.out.unknown-command: "Неизвестная команда"
+
+
+messages.out.unknown-command
+confirmation.additional.message
