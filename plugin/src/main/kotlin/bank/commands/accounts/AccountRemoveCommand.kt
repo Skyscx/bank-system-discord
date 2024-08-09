@@ -1,6 +1,7 @@
 package bank.commands.accounts
 
 import data.Database
+import gui.InventoryManager
 import gui.accountmenu.removeaccount.AccountRemoveInventory
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -146,8 +147,9 @@ class AccountRemoveCommand(private val database: Database) : CommandExecutor {
             }
 
             else -> {
-                accountRemoveInventory.removeAccountMenu(sender)
-                return true //TODO: Можно реализовать открытие GUI
+                val inventoryManager = InventoryManager()
+                //accountRemoveInventory.removeAccountMenu(sender)
+                inventoryManager.openInventory(sender, "remove")
             }
         }
         return true

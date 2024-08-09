@@ -1,0 +1,36 @@
+# Системные описания
+
+localisation.title: "Банковская система"
+localisation.language: "RUSSIAN"
+localisation.languageTAG: "[RU]"
+localisation.description: "Описание плагина"
+
+# Информационные сообщения в чате
+
+localisation.messages.out.unknown-command: "Неизвестная команда"
+localisation.messages.out.no-permissions: "У вас недостаточно разрешений, для выполнения данной команды!"
+localisation.messages.out.developing: "Данная возможность находиться на стадии разработки. Попробуйте позже."
+
+# Информационные сообщения в чате о правильном использовании команды
+
+localisation.messages.usage.account:
+localisation.messages.usage.account.open:
+localisation.messages.usage.account.remove: "text"
+localisation.messages.usage.account.remove.id: "text"
+localisation.messages.usage.account.remove.name: "text"
+localisation.messages.usage.account.remove.all: "text"
+localisation.messages.usage.account.rename:
+localisation.messages.usage.account.set-default:
+localisation.messages.usage.account.set-name:
+localisation.messages.usage.account.list:
+localisation.messages.usage.account.force:
+
+# Текстовые поля для оформления GUI
+
+localisation.inventory.item.accept: "Подтвердить!"
+localisation.inventory.item.reject: "Отклонить"
+
+## Подтверждение открытия кошелька
+
+localisation.account.open.confirmation.title: "Подтверждение открытия кошелька."
+localisation.account.open.confirmation.item.accept.lore: "Подтвердив операцию, с вашего инвентаря заберутся $amount алмазной руды."

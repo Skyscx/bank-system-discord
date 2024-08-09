@@ -1,5 +1,6 @@
 package bank.commands.accounts
 
+import App.Companion.localizationManager
 import bank.commands.accounts.collection.*
 import functions.Functions
 import org.bukkit.command.Command
@@ -16,7 +17,7 @@ class AccountCommands : CommandExecutor{
         }
         if (args.isEmpty()){
             //TODO: open inventory manager
-            sender.sendMessage("--Developing an interaction menu--")
+            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.developing"))
             return true
         }
         val argsArray = args.toList().toTypedArray()

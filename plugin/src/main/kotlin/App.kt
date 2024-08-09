@@ -1,18 +1,18 @@
 
 
-import bank.commands.accounts.AccountOpenCommand
+import bank.commands.BalanceSetCommand
+import bank.commands.NewTransferCommand
 import bank.commands.accounts.AccountRemoveCommand
 import bank.commands.accounts.AccountSetDefaultWalletCommand
 import bank.commands.accounts.AccountSetNameCommand
-import bank.commands.BalanceSetCommand
-import bank.commands.NewTransferCommand
 import bank.commands.banker.AccountVerificationCommand
 import data.Config
 import data.Database
+import data.localisation.LocalisationManager
 import discord.DiscordSRVHook
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
-import gui.сonfirmations.OpenAccountInventoryEvent
+import gui.accountmenu.openaccount.AccountOpenInventoryEvent
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -28,6 +28,7 @@ class App : JavaPlugin(), Listener {
         lateinit var configPlugin: Config
         lateinit var discordBot: DiscordBot
         lateinit var database: Database
+        lateinit var localizationManager: LocalisationManager
     }
 
 
@@ -41,6 +42,8 @@ class App : JavaPlugin(), Listener {
         // Config
         configPlugin = Config.getInstance(this)
         configPlugin.loadConfig()
+        //Localisation
+        localizationManager = LocalisationManager(this)
         //Database
         val databaseFolder = File(dataFolder, "data")
         if (!databaseFolder.exists()) {
@@ -69,7 +72,7 @@ class App : JavaPlugin(), Listener {
         //getCommand("balance")?.setExecutor(BalanceCommand(database))
         //getCommand("add-balance")?.setExecutor(BalanceAddCommand(database))
         getCommand("set-balance")?.setExecutor(BalanceSetCommand(database))
-        getCommand("open-account")?.setExecutor(AccountOpenCommand())
+        //getCommand("open-account")?.setExecutor(AccountOpenCommand())
         getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
         getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
@@ -90,9 +93,8 @@ class App : JavaPlugin(), Listener {
 
         //gui.accountmenu.renamingaccount.anviltest.Events
         Bukkit.getPluginManager().registerEvents(PlayerConnection(database), this)
-        Bukkit.getPluginManager().registerEvents(OpenAccountInventoryEvent(database, config, discordBot), this)
-
-
+        Bukkit.getPluginManager().registerEvents(AccountOpenInventoryEvent(database, config, discordBot), this)
+        //todo: 07/08/2024 21/10 переделать команды, сделать локализацию, попробовать очистить ветку main
         //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)
 
         //Depends

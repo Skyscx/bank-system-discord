@@ -1,13 +1,15 @@
 package gui.accountmenu.removeaccount
 
+import gui.InventoryCreator
 import gui.SystemGUI
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 
-class AccountRemoveInventory {
+class AccountRemoveInventory : InventoryCreator {
     private val systemGUI = SystemGUI()
-    fun removeAccountMenu(player: Player) {
+    override fun createInventory(player: Player) : Inventory {
         val removeAccount = Bukkit.createInventory(null, 54, "Удаление кошелька")
         // default
         val removeMyAccountID = systemGUI.createItem(Material.APPLE, "Удалить мой кошелек.", listOf("Нажав, выйдет окно с вводом номера кошелька.\n После ввода необходимо будет подтвердить удаление"))
@@ -31,7 +33,8 @@ class AccountRemoveInventory {
         removeAccount.setItem(6, removeForcedAccountsUUID)
         removeAccount.setItem(7, removeForcedAccountsDiscordID)
         removeAccount.setItem(8, removeForcedAccountsTable)
-
-        player.openInventory(removeAccount)
+        return removeAccount
     }
+
+
 }

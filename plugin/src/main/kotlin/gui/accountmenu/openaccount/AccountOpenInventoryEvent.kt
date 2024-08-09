@@ -1,4 +1,4 @@
-package gui.сonfirmations
+package gui.accountmenu.openaccount
 
 import data.Database
 import discord.dsbot.DiscordBot
@@ -12,7 +12,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import java.util.*
 
-class OpenAccountInventoryEvent(private val database: Database, config: FileConfiguration,private val discordBot: DiscordBot) : Listener {
+class AccountOpenInventoryEvent(private val database: Database, config: FileConfiguration, private val discordBot: DiscordBot) : Listener {
     private val functions = Functions()
     //private val functionsDiscord = FunctionsDiscord(discordBot)
     //private val discordBot = DiscordBot.getInstance(database, config)

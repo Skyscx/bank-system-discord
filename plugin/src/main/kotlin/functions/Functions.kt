@@ -109,4 +109,12 @@ class Functions {
         inventory.addItem(newItem)
         player.sendMessage("Вы получили $amount x ${item.type.name}.")
     }
+
+    fun checkArguments(sender: CommandSender, expectedArgs: Int, args: Array<out String>, errorMessage: String): Boolean {
+        if (args.size != expectedArgs) {
+            sender.sendMessage(errorMessage)
+            return false
+        }
+        return true
+    }
 }
