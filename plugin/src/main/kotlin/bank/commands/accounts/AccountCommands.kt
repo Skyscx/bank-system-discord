@@ -16,7 +16,7 @@ class AccountCommands : CommandExecutor{
             return true
         }
         if (args.isEmpty()){
-            //TODO: open inventory manager
+            //TODO: Сделать открытие меню инвентаря со всеми доступными функциями.
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.developing"))
             return true
         }

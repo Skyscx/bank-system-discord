@@ -22,7 +22,7 @@ class AccountSetNameCommand(private val database: Database) : CommandExecutor{
             return true
         }
 
-        val uuidPlayerWallet = database.getUUID(id)
+        val uuidPlayerWallet = database.getUUIDbyWalletID(id)
         if (uuidPlayerWallet != sender.uniqueId.toString()) {
             sender.sendMessage("Вы не владелец этого кошелька!")
             return true

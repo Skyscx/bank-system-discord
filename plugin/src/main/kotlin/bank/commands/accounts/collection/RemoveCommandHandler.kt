@@ -14,7 +14,12 @@ class RemoveCommandHandler {
         when(args[1].lowercase()){
             "id" -> {
                 if (functions.checkArguments(sender, 4, args, localizationManager.getMessage("localisation.messages.usage.account.remove.id"))) return
-
+                val identifier = args[2]
+                val bool = args[2].toBooleanStrictOrNull()
+                if (bool == null) {
+                    sender.sendMessage(localizationManager.getMessage("localisation.messages.usage.account.remove.id.boolean"))
+                    return
+                }
             }
             "name" -> {}
             "all" -> {}

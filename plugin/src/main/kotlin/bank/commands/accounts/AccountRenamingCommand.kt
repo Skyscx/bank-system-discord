@@ -23,7 +23,7 @@ class AccountRenamingCommand(private val database: Database) : CommandExecutor{
             return true
         }
 
-        val uuidPlayerWallet = database.getUUID(walletID)
+        val uuidPlayerWallet = database.getUUIDbyWalletID(walletID)
         if (uuidPlayerWallet != sender.uniqueId.toString()) {
             sender.sendMessage("Вы не владелец этого кошелька!")
             return true

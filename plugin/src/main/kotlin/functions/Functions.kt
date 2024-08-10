@@ -117,4 +117,7 @@ class Functions {
         }
         return true
     }
+    fun hasPermission(sender: CommandSender, permission: String): Boolean {
+        return sender.hasPermission(permission)
+    }
 }

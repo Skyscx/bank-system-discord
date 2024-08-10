@@ -58,7 +58,7 @@ class NewTransferCommand(private val database: Database) : CommandExecutor {
         }
 
         val player = sender as Player
-        val uuidWalletSource = database.getUUID(sourceWalletID)
+        val uuidWalletSource = database.getUUIDbyWalletID(sourceWalletID)
 
         if (uuidWalletSource != player.uniqueId.toString()) {
             sender.sendMessage("Вы не владелец этого кошелька!")
@@ -92,7 +92,7 @@ class NewTransferCommand(private val database: Database) : CommandExecutor {
         }
 
         // Получение данных для отправки запроса
-        val targetUUID = database.getUUID(targetWalletID)
+        val targetUUID = database.getUUIDbyWalletID(targetWalletID)
         val target = function.getPlayerByUUID(targetUUID.toString())
 
         if (target == null) {
@@ -100,7 +100,7 @@ class NewTransferCommand(private val database: Database) : CommandExecutor {
             return
         }
 
-        val operation = database.transferFunds(player, target, sourceWalletID, targetWalletID, amount, currency1, 1)
+        val operation = database.transferCash(player, target, sourceWalletID, targetWalletID, amount, currency1, 1)
 
         if (operation) {
             sender.sendMessage("Вы перевели $amount $currency1 игроку $target (#$sourceWalletID -> #$targetWalletID)")
@@ -182,7 +182,7 @@ class NewTransferCommand(private val database: Database) : CommandExecutor {
             return
         }
 
-        val operation = database.transferFunds(senderPlayer, target, sourceWalletID, targetWalletID, amount, currency1, 1)
+        val operation = database.transferCash(senderPlayer, target, sourceWalletID, targetWalletID, amount, currency1, 1)
 
         if (operation) {
             sender.sendMessage("Вы перевели $amount $currency1 игроку $target (#$sourceWalletID -> #$targetWalletID)")

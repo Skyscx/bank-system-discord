@@ -1,6 +1,7 @@
 package bank.commands.accounts
 
 import data.Database
+import functions.Functions
 import gui.InventoryManager
 import gui.accountmenu.removeaccount.AccountRemoveInventory
 import org.bukkit.command.Command
@@ -10,6 +11,8 @@ import org.bukkit.entity.Player
 
 class AccountRemoveCommand(private val database: Database) : CommandExecutor {
     private val accountRemoveInventory = AccountRemoveInventory()
+    private val functions = Functions()
+
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
             sender.sendMessage("Эту команду можно использовать только в игре.")
@@ -17,6 +20,9 @@ class AccountRemoveCommand(private val database: Database) : CommandExecutor {
         }
         if (args.isEmpty()) return false
         val uuid = sender.uniqueId.toString()
+
+        //val hasPermission = functions.hasPermission(sender, "banker")
+
         val isBanker = sender.hasPermission("skybank.banker") //TODO: Проверить права
         when (args[0].lowercase()) {
             // Удаление кошелька по ID

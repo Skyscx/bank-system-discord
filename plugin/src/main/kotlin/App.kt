@@ -34,7 +34,7 @@ class App : JavaPlugin(), Listener {
 
 
     override fun onEnable() {
-        //Folder
+        // Folder
         val pluginFolder = dataFolder
         if (!pluginFolder.exists()) {
             pluginFolder.mkdirs()
@@ -42,9 +42,9 @@ class App : JavaPlugin(), Listener {
         // Config
         configPlugin = Config.getInstance(this)
         configPlugin.loadConfig()
-        //Localisation
+        // Localisation
         localizationManager = LocalisationManager(this)
-        //Database
+        // Database
         val databaseFolder = File(dataFolder, "data")
         if (!databaseFolder.exists()) {
             databaseFolder.mkdirs()
@@ -59,11 +59,11 @@ class App : JavaPlugin(), Listener {
             return
         }
 
-        //DiscordBot
+        // DiscordBot
         val discordBot = DiscordBot.getInstance(database, config)
         val token = config.getString("bot-token")
         discordBot.start(token)
-        //Classes
+        // Classes
 
 
 
@@ -100,6 +100,7 @@ class App : JavaPlugin(), Listener {
         //Depends
         if (server.pluginManager.getPlugin("DiscordSRV") != null){
             DiscordSRVHook.register()
+            //todo: сделать выключение плагина если плагин не найден.
         }
 
 

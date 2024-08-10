@@ -15,7 +15,7 @@ class DiscordNotifierEvents(private val database: Database, private val discordB
             val walletId = parts[1].toInt()
             val verificationDatabase = database.getVerificationWallet(walletId)
             val discordUserID = event.user.id
-            val uuid = database.getUUID(walletId).toString()
+            val uuid = database.getUUIDbyWalletID(walletId).toString()
             val bankerPermission = "skybank.banker"
             val status = when (verificationDatabase) {
                 1 -> "Запрос был одобрен."
@@ -63,7 +63,7 @@ class DiscordNotifierEvents(private val database: Database, private val discordB
                         database.setVerificationWallet(walletId, -1)
                         database.setInspectorWallet(walletId,event.user.id)
                         database.setVerificationWalletDate(walletId)
-                        functions.sendMessageIsPlayerOnline(database.getUUID(walletId).toString(), "Ваш запрос отклонили!")
+                        functions.sendMessageIsPlayerOnline(database.getUUIDbyWalletID(walletId).toString(), "Ваш запрос отклонили!")
                         "Запрос был отклонен! (ID MESSAGE: `${event.messageId}`, ID ACCOUNT: `$walletId`)"
                     } else {
                         val discordIDInspector = database.getInspectorWallet(walletId) ?: return
