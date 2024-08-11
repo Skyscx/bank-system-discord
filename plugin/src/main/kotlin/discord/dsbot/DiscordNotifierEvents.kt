@@ -7,6 +7,12 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter
 
 class DiscordNotifierEvents(private val database: Database, private val discordBot: DiscordBot) : ListenerAdapter() {
     private val functions = Functions()
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+
     override fun onButtonInteraction(event: ButtonInteractionEvent) {
         try {
             val componentId = event.componentId

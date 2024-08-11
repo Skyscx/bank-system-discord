@@ -64,7 +64,7 @@ class Functions {
     }
     fun takeItem(player: Player, itemType: String?, amount: Int) {
         if (itemType == null) {
-            player.sendMessage("Неверный тип предмета.")
+            player.sendMessage("Неверный тип предмета.") //todo: сделать сообщение из конфига
             return
         }
 
@@ -72,7 +72,7 @@ class Functions {
         try {
             material = Material.valueOf(itemType)
         } catch (e: IllegalArgumentException) {
-            player.sendMessage("Неверный тип предмета.")
+            player.sendMessage("Неверный тип предмета.") //todo: сделать сообщение из конфига
             return
         }
 
@@ -83,14 +83,14 @@ class Functions {
                 count += item.amount
                 if (count >= amount) {
                     inventory.removeItem(ItemStack(material, amount))
-                    player.sendMessage("Вы потратили $amount x ${material.name}.")
+                    player.sendMessage("Вы потратили $amount x ${material.name}.") //todo: сделать сообщение из конфига
                     return
                 }
             }
         }
 
         if (count < amount) {
-            player.sendMessage("У вас недостаточно ${material.name}.")
+            player.sendMessage("У вас недостаточно ${material.name}.") //todo: сделать сообщение из конфига
         }
     }
 
@@ -99,7 +99,7 @@ class Functions {
         val freeSpace = inventory.firstEmpty()
 
         if (freeSpace == -1) {
-            player.sendMessage("У вас недостаточно места в инвентаре.")
+            player.sendMessage("У вас недостаточно места в инвентаре.") //todo: сделать сообщение из конфига
             return
         }
 
@@ -107,7 +107,7 @@ class Functions {
         newItem.amount = amount
 
         inventory.addItem(newItem)
-        player.sendMessage("Вы получили $amount x ${item.type.name}.")
+        player.sendMessage("Вы получили $amount x ${item.type.name}.") //todo: сделать сообщение из конфига
     }
 
     fun checkArguments(sender: CommandSender, expectedArgs: Int, args: Array<out String>, errorMessage: String): Boolean {

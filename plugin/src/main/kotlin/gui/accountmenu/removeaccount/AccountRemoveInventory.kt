@@ -33,6 +33,7 @@ class AccountRemoveInventory : InventoryCreator {
         removeAccount.setItem(6, removeForcedAccountsUUID)
         removeAccount.setItem(7, removeForcedAccountsDiscordID)
         removeAccount.setItem(8, removeForcedAccountsTable)
+        //todo: посмотреть инвентарь
         return removeAccount
     }
 

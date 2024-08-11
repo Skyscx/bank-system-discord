@@ -7,19 +7,30 @@ localisation.description: "Описание плагина"
 
 # Информационные сообщения в чате
 
-localisation.messages.out.unknown-command: "Неизвестная команда"
+localisation.messages.out.unknown-command: "Неизвестная команда. Используйте $commandHelp"
 localisation.messages.out.no-permissions: "У вас недостаточно разрешений, для выполнения данной команды!"
 localisation.messages.out.developing: "Данная возможность находиться на стадии разработки. Попробуйте позже."
+localisation.messages.out.not-owner: "Вы не владелец данного кошелька!"
+localisation.messages.out.error-search-data-in-database: "Произошла ошибка инициализации данных. Обратитесь к администратору или банкиру."
+localisation.messages.out.empty-wallets-list: "Открытых кошельков нету, чтобы их закрыть."
+localisation.messages.out.wallet-name-valid: "Имя кошелька должно быть минимум из 5 символов, максимум 32 символа. Первый символ - не цифра."
+localisation.messages.out.wallet-null: "Данный кошелек не существует."
+localisation.messages.out.name-is-not-free: "Данное имя кошелька ($walletName) уже занято."
+
+# Генерация сообщений
+
+localisation.messages.generate.wallet-data: " * Кошелек $name (#$walletID). Баланс: $balance. Валюта: $currency"
 
 # Информационные сообщения в чате о правильном использовании команды
 
 localisation.messages.usage.account:
 localisation.messages.usage.account.open:
-localisation.messages.usage.account.remove: "text"
-localisation.messages.usage.account.remove.id: "text"
-localisation.messages.usage.account.remove.name: "text"
-localisation.messages.usage.account.remove.all: "text"
-localisation.messages.usage.account.rename:
+localisation.messages.usage.account.remove: "Используйте /account remove <id/name> true"
+localisation.messages.usage.account.remove.boolean: "Необходимо подтвердить - /account remove <id/name> true"
+localisation.messages.usage.account.remove.all: "/account remove all true"
+localisation.messages.usage.account.remove.all.boolean: "Необходимо подтвердить - /account remove all true"
+localisation.messages.usage.account.remove.gui: "Открыть меню удаления кошельков - /account remove"
+localisation.messages.usage.account.rename: "Используйте /account rename <id/name> <new name>"
 localisation.messages.usage.account.set-default:
 localisation.messages.usage.account.set-name:
 localisation.messages.usage.account.list:

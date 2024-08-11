@@ -21,6 +21,11 @@ class DiscordBot private constructor(private val database: Database, private val
     }
 
     lateinit var jda: JDA
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
 
     fun start(token: String?) {
         jda = JDABuilder.createDefault(token)

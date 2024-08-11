@@ -1,6 +1,7 @@
 package data
 
 import App
+import App.Companion.localizationManager
 import discord.FunctionsDiscord
 import functions.Functions
 import org.bukkit.Bukkit
@@ -641,6 +642,34 @@ class Database private constructor(url: String, plugin: App?) {
     }
 
     /**
+     * Генерация строки с необходимыми данными о статусе верификации кошелька по ID кошельку из таблицы кошельков.
+     */
+    fun getWalletDataByID(walletID: Int): String? {
+        var walletData: String? = null
+        val sql = "SELECT Name, Currency, Balance FROM bank_wallets WHERE ID = ?"
+
+        try {
+            connection?.prepareStatement(sql)?.use { pstmt ->
+                pstmt.setInt(1, walletID)
+                val resultSet = pstmt.executeQuery()
+                if (resultSet.next()) {
+                    val name = resultSet.getString("Name")
+                    val currency = resultSet.getString("Currency")
+                    val balance = resultSet.getString("Balance")
+                    walletData = localizationManager.getMessage("localisation.messages.generate.wallet-data",
+                        "name" to name,
+                        "walletID" to walletID.toString(),
+                        "balance" to balance,
+                        "currency" to currency  )
+                }
+            }
+        } catch (e: SQLException) {
+            e.printStackTrace()
+        }
+        return walletData
+    }
+
+    /**
      * Получение статуса верификации кошелька в таблице кошельков
      *
      * 1 - одобрен || 0 - ожидание || -1 - отказан
@@ -1108,7 +1137,6 @@ class Database private constructor(url: String, plugin: App?) {
      * Проверка на то существует ли уже кошелек с таким названием.
      */
     fun isWalletNameAvailable(walletName: String): Boolean {
-        //if (!functions.isWalletNameValid(walletName)) return false //Проверка регистра
         val sql = "SELECT COUNT(*) FROM bank_wallets WHERE Name = ?"
         var count: Int? = null
 

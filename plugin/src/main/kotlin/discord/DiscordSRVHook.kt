@@ -12,7 +12,7 @@ class DiscordSRVHook private constructor() {
         val channel = event.channel.name
         val message = event.message.contentRaw
 
-        Bukkit.broadcastMessage("[DS] : $playerName : $channel : $message")
+        Bukkit.broadcastMessage("[DS] : $playerName : $channel : $message")  //todo: delete fun
     }
 
     companion object {

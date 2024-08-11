@@ -8,36 +8,39 @@ commands:
   #pay:
   #  description: Отправить деньги игроку.
   #  usage: /pay <игрок> <сумма>
-  balance:
-    description: Посмотреть баланс.
-    usage: /balance
-  set-balance:
-    description: Установить значение "Баланс".
-    usage: /set-balance <игрок> <сумма>
-  add-balance:
-    description: Добавить значение к балансу.
-    usage: /add-balance <игрок> <сумма>
-  open-account:
-    description: Открыть кошелек.
-    usage: /open-account
-  account-set-name:
-    description: Установить визуальное имя кошелька.
-    usage: /account-set-name <name> <id>
-  account-verify:
-    description: Верифицировать кошелек игрока.
-    usage: /account-verify <id> <true/false>
-  bank-reload-plugin:
-    description: Перезагрузить плагин.
-    usage: /bank-reload-plugin
-  account-remove:
-    description: Закрыть счет.
-    usage: /account-remove [id | name] <id | name> <true/false>
-  account-set-default-wallet:
-    description: Установить основной счет.
-    usage: /account-set-default-wallet [id | name] <id | name>
-  transfer:
-    description: Перевести валюту.
-    usage: /transfer [t=id|name] [s=id|name]* [amount]
-  account-renaming:
-    description: Переименовать кошелек.
-    usage: /account-renaming <ID wallet>
+  #balance:
+  #  description: Посмотреть баланс.
+  #  usage: /balance
+  #set-balance:
+  #  description: Установить значение "Баланс".
+  #  usage: /set-balance <игрок> <сумма>
+  #add-balance:
+  #  description: Добавить значение к балансу.
+  #  usage: /add-balance <игрок> <сумма>
+  #open-account:
+  #  description: Открыть кошелек.
+  #  usage: /open-account
+  #account-set-name:
+  #  description: Установить визуальное имя кошелька.
+  #  usage: /account-set-name <name> <id>
+  #account-verify:
+  #  description: Верифицировать кошелек игрока.
+  #  usage: /account-verify <id> <true/false>
+  #bank-reload-plugin:
+  #  description: Перезагрузить плагин.
+  #  usage: /bank-reload-plugin
+  #account-remove:
+  #  description: Закрыть счет.
+  #  usage: /account-remove [id | name] <id | name> <true/false>
+  #account-set-default-wallet:
+  #  description: Установить основной счет.
+  #  usage: /account-set-default-wallet [id | name] <id | name>
+  #transfer:
+  #  description: Перевести валюту.
+  #  usage: /transfer [t=id|name] [s=id|name]* [amount]
+  #account-renaming:
+  #  description: Переименовать кошелек.
+  #  usage: /account-renaming <ID wallet>
+  account:
+    description: Работа с кошельками.
+    usage: /account

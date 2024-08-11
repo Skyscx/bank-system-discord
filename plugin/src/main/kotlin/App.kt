@@ -1,11 +1,7 @@
 
 
-import bank.commands.BalanceSetCommand
-import bank.commands.NewTransferCommand
-import bank.commands.accounts.AccountRemoveCommand
-import bank.commands.accounts.AccountSetDefaultWalletCommand
-import bank.commands.accounts.AccountSetNameCommand
-import bank.commands.banker.AccountVerificationCommand
+import bank.commands.accounts.AccountCommands
+import bank.commands.tabcompleter.AccountsCommandCompleter
 import data.Config
 import data.Database
 import data.localisation.LocalisationManager
@@ -68,18 +64,19 @@ class App : JavaPlugin(), Listener {
 
 
         //Commands
+        getCommand("account")?.setExecutor(AccountCommands(database))
+
         //getCommand("pay")?.setExecutor(PayCommand(database))
         //getCommand("balance")?.setExecutor(BalanceCommand(database))
         //getCommand("add-balance")?.setExecutor(BalanceAddCommand(database))
-        getCommand("set-balance")?.setExecutor(BalanceSetCommand(database))
+        //getCommand("set-balance")?.setExecutor(BalanceSetCommand(database))
         //getCommand("open-account")?.setExecutor(AccountOpenCommand())
-        getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
-        getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
-        getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
-        getCommand("transfer")?.setExecutor(NewTransferCommand(database))
-        getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
+        //getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
+        //getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
+        //getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
+        //getCommand("transfer")?.setExecutor(NewTransferCommand(database))
+        //getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
         //getCommand("account-renaming")?.setExecutor(Events())
-
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
 
         //accounts-list
@@ -96,6 +93,9 @@ class App : JavaPlugin(), Listener {
         Bukkit.getPluginManager().registerEvents(AccountOpenInventoryEvent(database, config, discordBot), this)
         //todo: 07/08/2024 21/10 переделать команды, сделать локализацию, попробовать очистить ветку main
         //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)
+
+        // Tab Completer
+        getCommand("account")?.tabCompleter = AccountsCommandCompleter()
 
         //Depends
         if (server.pluginManager.getPlugin("DiscordSRV") != null){

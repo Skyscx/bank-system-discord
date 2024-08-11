@@ -7,6 +7,7 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.ItemStack
 
 class AccountsMenuInventory {
+    //todo: old version
     fun openAccountMenu(player: Player) {
         val openAccount = Bukkit.createInventory(null, InventoryType.HOPPER, "Подтверждение операции")
         //Accept

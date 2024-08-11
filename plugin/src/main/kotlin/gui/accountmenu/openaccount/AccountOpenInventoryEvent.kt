@@ -26,10 +26,10 @@ class AccountOpenInventoryEvent(private val database: Database, config: FileConf
     fun onClick(e: InventoryClickEvent) {
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.HOPPER) {
-            if (e.view.title == "Подтверждение операции") {
+            if (e.view.title == "Подтверждение операции") { //todo: сделать сообщение из конфига
                 if (Objects.requireNonNull(e.currentItem)?.itemMeta != null){
                     //accept
-                    if (e.currentItem!!.itemMeta.displayName == "Подтвердить!") {
+                    if (e.currentItem!!.itemMeta.displayName == "Подтвердить!") { //todo: сделать сообщение из конфига
                         if (functions.hasDiamondOre(player)){
                             val uuidPlayer = player.uniqueId.toString()
                             val countAccounts = database.getWalletsCount(uuidPlayer)
@@ -47,7 +47,7 @@ class AccountOpenInventoryEvent(private val database: Database, config: FileConf
                                     if (discordID != null){
                                         discordNotifier.sendMessageChannel(
                                             channelIdBankerNotifier.toString(),
-                                            "/././././././././././././././././\n" +
+                                            "/././././././././././././././././\n" + //todo: сделать сообщение из конфига
                                                     "Пришел новый запрос на открытие кошелька!\n" +
                                                     "Пользователь - `${player.name}`\n" +
                                                     "Дискорд - $mention\n" +
@@ -57,12 +57,12 @@ class AccountOpenInventoryEvent(private val database: Database, config: FileConf
 
                                         discordNotifier.sendMessageWithButtons(
                                             channelIdBankerNotifier.toString(),
-                                            "Вам необходимо подтвердить или отклонить запрос.",
+                                            "Вам необходимо подтвердить или отклонить запрос.", //todo: сделать сообщение из конфига
                                             lastID
                                         )
                                     }else {
                                         // Обработка случая, когда discordID == null
-                                        functions.sendMessagePlayer(player, "Не удалось найти идентификатор Discord.")
+                                        functions.sendMessagePlayer(player, "Не удалось найти идентификатор Discord.") //todo: сделать сообщение из конфига
                                     }
                                 }
                                 database.insertWallet(player, currencyAccountConfig!!, price, verificationInt).thenAccept { isCreate ->
@@ -70,20 +70,20 @@ class AccountOpenInventoryEvent(private val database: Database, config: FileConf
                                         functions.takeItem(player, currencyAccountConfig, priceAccountConfig)
                                         //functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
                                     } else {
-                                        functions.sendMessagePlayer(player, "Не удалось создать банковский счет.")
+                                        functions.sendMessagePlayer(player, "Не удалось создать банковский счет.") //todo: сделать сообщение из конфига
                                     }
                                 }
-                                functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
+                                functions.sendMessagePlayer(player, "Банковский счет был успешно создан!") //todo: сделать сообщение из конфига
                             }else{
-                                functions.sendMessagePlayer(player, "У вас уже максимальное количество счетов!")
+                                functions.sendMessagePlayer(player, "У вас уже максимальное количество счетов!") //todo: сделать сообщение из конфига
                             }
                         }else{
-                            functions.sendMessagePlayer(player,"Недостаточно алмазной руды на руках!")
+                            functions.sendMessagePlayer(player,"Недостаточно алмазной руды на руках!") //todo: сделать сообщение из конфига
                         }
                     }
                     //close
-                    if (e.currentItem!!.itemMeta.displayName == "Отклонить!") {
-                        functions.sendMessagePlayer(player, "Отклонено.")
+                    if (e.currentItem!!.itemMeta.displayName == "Отклонить!") { //todo: сделать сообщение из конфига
+                        functions.sendMessagePlayer(player, "Отклонено.") //todo: сделать сообщение из конфига
                     }
                     e.isCancelled
                     player.closeInventory()

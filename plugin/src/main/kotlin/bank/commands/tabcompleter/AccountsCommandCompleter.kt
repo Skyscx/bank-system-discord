@@ -6,27 +6,34 @@ import org.bukkit.command.TabCompleter
 
 class AccountsCommandCompleter : TabCompleter {
     override fun onTabComplete(sender: CommandSender, command: Command, label: String, args: Array<String>): List<String>? {
-        if (args.size == 1) {
-            return if (sender.hasPermission("skyresourcepack.admin") || sender.isOp) {
-                listOf(
-                    "TODO"
-                )
-            } else {
-                listOf(
-                    "open",
-                    "remove",
-                    "rename",
-                    "set-default",
-                    "set-name",
-                    "list"
-                )
-            }
-        }
+        if (args.size == 1)  return listOf(
+                "open",
+                "remove",
+                "rename",
+                "set-default",
+                "list"
+            )
         if (args.size == 2) {
-            if (args[0].equals("open", ignoreCase = true)) {
-                return listOf("<name>")
-            }
+            if (args[0] == "remove") return listOf(
+                    " ",
+                    "<id/name>",
+                    "all"
+                )
+            if (args[0] == "rename") return listOf(
+                "<id/name>"
+            )
+            if (args[0] == "set-default") return listOf(
+                "<id/name>"
+            )
             return emptyList()
+        }
+        if (args.size == 3){
+            if (args[0] == "remove") return listOf(
+                "<true/false>"
+            )
+            if (args[0] == "rename") return listOf(
+                "<new name>"
+            )
         }
         return null
     }

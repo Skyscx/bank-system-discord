@@ -17,7 +17,7 @@ class InventoryManager {
             val inventory = creator.createInventory(player)
             player.openInventory(inventory)
         } else {
-            player.sendMessage("Unknown inventory type: $inventoryType")
+            player.sendMessage("Unknown inventory type: $inventoryType") //todo: переделать сообщение на конфиг месседж
         }
     }
 }

@@ -5,6 +5,12 @@ import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
 
 class DiscordNotifier(private val jda: JDA) {
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+    //todo: сделать сообщение из конфига!!!!
+
     fun sendMessageChannel(channelId: String, message: String) {
         val channel = jda.getTextChannelById(channelId)
         if (channel != null) {

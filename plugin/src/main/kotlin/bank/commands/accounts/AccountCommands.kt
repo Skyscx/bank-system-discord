@@ -2,12 +2,13 @@ package bank.commands.accounts
 
 import App.Companion.localizationManager
 import bank.commands.accounts.collection.*
+import data.Database
 import functions.Functions
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 
-class AccountCommands : CommandExecutor{
+class AccountCommands (private val database: Database) : CommandExecutor{
     private val functions = Functions()
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val isPlayer = functions.senderIsPlayer(sender)
@@ -27,24 +28,20 @@ class AccountCommands : CommandExecutor{
                 openCommandHandler.handleOpenCommand(sender, argsArray)
             }
             "remove" -> {
-                val removeCommandHandler = RemoveCommandHandler()
+                val removeCommandHandler = RemoveCommandHandler(database)
                 removeCommandHandler.handleRemoveCommand(sender, argsArray)
             }
             "rename" -> {
-                val renameCommandHandler = RenameCommandHandler()
+                val renameCommandHandler = RenameCommandHandler(database)
                 renameCommandHandler.handleRenameCommand(sender, argsArray)
             }
-            "set-name" -> {
-                val setNameCommandHandler = SetNameCommandHandler()
-                setNameCommandHandler.handleSetNameCommand(sender, argsArray)
-            }
             "set-default" -> {
-                val setDefaultCommandHandler = SetDefaultCommandHandler()
+                val setDefaultCommandHandler = SetDefaultCommandHandler(database)
                 setDefaultCommandHandler.handleSetDefaultCommand(sender, argsArray)
             }
             "list" -> {
-                val listCommandHandler = ListCommandHandler()
-                listCommandHandler.handleListCommand(sender, argsArray)
+                val listCommandHandler = ListCommandHandler(database)
+                listCommandHandler.handleListCommand(sender)
             }
             else -> {
                 functions.unknownCommand(sender)
