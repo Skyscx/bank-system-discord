@@ -26,13 +26,23 @@ class LocalisationManager(private val app: App) {
     }
 
     private fun loadLocaleFile(locale: String) {
+        if (locales.containsKey(locale)) {
+            app.logger.info("Locale '$locale' already loaded.")
+            return
+        }
+
         val localeFile = File(app.dataFolder, "locales/$locale.yml")
         if (localeFile.exists()) {
             val config = YamlConfiguration.loadConfiguration(localeFile)
             locales[locale] = config
+            app.logger.info("Successfully loaded locale '$locale'.")
         } else {
             app.logger.warning("Locale file for '$locale' not found. Falling back to default locale 'en'.")
-            loadLocaleFile("en")
+            if (locale != "en") {
+                loadLocaleFile("en")
+            } else {
+                app.logger.severe("Default locale file 'en' not found. Please check your configuration.")
+            }
         }
     }
 
@@ -41,7 +51,7 @@ class LocalisationManager(private val app: App) {
         val message = config?.getString(key) ?: "Message not found"
         return replaceVariables(message, *replacements)
     }
-    // бесполезная фигня
+
     fun getMessageForPlayer(player: Player, key: String, vararg replacements: Pair<String, String>): String {
         val locale = player.locale.lowercase(Locale.getDefault())
         return getMessageForLocale(locale, key, *replacements)

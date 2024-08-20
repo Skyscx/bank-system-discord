@@ -33,16 +33,27 @@ class Database private constructor(url: String, plugin: App?) {
     /**
      * Инициализация базы данных
      */
-
     init {
         this.plugin = plugin
         try {
-            connection = DriverManager.getConnection(url)
+            connect(url)
             createTableUsers()
             createTableWallets()
             createTableHistory()
         } catch (e: SQLException) {
             e.printStackTrace()
+            plugin?.logger?.severe("Failed to initialize database: ${e.message}")
+            plugin?.server?.pluginManager?.disablePlugin(plugin)
+        }
+    }
+
+    private fun connect(url: String) {
+        try {
+            connection = DriverManager.getConnection(url)
+            plugin?.logger?.info("Successfully connected to the database.")
+        } catch (e: SQLException) {
+            plugin?.logger?.severe("Failed to connect to the database: ${e.message}")
+            throw e
         }
     }
 
@@ -51,7 +62,6 @@ class Database private constructor(url: String, plugin: App?) {
      */
     @Throws(SQLException::class)
     fun createTableUsers() {
-        //todo: 2f auth, privatekey, lastOperation, usdt
         val sql = """
         CREATE TABLE IF NOT EXISTS bank_users (
             ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -81,7 +91,6 @@ class Database private constructor(url: String, plugin: App?) {
      */
     @Throws(SQLException::class)
     fun createTableWallets() {
-        //TODO: ЗАМЕНИТЬ НА LONG либо реализовать по другому.(Balance) // PrivateKey - not usage
         val sql = """
             CREATE TABLE IF NOT EXISTS bank_wallets (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -89,7 +98,7 @@ class Database private constructor(url: String, plugin: App?) {
                 DiscordID TEXT NOT NULL,
                 Registration TEXT NOT NULL,
                 PrivateKey TEXT NOT NULL,
-                Balance INTEGER NOT NULL, 
+                Balance INTEGER NOT NULL,
                 Currency TEXT NOT NULL,
                 Name TEXT NOT NULL,
                 Verification INTEGER NOT NULL,

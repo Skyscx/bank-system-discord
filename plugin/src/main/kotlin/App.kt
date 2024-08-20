@@ -38,8 +38,6 @@ class App : JavaPlugin(), Listener {
         // Config
         configPlugin = Config.getInstance(this)
         configPlugin.loadConfig()
-        // Localisation
-        localizationManager = LocalisationManager(this)
         // Database
         val databaseFolder = File(dataFolder, "data")
         if (!databaseFolder.exists()) {
@@ -55,10 +53,25 @@ class App : JavaPlugin(), Listener {
             return
         }
 
+        /**
+         * NEW DATABASE
+         *
+         * // Инициализация DatabaseManager
+         *         try {
+         *             dbManager = DatabaseManager.getInstance(url, this)
+         *         } catch (e: SQLException) {
+         *             e.printStackTrace()
+         *             server.pluginManager.disablePlugin(this)
+         *             return
+         *         }
+         */
         // DiscordBot
         val discordBot = DiscordBot.getInstance(database, config)
         val token = config.getString("bot-token")
         discordBot.start(token)
+        // Localisation
+        localizationManager = LocalisationManager(this)
+        copyConfigFile("locales/messages_en.yml")
         // Classes
 
 
@@ -128,6 +141,21 @@ class App : JavaPlugin(), Listener {
     }
     fun getDiscordBot(): DiscordBot {
         return discordBot
+    }
+    private fun copyConfigFile(resourcePath: String) {
+        val pluginDirectory = dataFolder.toPath()
+        val targetPath = pluginDirectory.resolve(resourcePath)
+
+        if (!targetPath.toFile().exists()) {
+            try {
+                saveResource(resourcePath, false)
+                logger.info("Successfully copied $resourcePath to $targetPath")
+            } catch (e: Exception) {
+                logger.severe("Failed to copy $resourcePath to $targetPath: ${e.message}")
+            }
+        } else {
+            logger.info("$resourcePath already exists at $targetPath")
+        }
     }
 
 
