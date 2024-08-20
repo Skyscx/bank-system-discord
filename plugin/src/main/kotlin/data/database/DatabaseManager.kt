@@ -1,4 +1,4 @@
-package data
+package data.database
 
 import App
 import java.sql.Connection
@@ -34,16 +34,17 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
     }
 
     // Обновление данных
-    fun executeUpdate(query: String, vararg args: Any) {
-        try {
+    fun executeUpdate(query: String, vararg args: Any): Boolean {
+        return try {
             val preparedStatement: PreparedStatement = connection!!.prepareStatement(query)
             for (i in args.indices) {
                 preparedStatement.setObject(i + 1, args[i])
             }
-            preparedStatement.executeUpdate()
-            plugin.logger.info("Query executed successfully.")
+            val rowsAffected = preparedStatement.executeUpdate()
+            rowsAffected > 0
         } catch (e: SQLException) {
             e.printStackTrace()
+            false
         }
     }
 

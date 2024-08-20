@@ -676,7 +676,7 @@ class Database private constructor(url: String, plugin: App?) {
             e.printStackTrace()
         }
         return walletData
-    }
+    } //TODO: 20/08/2024 // 21/06
 
     /**
      * Получение статуса верификации кошелька в таблице кошельков

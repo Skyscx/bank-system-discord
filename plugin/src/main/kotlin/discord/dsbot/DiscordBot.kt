@@ -1,6 +1,7 @@
 package discord.dsbot
-import data.Database
 //import discord.dsbot.commands.PayCommandDiscord
+import App.Companion.dbManager
+import data.database.DatabaseManager
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.UserSnowflake
@@ -9,14 +10,14 @@ import net.dv8tion.jda.api.interactions.commands.build.Commands
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData
 import org.bukkit.configuration.file.FileConfiguration
 
-class DiscordBot private constructor(private val database: Database, private val config: FileConfiguration) {
+class DiscordBot private constructor(dbManager: DatabaseManager, private val config: FileConfiguration) {
     companion object {
         @Volatile
         private var instance: DiscordBot? = null
 
-        fun getInstance(database: Database, config: FileConfiguration): DiscordBot =
+        fun getInstance(dbManager: DatabaseManager, config: FileConfiguration): DiscordBot =
             instance ?: synchronized(this) {
-                instance ?: DiscordBot(database, config).also { instance = it }
+                instance ?: DiscordBot(dbManager, config).also { instance = it }
             }
     }
 
@@ -30,7 +31,7 @@ class DiscordBot private constructor(private val database: Database, private val
     fun start(token: String?) {
         jda = JDABuilder.createDefault(token)
             //.addEventListeners(PayCommandDiscord(database, config))
-            .addEventListeners(DiscordNotifierEvents(database, this))
+            .addEventListeners(DiscordNotifierEvents(dbManager, this))
             // .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
             .build()
         jda.awaitReady()

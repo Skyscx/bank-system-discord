@@ -1,15 +1,11 @@
 
 
-import bank.commands.accounts.AccountCommands
 import bank.commands.tabcompleter.AccountsCommandCompleter
 import data.Config
-import data.Database
+import data.database.DatabaseManager
 import data.localisation.LocalisationManager
 import discord.DiscordSRVHook
 import discord.dsbot.DiscordBot
-import functions.events.PlayerConnection
-import gui.accountmenu.openaccount.AccountOpenInventoryEvent
-import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -23,8 +19,9 @@ class App : JavaPlugin(), Listener {
     companion object {
         lateinit var configPlugin: Config
         lateinit var discordBot: DiscordBot
-        lateinit var database: Database
+        //lateinit var database: Database
         lateinit var localizationManager: LocalisationManager
+        lateinit var dbManager: DatabaseManager
     }
 
 
@@ -39,45 +36,46 @@ class App : JavaPlugin(), Listener {
         configPlugin = Config.getInstance(this)
         configPlugin.loadConfig()
         // Database
-        val databaseFolder = File(dataFolder, "data")
-        if (!databaseFolder.exists()) {
-            databaseFolder.mkdirs()
-        }
-        val databaseFile = File(databaseFolder, "database.db")
+        /**
+         * Создание папки "data" - deleted
+         */
+//        val databaseFolder = File(dataFolder, "data")
+//        if (!databaseFolder.exists()) {
+//            databaseFolder.mkdirs()
+//        }
+        val databaseFile = File(pluginFolder, "database.db")
         val url = "jdbc:sqlite:${databaseFile.absolutePath}"
+
+        /**
+         * Старая версия базы данных
+         */
+//        try {
+//            database = Database.getInstance(url,this)
+//        } catch (e: SQLException) {
+//            e.printStackTrace()
+//            server.pluginManager.disablePlugin(this)
+//            return
+//        }
+        // Инициализация DatabaseManager
         try {
-            database = Database.getInstance(url,this)
+            dbManager = DatabaseManager.getInstance(url, this)
         } catch (e: SQLException) {
             e.printStackTrace()
             server.pluginManager.disablePlugin(this)
             return
         }
-
-        /**
-         * NEW DATABASE
-         *
-         * // Инициализация DatabaseManager
-         *         try {
-         *             dbManager = DatabaseManager.getInstance(url, this)
-         *         } catch (e: SQLException) {
-         *             e.printStackTrace()
-         *             server.pluginManager.disablePlugin(this)
-         *             return
-         *         }
-         */
         // DiscordBot
-        val discordBot = DiscordBot.getInstance(database, config)
+        val discordBot = DiscordBot.getInstance(dbManager, config)
         val token = config.getString("bot-token")
         discordBot.start(token)
         // Localisation
         localizationManager = LocalisationManager(this)
         copyConfigFile("locales/messages_en.yml")
-        // Classes
-
-
 
         //Commands
-        getCommand("account")?.setExecutor(AccountCommands(database))
+        // TODO: Временно переделано!!! Тестирование dbManager
+        //getCommand("account")?.setExecutor(AccountCommands(database))
+        // TODO: Временно переделано!!! Тестирование dbManager
 
         //getCommand("pay")?.setExecutor(PayCommand(database))
         //getCommand("balance")?.setExecutor(BalanceCommand(database))
@@ -102,9 +100,13 @@ class App : JavaPlugin(), Listener {
         //account-close
 
         //gui.accountmenu.renamingaccount.anviltest.Events
-        Bukkit.getPluginManager().registerEvents(PlayerConnection(database), this)
-        Bukkit.getPluginManager().registerEvents(AccountOpenInventoryEvent(database, config, discordBot), this)
-        //todo: 07/08/2024 21/10 переделать команды, сделать локализацию, попробовать очистить ветку main
+
+        // TODO: Временно переделано!!! Тестирование dbManager
+        //Bukkit.getPluginManager().registerEvents(PlayerConnection(database), this)
+        //Bukkit.getPluginManager().registerEvents(AccountOpenInventoryEvent(database, config, discordBot), this)
+        // TODO: Временно переделано!!! Тестирование dbManager
+
+        //todo: 07/08/2024 21/10 переделать команды, сделать локализацию
         //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)
 
         // Tab Completer
@@ -125,7 +127,10 @@ class App : JavaPlugin(), Listener {
         if (server.pluginManager.getPlugin("DiscordSRV") != null){
             DiscordSRVHook.unregister()
         }
-        database.closeConnection();
+        dbManager.close()
+        // TODO: Временно переделано!!! Тестирование dbManager
+        //database.closeConnection()
+        // TODO: Временно переделано!!! Тестирование dbManager
         saveConfig()
     }
 

@@ -9,7 +9,7 @@ class FunctionsDiscord() {
         val discordId = DiscordSRV.getPlugin().accountLinkManager.getDiscordId(uuid)
         return discordId
     }
-
+    //TODO: Если нету -> вернуть string "Null"
 
 
 
