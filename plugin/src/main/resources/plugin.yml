@@ -41,6 +41,6 @@ commands:
   #account-renaming:
   #  description: Переименовать кошелек.
   #  usage: /account-renaming <ID wallet>
-  account:
+  wallet:
     description: Работа с кошельками.
-    usage: /account
+    usage: /wallet

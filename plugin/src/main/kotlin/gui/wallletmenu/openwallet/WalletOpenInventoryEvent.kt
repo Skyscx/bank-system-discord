@@ -1,4 +1,4 @@
-package gui.accountmenu.openaccount
+package gui.wallletmenu.openwallet
 
 import App.Companion.localizationManager
 import App.Companion.userDB
@@ -14,7 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import java.util.*
 
-class AccountOpenInventoryEvent(config: FileConfiguration, private val discordBot: DiscordBot) : Listener {
+class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot: DiscordBot) : Listener {
     private val functions = Functions()
     //private val functionsDiscord = FunctionsDiscord(discordBot)
     //private val discordBot = DiscordBot.getInstance(database, config)

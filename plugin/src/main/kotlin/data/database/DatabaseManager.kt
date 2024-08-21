@@ -49,7 +49,6 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
     }
 
     // Получение данных
-    // Получение данных
     fun executeQuery(query: String, vararg args: Any): List<Map<String, Any>> {
         val result = mutableListOf<Map<String, Any>>()
         try {
@@ -68,8 +67,6 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
                     val value = resultSet.getObject(i)
                     if (value != null) {
                         row[columnName] = value
-                    } else {
-                        plugin.logger.warning("Null value found for column: $columnName")
                     }
                 }
                 result.add(row)
@@ -84,7 +81,6 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
         try {
             val statement = connection!!.createStatement()
             statement.execute(query)
-            plugin.logger.info("Table created successfully.")
         } catch (e: SQLException) {
             e.printStackTrace()
         }

@@ -5,7 +5,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-class AccountVerificationInventory {
+class WalletVerificationInventory {
     fun accountVerificationMenu(player: Player) {
         val accountVerification = Bukkit.createInventory(null, 54, "Верификация пользователя")
         //Head Info

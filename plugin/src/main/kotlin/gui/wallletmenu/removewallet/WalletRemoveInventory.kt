@@ -1,4 +1,4 @@
-package gui.accountmenu.removeaccount
+package gui.wallletmenu.removewallet
 
 import gui.InventoryCreator
 import gui.SystemGUI
@@ -7,7 +7,7 @@ import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 
-class AccountRemoveInventory : InventoryCreator {
+class WalletRemoveInventory : InventoryCreator {
     private val systemGUI = SystemGUI()
     override fun createInventory(player: Player) : Inventory {
         val removeAccount = Bukkit.createInventory(null, 54, "Удаление кошелька")

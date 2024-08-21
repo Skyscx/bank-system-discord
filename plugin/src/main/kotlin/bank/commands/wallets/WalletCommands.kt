@@ -1,13 +1,13 @@
-package bank.commands.accounts
+package bank.commands.wallets
 
 import App.Companion.localizationManager
-import bank.commands.accounts.collection.*
+import bank.commands.wallets.collection.*
 import functions.Functions
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 
-class AccountCommands : CommandExecutor{
+class WalletCommands : CommandExecutor{
     private val functions = Functions()
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val isPlayer = functions.senderIsPlayer(sender)

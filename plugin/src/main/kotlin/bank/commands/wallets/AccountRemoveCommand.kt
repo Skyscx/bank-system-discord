@@ -1,16 +1,16 @@
-package bank.commands.accounts
+package bank.commands.wallets
 
 import data.Database
 import functions.Functions
 import gui.InventoryManager
-import gui.accountmenu.removeaccount.AccountRemoveInventory
+import gui.wallletmenu.removewallet.WalletRemoveInventory
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 class AccountRemoveCommand(private val database: Database) : CommandExecutor {
-    private val accountRemoveInventory = AccountRemoveInventory()
+    private val walletRemoveInventory = WalletRemoveInventory()
     private val functions = Functions()
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {

@@ -1,4 +1,4 @@
-package bank.commands.accounts.collectionforce
+package bank.commands.wallets.collectionforce
 
 import org.bukkit.command.CommandSender
 

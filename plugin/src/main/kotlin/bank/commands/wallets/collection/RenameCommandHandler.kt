@@ -1,4 +1,4 @@
-package bank.commands.accounts.collection
+package bank.commands.wallets.collection
 
 import App.Companion.localizationManager
 import App.Companion.walletDB

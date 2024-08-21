@@ -21,3 +21,5 @@ currency-block-default: DIAMOND_ORE
 count-donate-accounts: 0
 # Стоимость создания кошелька, от 1 до 2304
 price-account: 15
+# Максимальная вместимость кошелька
+wallet-limit: 1000000000

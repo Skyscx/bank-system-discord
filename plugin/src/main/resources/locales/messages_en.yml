@@ -11,11 +11,34 @@ localisation.messages.out.unknown-command: "Неизвестная команд�
 localisation.messages.out.no-permissions: "У вас недостаточно разрешений, для выполнения данной команды!"
 localisation.messages.out.developing: "Данная возможность находиться на стадии разработки. Попробуйте позже."
 localisation.messages.out.not-owner: "Вы не владелец данного кошелька!"
+localisation.messages.out.wallet-same-thing: "Транзакция не может быть произведена на одинаковых кошельках."
+localisation.messages.out.amount-incorrect: "Неверно указана сумма."
+
+
+
 localisation.messages.out.error-search-data-in-database: "Произошла ошибка инициализации данных. Обратитесь к администратору или банкиру."
 localisation.messages.out.empty-wallets-list: "Открытых кошельков нету, чтобы их закрыть."
 localisation.messages.out.wallet-name-valid: "Имя кошелька должно быть минимум из 5 символов, максимум 32 символа. Первый символ - не цифра."
-localisation.messages.out.wallet-null: "Данный кошелек не существует."
+localisation.messages.out.wallet-null: "Кошелек не существует. ($wallet-owner)"
 localisation.messages.out.name-is-not-free: "Данное имя кошелька ($walletName) уже занято."
+localisation.messages.out.wallet.unavailable.sender: "Ваш кошелек на данный момент не доступен!"
+localisation.messages.out.wallet.unavailable.target: "Кошелек получателя на данный момент не доступен!"
+localisation.messages.out.wallet.not-balance: "На вашем счете недостаточно средств! Баланс: $balance"
+localisation.messages.out.wallet.overflow.target: "Операция невозможна! На данный счет можно перевести $free"
+localisation.messages.out.wallet.overflow.sender: "Операция невозможна! На ваш счет можно пополнить на $free"
+localisation.messages.out.wallet.currency.mismatch: "Валюты кошельков не совпадают! ($currencyS -> $currencyT)"
+localisation.messages.out.wallet.target-not-found: "Получатель не найден!"
+localisation.messages.out.wallet.transfer-successfully: "Вы перевели $amount $currency1 игроку $target (#$senderWalletID -> #$targetWalletID)"
+localisation.messages.out.wallet.transfer-unsuccessfully: "Ошибка при выполнении перевода."
+
+
+
+
+localisation.sender: "Отправитель"
+localisation.target: "Получатель"
+
+
+
 
 # Генерация сообщений
 
@@ -35,6 +58,10 @@ localisation.messages.usage.account.set-default:
 localisation.messages.usage.account.set-name:
 localisation.messages.usage.account.list:
 localisation.messages.usage.account.force:
+localisation.messages.usage.transfer: "Используйте: /transfer <WalletID/WalletName (S)> <WalletID/WalletName (T)> <amount>"
+localisation.messages.usage.transfer.default: "Используйте: /transfer default <Player (T)> <amount>"
+
+
 
 # Текстовые поля для оформления GUI
 

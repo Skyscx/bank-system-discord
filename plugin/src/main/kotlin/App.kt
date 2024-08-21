@@ -1,7 +1,7 @@
 
 
-import bank.commands.accounts.AccountCommands
-import bank.commands.tabcompleter.AccountsCommandCompleter
+import bank.commands.tabcompleter.WalletsCommandCompleter
+import bank.commands.wallets.WalletCommands
 import data.Config
 import data.database.DatabaseManager
 import data.database.collection.History
@@ -12,7 +12,7 @@ import discord.DiscordSRVHook
 import discord.FunctionsDiscord
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
-import gui.accountmenu.openaccount.AccountOpenInventoryEvent
+import gui.wallletmenu.openwallet.WalletOpenInventoryEvent
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -27,7 +27,6 @@ class App : JavaPlugin(), Listener {
     companion object {
         lateinit var configPlugin: Config
         lateinit var discordBot: DiscordBot
-        //lateinit var database: Database
         lateinit var localizationManager: LocalisationManager
 
         lateinit var dbManager: DatabaseManager
@@ -37,38 +36,21 @@ class App : JavaPlugin(), Listener {
 
     }
 
-
-
     override fun onEnable() {
         // Folder
         val pluginFolder = dataFolder
         if (!pluginFolder.exists()) {
             pluginFolder.mkdirs()
         }
+
         // Config
         configPlugin = Config.getInstance(this)
         configPlugin.loadConfig()
+
         // Database
-        /**
-         * Создание папки "data" - deleted
-         */
-//        val databaseFolder = File(dataFolder, "data")
-//        if (!databaseFolder.exists()) {
-//            databaseFolder.mkdirs()
-//        }
         val databaseFile = File(pluginFolder, "database.db")
         val url = "jdbc:sqlite:${databaseFile.absolutePath}"
 
-        /**
-         * Старая версия базы данных
-         */
-//        try {
-//            database = Database.getInstance(url,this)
-//        } catch (e: SQLException) {
-//            e.printStackTrace()
-//            server.pluginManager.disablePlugin(this)
-//            return
-//        }
         // Инициализация DatabaseManager
         try {
             dbManager = DatabaseManager.getInstance(url, this)
@@ -77,10 +59,12 @@ class App : JavaPlugin(), Listener {
             server.pluginManager.disablePlugin(this)
             return
         }
+
         // DiscordBot
         val discordBot = DiscordBot.getInstance(dbManager, config)
         val token = config.getString("bot-token")
         discordBot.start(token)
+
         // Инициализация Database Collection
         val functionsDiscord = FunctionsDiscord()
         walletDB = Wallet.getInstance(dbManager, this, functionsDiscord)
@@ -92,9 +76,7 @@ class App : JavaPlugin(), Listener {
         copyConfigFile("locales/messages_en.yml")
 
         //Commands
-        // TODO: Временно переделано!!! Тестирование dbManager
-        getCommand("account")?.setExecutor(AccountCommands())
-        // TODO: Временно переделано!!! Тестирование dbManager
+        getCommand("account")?.setExecutor(WalletCommands())
 
         //getCommand("pay")?.setExecutor(PayCommand(database))
         //getCommand("balance")?.setExecutor(BalanceCommand(database))
@@ -118,18 +100,14 @@ class App : JavaPlugin(), Listener {
         //bank-history
         //account-close
 
-        //gui.accountmenu.renamingaccount.anviltest.Events
-
-        // TODO: Временно переделано!!! Тестирование dbManager
         Bukkit.getPluginManager().registerEvents(PlayerConnection(), this)
-        Bukkit.getPluginManager().registerEvents(AccountOpenInventoryEvent(config, discordBot), this)
-        // TODO: Временно переделано!!! Тестирование dbManager
+        Bukkit.getPluginManager().registerEvents(WalletOpenInventoryEvent(config, discordBot), this)
 
         //todo: 07/08/2024 21/10 переделать команды, сделать локализацию
         //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)
 
         // Tab Completer
-        getCommand("account")?.tabCompleter = AccountsCommandCompleter()
+        getCommand("wallet")?.tabCompleter = WalletsCommandCompleter()
 
         //Depends
         if (server.pluginManager.getPlugin("DiscordSRV") != null){

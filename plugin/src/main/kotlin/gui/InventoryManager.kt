@@ -1,13 +1,13 @@
 package gui
 
-import gui.accountmenu.openaccount.AccountOpenInventory
-import gui.accountmenu.removeaccount.AccountRemoveInventory
+import gui.wallletmenu.openwallet.WalletOpenInventory
+import gui.wallletmenu.removewallet.WalletRemoveInventory
 import org.bukkit.entity.Player
 
 class InventoryManager {
     private val inventoryCreators = mapOf(
-        "open" to AccountOpenInventory(),
-        "remove" to AccountRemoveInventory()
+        "open" to WalletOpenInventory(),
+        "remove" to WalletRemoveInventory()
         /**more inventory**/
     )
 

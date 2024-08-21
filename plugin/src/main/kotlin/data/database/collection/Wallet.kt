@@ -87,10 +87,7 @@ class Wallet (
     fun getInspectorWallet(id: Int): String? {
         val sql = "SELECT Inspector FROM bank_wallets WHERE ID = ?"
         val result = dbManager.executeQuery(sql, id)
-        if (result.isEmpty()) {
-            plugin.logger.warning("No Inspector found for wallet ID: $id")
-            return null
-        }
+        if (result.isEmpty()) return null
         val row = result.firstOrNull()
         return row?.get("Inspector") as? String
     }
@@ -109,10 +106,7 @@ class Wallet (
     fun getVerificationWalletDate(id: Int): String? {
         val sql = "SELECT VerificationDate FROM bank_wallets WHERE ID = ?"
         val result = dbManager.executeQuery(sql, id)
-        if (result.isEmpty()) {
-            plugin.logger.warning("No VerificationDate found for wallet ID: $id")
-            return null
-        }
+        if (result.isEmpty()) return null
         val row = result.firstOrNull()
         return row?.get("VerificationDate") as? String
     }
@@ -160,10 +154,7 @@ class Wallet (
     fun getUUIDbyWalletID(id: Int): String? {
         val sql = "SELECT UUID FROM bank_wallets WHERE ID = ?"
         val result = dbManager.executeQuery(sql, id)
-        if (result.isEmpty()) {
-            plugin.logger.warning("No UUID found for wallet ID: $id")
-            return null
-        }
+        if (result.isEmpty()) return null
         val row = result.firstOrNull()
         return row?.get("UUID") as? String
     }
@@ -174,33 +165,21 @@ class Wallet (
     fun getPlayerByWalletID(id: Int): Player? {
         val sql = "SELECT UUID FROM bank_wallets WHERE ID = ?"
         val result = dbManager.executeQuery(sql, id)
-        if (result.isEmpty()) {
-            plugin.logger.warning("No Player found for wallet ID: $id")
-            return null
-        }
+        if (result.isEmpty()) return null
         val row = result.firstOrNull()
         val uuid = row?.get("UUID") as? String
         return uuid?.let { Bukkit.getPlayer(UUID.fromString(it)) }
     }
 
     /**
-     * Получение баланса игрока из базы данных (NOW: Неактуальный метод, необходимо переделать)
+     * Получение баланса игрока из базы данных
      */
-    fun getWalletBalance(id: Int): Int {
+    fun getWalletBalance(walletID: Int): Int? {
         val sql = "SELECT Balance FROM bank_wallets WHERE ID = ?"
-        var balance = 0
-
-        try {
-            val result = dbManager.executeQuery(sql, id)
-            if (result.isNotEmpty()) {
-                val row = result.firstOrNull()
-                balance = row?.get("Balance") as? Int ?: 0
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
-        }
-
-        return balance
+        val result = dbManager.executeQuery(sql, walletID)
+        if (result.isEmpty()) return null
+        val row = result.firstOrNull()
+        return row?.get("Balance") as? Int
     }
 
     /**
@@ -215,17 +194,11 @@ class Wallet (
     fun checkWalletStatus(walletID: Int): Boolean {
         val sql = "SELECT Status FROM bank_wallets WHERE ID = ?"
         var status = false
-
-        try {
-            val result = dbManager.executeQuery(sql, walletID)
-            if (result.isNotEmpty()) {
-                val row = result.firstOrNull()
-                status = (row?.get("Status") as? Int) == 1
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
+        val result = dbManager.executeQuery(sql, walletID)
+        if (result.isNotEmpty()) {
+            val row = result.firstOrNull()
+            status = (row?.get("Status") as? Int) == 1
         }
-
         return status
     }
 
@@ -241,27 +214,6 @@ class Wallet (
         currency: String,
         status: Int
     ): Boolean {
-        //todo: подумать над проверками
-        if (!checkWalletStatus(senderWalletID)) {
-            //message sender - wallet not access
-            return false
-        }
-        if (!checkWalletStatus(targetWalletID)) {
-            //message target - wallet not access
-            return false
-        }
-        val sql = "SELECT Balance FROM bank_wallets WHERE ID = ?"
-        val result = dbManager.executeQuery(sql, senderWalletID)
-        if (result.isEmpty()) {
-            plugin.logger.warning("No Balance found for wallet ID: $senderWalletID")
-            return false
-        }
-        val row = result.firstOrNull()
-        val senderBalance = row?.get("Balance") as? Int
-        if (senderBalance == null || senderBalance < amount) { //TODO: Проверку на null senderBalance сделать отдельной
-            println("Недостаточно средств на счете отправителя")
-            return false
-        }
         updateWalletBalance(senderWalletID, -amount)
         updateWalletBalance(targetWalletID, amount)
 
@@ -287,16 +239,6 @@ class Wallet (
         }
 
         return count
-    }
-
-    /**
-     * Присвоение уникального имени кошелька пользователя по ID кошелька.
-     *
-     * TODO: Необходимо сделать проверку на занятость имени кошелька.
-     */
-    fun setWalletName(uuid: String, name: String, id: Int): Boolean {
-        val sql = "UPDATE bank_wallets SET Name = ? WHERE UUID = ? AND ID = ?"
-        return dbManager.executeUpdate(sql, name, uuid, id)
     }
 
     /**

@@ -1,4 +1,4 @@
-package gui.accountmenu.openaccount
+package gui.wallletmenu.openwallet
 
 import App.Companion.localizationManager
 import gui.InventoryCreator
@@ -9,7 +9,7 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 
-class AccountOpenInventory : InventoryCreator {
+class WalletOpenInventory : InventoryCreator {
     private val systemGUI = SystemGUI()
     override fun createInventory(player: Player): Inventory {
         //todo: сделать получение цены создания кошелька.

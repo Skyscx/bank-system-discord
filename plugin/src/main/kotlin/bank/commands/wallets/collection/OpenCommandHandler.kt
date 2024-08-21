@@ -1,4 +1,4 @@
-package bank.commands.accounts.collection
+package bank.commands.wallets.collection
 
 import gui.InventoryManager
 import org.bukkit.command.CommandSender
