@@ -1,12 +1,12 @@
 package bank.commands.accounts.collection
 
 import App.Companion.localizationManager
-import data.Database
+import App.Companion.walletDB
 import functions.Functions
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class RenameCommandHandler(private val database: Database) {
+class RenameCommandHandler() {
     val functions = Functions()
 
     fun handleRenameCommand(sender: CommandSender, args: Array<String>) {
@@ -22,23 +22,23 @@ class RenameCommandHandler(private val database: Database) {
 
         val player = sender as Player
         val uuid = player.uniqueId.toString()
-        val walletID = identifier.toIntOrNull() ?: database.getWalletID(identifier)
+        val walletID = identifier.toIntOrNull() ?: walletDB.getWalletID(identifier)
 
-        if (walletID == null || !database.doesIdExistWallet(walletID)) {
+        if (walletID == null || !walletDB.doesIdExistWallet(walletID)) {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet-null"))
             return
         }
-        val walletOwnerUUID = database.getUUIDbyWalletID(walletID)
+        val walletOwnerUUID = walletDB.getUUIDbyWalletID(walletID)
         if (uuid != walletOwnerUUID) {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.not-owner"))
             return
         }
 
-        if (!database.isWalletNameAvailable(newName)) {
+        if (!walletDB.isWalletNameAvailable(newName)) {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.name-is-not-free", "walletName" to newName))
             return
         }
 
-        database.setNameWalletByIDWallet(newName, walletID)
+        walletDB.setNameWalletByIDWallet(newName, walletID)
     }
 }

@@ -1,7 +1,7 @@
 package bank.commands.accounts
 
 import App.Companion.localizationManager
-import bank.commands.accounts.collection.OpenCommandHandler
+import bank.commands.accounts.collection.*
 import functions.Functions
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
@@ -26,22 +26,22 @@ class AccountCommands : CommandExecutor{
                 val openCommandHandler = OpenCommandHandler()
                 openCommandHandler.handleOpenCommand(sender, argsArray)
             }
-//            "remove" -> {
-//                val removeCommandHandler = RemoveCommandHandler(database)
-//                removeCommandHandler.handleRemoveCommand(sender, argsArray)
-//            }
-//            "rename" -> {
-//                val renameCommandHandler = RenameCommandHandler(database)
-//                renameCommandHandler.handleRenameCommand(sender, argsArray)
-//            }
-//            "set-default" -> {
-//                val setDefaultCommandHandler = SetDefaultCommandHandler(database)
-//                setDefaultCommandHandler.handleSetDefaultCommand(sender, argsArray)
-//            }
-//            "list" -> {
-//                val listCommandHandler = ListCommandHandler(database)
-//                listCommandHandler.handleListCommand(sender)
-//            }
+            "remove" -> {
+                val removeCommandHandler = RemoveCommandHandler()
+                removeCommandHandler.handleRemoveCommand(sender, argsArray)
+            }
+            "rename" -> {
+                val renameCommandHandler = RenameCommandHandler()
+                renameCommandHandler.handleRenameCommand(sender, argsArray)
+            }
+            "set-default" -> {
+                val setDefaultCommandHandler = SetDefaultCommandHandler()
+                setDefaultCommandHandler.handleSetDefaultCommand(sender, argsArray)
+            }
+            "list" -> {
+                val listCommandHandler = ListCommandHandler()
+                listCommandHandler.handleListCommand(sender)
+            }
             else -> {
                 functions.unknownCommand(sender)
             }

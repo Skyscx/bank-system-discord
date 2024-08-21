@@ -1,13 +1,13 @@
 package bank.commands.accounts.collection
 
 import App.Companion.localizationManager
-import data.Database
+import App.Companion.walletDB
 import functions.Functions
 import gui.InventoryManager
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class RemoveCommandHandler (private val database: Database) {
+class RemoveCommandHandler () {
     val functions = Functions()
     fun handleRemoveCommand(sender: CommandSender, args: Array<String>) {
         val player = sender as Player
@@ -15,7 +15,7 @@ class RemoveCommandHandler (private val database: Database) {
 
         if (args.size == 1){
             val inventoryManager = InventoryManager()
-            val wallets = database.getIdsWalletsOwnerByUUID(uuid)
+            val wallets = walletDB.getIdsWalletsOwnerByUUID(uuid)
             if (wallets.isNotEmpty()){
                 inventoryManager.openInventory(player, "remove")
             } else {
@@ -29,14 +29,14 @@ class RemoveCommandHandler (private val database: Database) {
                 if (functions.checkArguments(sender, 3, args, localizationManager.getMessage("localisation.messages.usage.account.remove.all"))) return
 
                 val bool = args[2].toBooleanStrictOrNull()
-                val ownerWallets = database.getIdsWalletsOwnerByUUID(uuid)
+                val ownerWallets = walletDB.getIdsWalletsOwnerByUUID(uuid)
                 if (bool == null) {
                     sender.sendMessage(localizationManager.getMessage("localisation.messages.usage.account.remove.all.boolean"))
                     return
                 }
                 if (bool){
                     for (id in ownerWallets){
-                        database.deleteUserWallet(id)
+                        walletDB.deleteUserWallet(id)
                     }
                 } else return
             }
@@ -52,26 +52,26 @@ class RemoveCommandHandler (private val database: Database) {
                 //Удаление по ID или по имени
                 if (identifier.toIntOrNull() != null){
                     val walletID = identifier.toInt()
-                    val ownerWallets = database.getIdsWalletsOwnerByUUID(uuid)
-                    if (!(database.doesIdExistWallet(walletID))){
+                    val ownerWallets = walletDB.getIdsWalletsOwnerByUUID(uuid)
+                    if (!(walletDB.doesIdExistWallet(walletID))){
                         sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet-null"))
                         return
                     }
                     if (walletID in ownerWallets) {
-                        if (bool) database.deleteUserWallet(walletID) else return // TODO: Подумать о выводе что нужно именно true
+                        if (bool) walletDB.deleteUserWallet(walletID) else return // TODO: Подумать о выводе что нужно именно true
                     } else {
                         if (bool) sender.sendMessage(localizationManager.getMessage("localisation.messages.out.not-owner"))
                         else return
                     }
                 } else {
-                    val walletID = database.getIDByWalletName(identifier)
+                    val walletID = walletDB.getIDByWalletName(identifier)
                     if (walletID == null) {
                         sender.sendMessage(localizationManager.getMessage("localisation.messages.out.error-search-data-in-database"))
                         return
                     }
-                    val ownerWallets = database.getIdsWalletsOwnerByUUID(uuid)
+                    val ownerWallets = walletDB.getIdsWalletsOwnerByUUID(uuid)
                     if (walletID in ownerWallets){
-                        if (bool) database.deleteUserWallet(walletID) else return
+                        if (bool) walletDB.deleteUserWallet(walletID) else return
                     } else {
                         if (bool) sender.sendMessage(localizationManager.getMessage("localisation.messages.out.not-owner"))
                         else return
