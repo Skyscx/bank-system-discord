@@ -1,6 +1,5 @@
 package discord.dsbot
 //import discord.dsbot.commands.PayCommandDiscord
-import App.Companion.dbManager
 import data.database.DatabaseManager
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
@@ -31,7 +30,7 @@ class DiscordBot private constructor(dbManager: DatabaseManager, private val con
     fun start(token: String?) {
         jda = JDABuilder.createDefault(token)
             //.addEventListeners(PayCommandDiscord(database, config))
-            .addEventListeners(DiscordNotifierEvents(dbManager, this))
+            .addEventListeners(DiscordNotifierEvents())
             // .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
             .build()
         jda.awaitReady()

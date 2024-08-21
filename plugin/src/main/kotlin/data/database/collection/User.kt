@@ -11,6 +11,10 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ExecutionException
 
 class User(private var dbManager: DatabaseManager, private var functionsDiscord: FunctionsDiscord, private var plugin: App) {
+
+    /**
+     * Создание пользователя в таблице пользователей
+     */
     private fun insertPlayer(uuid: UUID): Boolean {
         val player = Bukkit.getOfflinePlayer(uuid)
         val playerName = player.name as String
@@ -31,6 +35,9 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
 
     }
 
+    /**
+     * Проверка на существование пользователя в таблице пользователей по UUID (Возвращение boolean)
+     */
     private fun checkPlayer(uuid: UUID): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
 
@@ -49,6 +56,9 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
         return future
     }
 
+    /**
+     * Поиск пользователя в таблице пользователей по UUID (Необходим для создания пользователя в таблице пользователей)
+     */
     fun checkPlayerTaskInsert(uuid: UUID) {
         val future = checkPlayer(uuid)
 
@@ -66,6 +76,9 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
         })
     }
 
+    /**
+     * Получение DiscordID по UUID пользователя по таблице пользователей.
+     */
     fun getDiscordIDbyUUID(uuid: String): String? {
         val sql = "SELECT DiscordID FROM bank_users WHERE UUID = ?"
         val result = dbManager.executeQuery(sql, uuid)
@@ -74,6 +87,9 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
         return row?.get("DiscordID") as? String
     }
 
+    /**
+     * Получение UUID по DiscordID пользователя из таблицы пользователей
+     */
     fun getUUIDbyDiscordID(id: String): CompletableFuture<String?> {
         val future = CompletableFuture<String?>()
 
@@ -96,6 +112,32 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
             })
         }
         return future
+    }
+
+    /**
+     * Получение пользовательского UUID по имени пользователя по базе данных
+     */
+    fun getUUIDbyPlayerName(playerName: String): String? {
+        val sql = "SELECT UUID FROM bank_users WHERE PlayerName = ?"
+        var uuid: String? = null
+
+        val result = dbManager.executeQuery(sql, playerName)
+        if (result.isNotEmpty()) {
+            val row = result.firstOrNull()
+            uuid = row?.get("UUID") as? String
+        }
+
+        return uuid
+    }
+
+    companion object {
+        @Volatile
+        private var instance: User? = null
+
+        fun getInstance(dbManager: DatabaseManager, plugin: App, functionsDiscord: FunctionsDiscord): User =
+            instance ?: synchronized(this) {
+                instance ?: User(dbManager, functionsDiscord, plugin).also { instance = it }
+            }
     }
 
 }

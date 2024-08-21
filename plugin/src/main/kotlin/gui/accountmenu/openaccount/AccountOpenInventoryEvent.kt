@@ -1,6 +1,8 @@
 package gui.accountmenu.openaccount
 
-import data.Database
+import App.Companion.localizationManager
+import App.Companion.userDB
+import App.Companion.walletDB
 import discord.dsbot.DiscordBot
 import discord.dsbot.DiscordNotifier
 import functions.Functions
@@ -12,7 +14,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import java.util.*
 
-class AccountOpenInventoryEvent(private val database: Database, config: FileConfiguration, private val discordBot: DiscordBot) : Listener {
+class AccountOpenInventoryEvent(config: FileConfiguration, private val discordBot: DiscordBot) : Listener {
     private val functions = Functions()
     //private val functionsDiscord = FunctionsDiscord(discordBot)
     //private val discordBot = DiscordBot.getInstance(database, config)
@@ -26,13 +28,13 @@ class AccountOpenInventoryEvent(private val database: Database, config: FileConf
     fun onClick(e: InventoryClickEvent) {
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.HOPPER) {
-            if (e.view.title == "Подтверждение операции") { //todo: сделать сообщение из конфига
+            if (e.view.title == localizationManager.getMessage("localisation.account.open.confirmation.title")) { //todo: сделать сообщение из конфига
                 if (Objects.requireNonNull(e.currentItem)?.itemMeta != null){
                     //accept
-                    if (e.currentItem!!.itemMeta.displayName == "Подтвердить!") { //todo: сделать сообщение из конфига
+                    if (e.currentItem!!.itemMeta.displayName == localizationManager.getMessage("localisation.inventory.item.accept")) { //todo: сделать сообщение из конфига
                         if (functions.hasDiamondOre(player)){
                             val uuidPlayer = player.uniqueId.toString()
-                            val countAccounts = database.getWalletsCount(uuidPlayer)
+                            val countAccounts = walletDB.getWalletsCount(uuidPlayer)
                             if (countAccounts < countAccountConfig){
                                 var price = priceAccountConfig
                                 var verificationInt = 0
@@ -41,8 +43,8 @@ class AccountOpenInventoryEvent(private val database: Database, config: FileConf
                                     price = 0
                                     //TODO:Добавить зачисление price куда-то пока не знаю куда.
                                 }else{
-                                    val lastID = database.getLastIDWalletFree().toString()
-                                    val discordID = database.getDiscordIDbyUUID(player.uniqueId.toString())
+                                    val lastID = walletDB.getLastIDWalletFree().toString()
+                                    val discordID = userDB.getDiscordIDbyUUID(player.uniqueId.toString())
                                     val mention = discordBot.getMentionUser(discordID.toString())
                                     if (discordID != null){
                                         discordNotifier.sendMessageChannel(
@@ -65,7 +67,7 @@ class AccountOpenInventoryEvent(private val database: Database, config: FileConf
                                         functions.sendMessagePlayer(player, "Не удалось найти идентификатор Discord.") //todo: сделать сообщение из конфига
                                     }
                                 }
-                                database.insertWallet(player, currencyAccountConfig!!, price, verificationInt).thenAccept { isCreate ->
+                                walletDB.insertWallet(player, currencyAccountConfig!!, price, verificationInt).thenAccept { isCreate ->
                                     if (isCreate) {
                                         functions.takeItem(player, currencyAccountConfig, priceAccountConfig)
                                         //functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
@@ -82,7 +84,7 @@ class AccountOpenInventoryEvent(private val database: Database, config: FileConf
                         }
                     }
                     //close
-                    if (e.currentItem!!.itemMeta.displayName == "Отклонить!") { //todo: сделать сообщение из конфига
+                    if (e.currentItem!!.itemMeta.displayName == localizationManager.getMessage("localisation.inventory.item.reject")) { //todo: сделать сообщение из конфига
                         functions.sendMessagePlayer(player, "Отклонено.") //todo: сделать сообщение из конфига
                     }
                     e.isCancelled

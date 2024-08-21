@@ -1,11 +1,19 @@
 
 
+import bank.commands.accounts.AccountCommands
 import bank.commands.tabcompleter.AccountsCommandCompleter
 import data.Config
 import data.database.DatabaseManager
+import data.database.collection.History
+import data.database.collection.User
+import data.database.collection.Wallet
 import data.localisation.LocalisationManager
 import discord.DiscordSRVHook
+import discord.FunctionsDiscord
 import discord.dsbot.DiscordBot
+import functions.events.PlayerConnection
+import gui.accountmenu.openaccount.AccountOpenInventoryEvent
+import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
 import java.io.File
@@ -21,7 +29,12 @@ class App : JavaPlugin(), Listener {
         lateinit var discordBot: DiscordBot
         //lateinit var database: Database
         lateinit var localizationManager: LocalisationManager
+
         lateinit var dbManager: DatabaseManager
+        lateinit var walletDB: Wallet
+        lateinit var userDB: User
+        lateinit var historyDB: History
+
     }
 
 
@@ -68,13 +81,19 @@ class App : JavaPlugin(), Listener {
         val discordBot = DiscordBot.getInstance(dbManager, config)
         val token = config.getString("bot-token")
         discordBot.start(token)
+        // Инициализация Database Collection
+        val functionsDiscord = FunctionsDiscord()
+        walletDB = Wallet.getInstance(dbManager, this, functionsDiscord)
+        userDB = User.getInstance(dbManager, this, functionsDiscord)
+        historyDB = History.getInstance(dbManager, this)
+
         // Localisation
         localizationManager = LocalisationManager(this)
         copyConfigFile("locales/messages_en.yml")
 
         //Commands
         // TODO: Временно переделано!!! Тестирование dbManager
-        //getCommand("account")?.setExecutor(AccountCommands(database))
+        getCommand("account")?.setExecutor(AccountCommands())
         // TODO: Временно переделано!!! Тестирование dbManager
 
         //getCommand("pay")?.setExecutor(PayCommand(database))
@@ -102,8 +121,8 @@ class App : JavaPlugin(), Listener {
         //gui.accountmenu.renamingaccount.anviltest.Events
 
         // TODO: Временно переделано!!! Тестирование dbManager
-        //Bukkit.getPluginManager().registerEvents(PlayerConnection(database), this)
-        //Bukkit.getPluginManager().registerEvents(AccountOpenInventoryEvent(database, config, discordBot), this)
+        Bukkit.getPluginManager().registerEvents(PlayerConnection(), this)
+        Bukkit.getPluginManager().registerEvents(AccountOpenInventoryEvent(config, discordBot), this)
         // TODO: Временно переделано!!! Тестирование dbManager
 
         //todo: 07/08/2024 21/10 переделать команды, сделать локализацию

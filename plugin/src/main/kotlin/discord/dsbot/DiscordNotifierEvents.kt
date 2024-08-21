@@ -1,11 +1,13 @@
 package discord.dsbot
 
-import data.database.DatabaseManager
+import App.Companion.discordBot
+import App.Companion.walletDB
 import functions.Functions
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 
-class DiscordNotifierEvents(private val dbManager: DatabaseManager, private val discordBot: DiscordBot) : ListenerAdapter() {
+class DiscordNotifierEvents: ListenerAdapter() {
+
     private val functions = Functions()
     //todo: сделать сообщение из конфига!!!!
     //todo: сделать сообщение из конфига!!!!
@@ -19,9 +21,9 @@ class DiscordNotifierEvents(private val dbManager: DatabaseManager, private val 
             val parts = componentId.split(":")
             val action = parts[0]
             val walletId = parts[1].toInt()
-            val verificationDatabase = dbManager.getIntVerificationWallet(walletId)
+            val verificationDatabase = walletDB.getVerificationWallet(walletId)
             val discordUserID = event.user.id
-            val uuid = dbManager.getUUIDbyWalletID(walletId)
+            val uuid = walletDB.getUUIDbyWalletID(walletId)
             val bankerPermission = "skybank.banker" // todo: както подругому придумать, например через Functions
             val status = when (verificationDatabase) {
                 1 -> "Запрос был одобрен."
@@ -45,18 +47,18 @@ class DiscordNotifierEvents(private val dbManager: DatabaseManager, private val 
             val message = when (action) {
                 "acceptAccount" -> {
                     if (verificationDatabase == 0) {
-                        dbManager.setVerificationWallet(walletId, 1)
-                        dbManager.setDepositWallet(walletId, "0")
-                        dbManager.setInspectorWallet(walletId,discordUserID)
-                        dbManager.setVerificationWalletDate(walletId)
+                        walletDB.setVerificationWallet(walletId, 1)
+                        walletDB.setDepositWallet(walletId, "0")
+                        walletDB.setInspectorWallet(walletId,discordUserID)
+                        walletDB.setVerificationWalletDate(walletId)
                         functions.sendMessageIsPlayerOnline(uuid!!, "Ваш запрос одобрили!")
                         functions.sendMessageIsPlayerHavePermission(uuid, bankerPermission, "Кошелек $walletId одобрил \${event.user.name}")
                         //TODO: event.user.name - переделать под игровой ник, а не дс
                         "Запрос был одобрен! (ID MESSAGE: `${event.messageId}`, ID ACCOUNT: `$walletId`)"
                     } else {
-                        val discordIDInspector = dbManager.getInspectorWallet(walletId) ?: return
+                        val discordIDInspector = walletDB.getInspectorWallet(walletId) ?: return
                         val mentionInspector = discordBot.getMentionUser(discordIDInspector)
-                        val verificationDate = dbManager.getVerificationWalletDate(walletId)
+                        val verificationDate = walletDB.getVerificationWalletDate(walletId)
                         "Данный запрос уже был рассмотрен в игре! \n" +
                                 "Рассмотрел - $mentionInspector\n" +
                                 "Дата рассмотрения - `$verificationDate`" +
@@ -66,15 +68,15 @@ class DiscordNotifierEvents(private val dbManager: DatabaseManager, private val 
                 }
                 "rejectAccount" -> {
                     if (verificationDatabase == 0) {
-                        dbManager.setVerificationWallet(walletId, -1)
-                        dbManager.setInspectorWallet(walletId,event.user.id)
-                        dbManager.setVerificationWalletDate(walletId)
-                        functions.sendMessageIsPlayerOnline(dbManager.getUUIDbyWalletID(walletId).toString(), "Ваш запрос отклонили!")
+                        walletDB.setVerificationWallet(walletId, -1)
+                        walletDB.setInspectorWallet(walletId,event.user.id)
+                        walletDB.setVerificationWalletDate(walletId)
+                        functions.sendMessageIsPlayerOnline(walletDB.getUUIDbyWalletID(walletId).toString(), "Ваш запрос отклонили!")
                         "Запрос был отклонен! (ID MESSAGE: `${event.messageId}`, ID ACCOUNT: `$walletId`)"
                     } else {
-                        val discordIDInspector = dbManager.getInspectorWallet(walletId) ?: return
+                        val discordIDInspector = walletDB.getInspectorWallet(walletId) ?: return
                         val mentionInspector = discordBot.getMentionUser(discordIDInspector)
-                        val verificationDate = dbManager.getVerificationWalletDate(walletId)
+                        val verificationDate = walletDB.getVerificationWalletDate(walletId)
                         "Данный запрос уже был рассмотрен в игре! \n" +
                                 "Рассмотрел - $mentionInspector\n" +
                                 "Дата рассмотрения - `$verificationDate`" +

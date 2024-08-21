@@ -49,6 +49,7 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
     }
 
     // Получение данных
+    // Получение данных
     fun executeQuery(query: String, vararg args: Any): List<Map<String, Any>> {
         val result = mutableListOf<Map<String, Any>>()
         try {
@@ -63,7 +64,13 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
             while (resultSet.next()) {
                 val row = mutableMapOf<String, Any>()
                 for (i in 1..columnCount) {
-                    row[metaData.getColumnName(i)] = resultSet.getObject(i)
+                    val columnName = metaData.getColumnName(i)
+                    val value = resultSet.getObject(i)
+                    if (value != null) {
+                        row[columnName] = value
+                    } else {
+                        plugin.logger.warning("Null value found for column: $columnName")
+                    }
                 }
                 result.add(row)
             }

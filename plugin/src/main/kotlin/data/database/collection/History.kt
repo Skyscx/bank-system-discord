@@ -1,16 +1,19 @@
 package data.database.collection
 
 import App
+import App.Companion.userDB
 import data.database.DatabaseManager
-import discord.FunctionsDiscord
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import java.sql.SQLException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class History(private var dbManager: DatabaseManager, private val functionsDiscord: FunctionsDiscord, private var plugin: App) {
-    private val userDB = User(dbManager, functionsDiscord, plugin)
+class History(private var dbManager: DatabaseManager, private var plugin: App) {
+
+    /**
+     * Создание записи о проделанной операции в таблицу с историей.
+     */
     fun insertBankHistory(sender: Player, target: Player, senderWalletID: Int, targetWalletID: Int, amount: Int, currency: String, status: Int) {
         plugin.let {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
@@ -36,5 +39,15 @@ class History(private var dbManager: DatabaseManager, private val functionsDisco
                 }
             })
         }
+    }
+
+    companion object {
+        @Volatile
+        private var instance: History? = null
+
+        fun getInstance(dbManager: DatabaseManager, plugin: App): History =
+            instance ?: synchronized(this) {
+                instance ?: History(dbManager, plugin).also { instance = it }
+            }
     }
 }
