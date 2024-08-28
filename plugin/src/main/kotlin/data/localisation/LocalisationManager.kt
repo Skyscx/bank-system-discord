@@ -19,9 +19,9 @@ class LocalisationManager(private val app: App) {
         val configFile = File(app.dataFolder, "config.yml")
         if (configFile.exists()) {
             val config = YamlConfiguration.loadConfiguration(configFile)
-            currentLocale = config.getString("locale", "en").toString()
+            currentLocale = "messages_" + config.getString("locale", "messages_en").toString()
         } else {
-            currentLocale = "en"
+            currentLocale = "messages_en"
         }
     }
 
@@ -38,8 +38,8 @@ class LocalisationManager(private val app: App) {
             app.logger.info("Successfully loaded locale '$locale'.")
         } else {
             app.logger.warning("Locale file for '$locale' not found. Falling back to default locale 'en'.")
-            if (locale != "en") {
-                loadLocaleFile("en")
+            if (locale != "messages_en") {
+                loadLocaleFile("messages_en")
             } else {
                 app.logger.severe("Default locale file 'en' not found. Please check your configuration.")
             }

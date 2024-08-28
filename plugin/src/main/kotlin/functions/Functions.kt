@@ -1,5 +1,6 @@
 package functions
 
+import App.Companion.localizationManager
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
@@ -93,21 +94,21 @@ class Functions {
             player.sendMessage("У вас недостаточно ${material.name}.") //todo: сделать сообщение из конфига
         }
     }
-
-    fun giveItem(player: Player, item: ItemStack, amount: Int) {
+    fun giveItem(player: Player, item: ItemStack, amount: Int): Boolean {
         val inventory = player.inventory
         val freeSpace = inventory.firstEmpty()
-
         if (freeSpace == -1) {
-            player.sendMessage("У вас недостаточно места в инвентаре.") //todo: сделать сообщение из конфига
-            return
+            player.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.back-deposit.full-inventory"))
+            return false
         }
-
         val newItem = item.clone()
         newItem.amount = amount
-
         inventory.addItem(newItem)
-        player.sendMessage("Вы получили $amount x ${item.type.name}.") //todo: сделать сообщение из конфига
+        val message = localizationManager.getMessage("localisation.messages.out.wallet.back-deposit",
+            "amount" to amount.toString(), "currency" to item.type.name)
+        println(message)
+        player.sendMessage(message)
+        return true
     }
 
     fun checkArguments(sender: CommandSender, expectedArgs: Int, args: Array<out String>, errorMessage: String): Boolean {
@@ -120,4 +121,5 @@ class Functions {
     fun hasPermission(sender: CommandSender, permission: String): Boolean {
         return sender.hasPermission(permission)
     }
+
 }

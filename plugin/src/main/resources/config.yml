@@ -13,6 +13,8 @@ allowed-channel-id-for-bank-commands: your-allowed-channel-id-for-bank-commands-
 checker-banker: false
 # Айди канала, предназначенный для банкира
 channel-id-banker: your-channel-id-for-banker
+# Айди канала, предназначенный для банкира
+channel-id-logger: your-channel-id-for-logger
 # Максимальное количество кошельков создаваемых за блоки
 count-free-accounts: 10
 # Название блока для оплаты, формат: DIAMOND_ORE

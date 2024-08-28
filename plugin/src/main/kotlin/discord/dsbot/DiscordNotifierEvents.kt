@@ -57,7 +57,7 @@ class DiscordNotifierEvents: ListenerAdapter() {
                         "Запрос был одобрен! (ID MESSAGE: `${event.messageId}`, ID ACCOUNT: `$walletId`)"
                     } else {
                         val discordIDInspector = walletDB.getInspectorWallet(walletId) ?: return
-                        val mentionInspector = discordBot.getMentionUser(discordIDInspector)
+                        val mentionInspector = discordBot?.getMentionUser(discordIDInspector)
                         val verificationDate = walletDB.getVerificationWalletDate(walletId)
                         "Данный запрос уже был рассмотрен в игре! \n" +
                                 "Рассмотрел - $mentionInspector\n" +
@@ -75,7 +75,7 @@ class DiscordNotifierEvents: ListenerAdapter() {
                         "Запрос был отклонен! (ID MESSAGE: `${event.messageId}`, ID ACCOUNT: `$walletId`)"
                     } else {
                         val discordIDInspector = walletDB.getInspectorWallet(walletId) ?: return
-                        val mentionInspector = discordBot.getMentionUser(discordIDInspector)
+                        val mentionInspector = discordBot?.getMentionUser(discordIDInspector)
                         val verificationDate = walletDB.getVerificationWalletDate(walletId)
                         "Данный запрос уже был рассмотрен в игре! \n" +
                                 "Рассмотрел - $mentionInspector\n" +

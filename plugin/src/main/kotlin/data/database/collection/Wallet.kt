@@ -342,7 +342,7 @@ class Wallet (
      * Проверка по ID есть ли у пользователя доступный депозит для вывода (Возвращение boolean)
      */
     fun isDepositWalletAvailable(id: Int): Boolean {
-        var deposit: String? = null
+        var deposit: Int? = null
         val verification = getVerificationWallet(id)
 
         if (verification == -1) {
@@ -350,7 +350,7 @@ class Wallet (
             val result = dbManager.executeQuery(sql, id)
             if (result.isNotEmpty()) {
                 val row = result.firstOrNull()
-                deposit = row?.get("Deposit") as? String
+                deposit = row?.get("Deposit") as? Int
             }
         }
 
@@ -362,12 +362,14 @@ class Wallet (
      */
     fun getIdsWalletsReturnDepositByUUID(uuid: String): List<Int> {
         val depositIds = mutableListOf<Int>()
-        val sql = "SELECT id FROM bank_wallets WHERE UUID = ? AND Verification = -1"
+        val sql = "SELECT ID FROM bank_wallets WHERE UUID = ? AND Verification = -1 AND Deposit != 0"
 
         val result = dbManager.executeQuery(sql, uuid)
         for (row in result) {
-            val id = row["id"] as Int
-            depositIds.add(id)
+            val id = row["ID"]
+            if (id != null) {
+                depositIds.add(id as Int)
+            }
         }
 
         return depositIds
@@ -434,7 +436,7 @@ class Wallet (
      * Удаление кошелька из таблицы кошельков по ID кошельку.
      */
     fun deleteUserWallet(id: Int): Boolean {
-        val sqlUpdateWallet = "UPDATE bank_wallets SET Name = 'NULL', Status = 0 WHERE ID = ?"
+        val sqlUpdateWallet = "UPDATE bank_wallets SET Name = 'NULL', Deposit = 0, Status = 0 WHERE ID = ?"
         val sqlUpdateUser = "UPDATE bank_users SET DefaultWalletID = 0 WHERE DefaultWalletID = ?"
 
         return try {

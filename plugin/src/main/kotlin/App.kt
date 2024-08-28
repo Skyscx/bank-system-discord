@@ -1,6 +1,8 @@
 
 
+import bank.commands.banker.WalletVerificationCommand
 import bank.commands.tabcompleter.WalletsCommandCompleter
+import bank.commands.transfers.NewTransferCommand
 import bank.commands.wallets.WalletCommands
 import data.Config
 import data.database.DatabaseManager
@@ -26,9 +28,8 @@ lateinit var app: App
 class App : JavaPlugin(), Listener {
     companion object {
         lateinit var configPlugin: Config
-        lateinit var discordBot: DiscordBot
+        var discordBot: DiscordBot? = null
         lateinit var localizationManager: LocalisationManager
-
         lateinit var dbManager: DatabaseManager
         lateinit var walletDB: Wallet
         lateinit var userDB: User
@@ -60,10 +61,25 @@ class App : JavaPlugin(), Listener {
             return
         }
 
+        //Depends
+        if (server.pluginManager.getPlugin("DiscordSRV") == null) {
+            logger.severe("DiscordSRV plugin not found. Disabling plugin.")
+            server.pluginManager.disablePlugin(this)
+            return
+        } else {
+            DiscordSRVHook.register()
+        }
+
         // DiscordBot
-        val discordBot = DiscordBot.getInstance(dbManager, config)
-        val token = config.getString("bot-token")
-        discordBot.start(token)
+        val token = configPlugin.getString("bot-token")
+        if (token.isNullOrEmpty() || token == "your-bot-token-here") {
+            logger.severe("Discord bot token is missing. Disabling plugin.")
+            server.pluginManager.disablePlugin(this)
+            return
+        }
+
+        discordBot = DiscordBot.getInstance(dbManager, config)
+        discordBot?.start(token)
 
         // Инициализация Database Collection
         val functionsDiscord = FunctionsDiscord()
@@ -73,10 +89,11 @@ class App : JavaPlugin(), Listener {
 
         // Localisation
         localizationManager = LocalisationManager(this)
-        copyConfigFile("locales/messages_en.yml")
+        val language = configPlugin.getString("locale")
+        copyConfigFile("locales/messages_$language.yml")
 
         //Commands
-        getCommand("account")?.setExecutor(WalletCommands())
+        getCommand("wallet")?.setExecutor(WalletCommands())
 
         //getCommand("pay")?.setExecutor(PayCommand(database))
         //getCommand("balance")?.setExecutor(BalanceCommand(database))
@@ -84,9 +101,9 @@ class App : JavaPlugin(), Listener {
         //getCommand("set-balance")?.setExecutor(BalanceSetCommand(database))
         //getCommand("open-account")?.setExecutor(AccountOpenCommand())
         //getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
-        //getCommand("account-verify")?.setExecutor(AccountVerificationCommand(database))
+        getCommand("wallet-verify")?.setExecutor(WalletVerificationCommand())
         //getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
-        //getCommand("transfer")?.setExecutor(NewTransferCommand(database))
+        getCommand("transfer")?.setExecutor(NewTransferCommand())
         //getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
         //getCommand("account-renaming")?.setExecutor(Events())
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
@@ -100,8 +117,8 @@ class App : JavaPlugin(), Listener {
         //bank-history
         //account-close
 
-        Bukkit.getPluginManager().registerEvents(PlayerConnection(), this)
-        Bukkit.getPluginManager().registerEvents(WalletOpenInventoryEvent(config, discordBot), this)
+        Bukkit.getPluginManager().registerEvents(PlayerConnection(config, discordBot!!), this)
+        Bukkit.getPluginManager().registerEvents(WalletOpenInventoryEvent(config, discordBot!!), this)
 
         //todo: 07/08/2024 21/10 переделать команды, сделать локализацию
         //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)
@@ -109,25 +126,18 @@ class App : JavaPlugin(), Listener {
         // Tab Completer
         getCommand("wallet")?.tabCompleter = WalletsCommandCompleter()
 
-        //Depends
-        if (server.pluginManager.getPlugin("DiscordSRV") != null){
-            DiscordSRVHook.register()
-            //todo: сделать выключение плагина если плагин не найден.
-        }
+
 
 
     }
     //
 
     override fun onDisable() {
-        discordBot.jda.shutdown()
-        if (server.pluginManager.getPlugin("DiscordSRV") != null){
+        if (server.pluginManager.getPlugin("DiscordSRV") != null) {
             DiscordSRVHook.unregister()
         }
+        discordBot?.jda?.shutdownNow()
         dbManager.close()
-        // TODO: Временно переделано!!! Тестирование dbManager
-        //database.closeConnection()
-        // TODO: Временно переделано!!! Тестирование dbManager
         saveConfig()
     }
 
@@ -141,7 +151,7 @@ class App : JavaPlugin(), Listener {
             saveResource("config.yml", false)
         }
     }
-    fun getDiscordBot(): DiscordBot {
+    fun getDiscordBot(): DiscordBot? {
         return discordBot
     }
     private fun copyConfigFile(resourcePath: String) {
@@ -159,6 +169,5 @@ class App : JavaPlugin(), Listener {
             logger.info("$resourcePath already exists at $targetPath")
         }
     }
-
 
 }

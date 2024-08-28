@@ -8,13 +8,12 @@ localisation.description: "Описание плагина"
 # Информационные сообщения в чате
 
 localisation.messages.out.unknown-command: "Неизвестная команда. Используйте $commandHelp"
+localisation.messages.out.player-command: "Данную команду можно выполнить только в игре!"
 localisation.messages.out.no-permissions: "У вас недостаточно разрешений, для выполнения данной команды!"
 localisation.messages.out.developing: "Данная возможность находиться на стадии разработки. Попробуйте позже."
 localisation.messages.out.not-owner: "Вы не владелец данного кошелька!"
 localisation.messages.out.wallet-same-thing: "Транзакция не может быть произведена на одинаковых кошельках."
 localisation.messages.out.amount-incorrect: "Неверно указана сумма."
-
-
 
 localisation.messages.out.error-search-data-in-database: "Произошла ошибка инициализации данных. Обратитесь к администратору или банкиру."
 localisation.messages.out.empty-wallets-list: "Открытых кошельков нету, чтобы их закрыть."
@@ -30,8 +29,17 @@ localisation.messages.out.wallet.currency.mismatch: "Валюты кошельк
 localisation.messages.out.wallet.target-not-found: "Получатель не найден!"
 localisation.messages.out.wallet.transfer-successfully: "Вы перевели $amount $currency1 игроку $target (#$senderWalletID -> #$targetWalletID)"
 localisation.messages.out.wallet.transfer-unsuccessfully: "Ошибка при выполнении перевода."
+localisation.messages.out.wallet.back-deposit: "Вам вернули $amount x $currency."
+localisation.messages.out.wallet.back-deposit.full-inventory: "У вас недостаточно места в инвентаре для получения депозита."
+localisation.messages.out.wallet.open.not-money: "Для открытия кошелька не хватает $amount $currency NOT USAGE"
 
 
+
+localisation.messages.out.banker.wallet.open: "Вы открыли счет игроку $player."
+localisation.messages.out.banker.wallet.reject: "Вы отклонили счет игроку $player."
+localisation.messages.out.banker.wallet.already.open: "Счет уже открыт!"
+localisation.messages.out.banker.wallet.already.reject: "Счет уже отклонен!"
+localisation.messages.out.banker.list-verify-empty: "Список пуст!"
 
 
 localisation.sender: "Отправитель"
@@ -72,3 +80,8 @@ localisation.inventory.item.reject: "Отклонить"
 
 localisation.account.open.confirmation.title: "Подтверждение открытия кошелька."
 localisation.account.open.confirmation.item.accept.lore: "Подтвердив операцию, с вашего инвентаря заберутся $amount алмазной руды."
+
+
+# Информационные сообщения для логирования в Discord
+
+localisation.discord.logger.back-deposit: "Игроку $playerName вернули $amount $currency."
