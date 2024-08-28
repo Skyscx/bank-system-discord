@@ -4,15 +4,21 @@ import App.Companion.configPlugin
 import App.Companion.localizationManager
 import App.Companion.userDB
 import App.Companion.walletDB
+import discord.dsbot.DiscordBot
+import discord.dsbot.DiscordNotifier
 import functions.Functions
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 import java.util.*
 
-class NewTransferCommand : CommandExecutor {
+class NewTransferCommand(config: FileConfiguration, discordBot: DiscordBot) : CommandExecutor {
     private val function = Functions()
+    private val discordNotifier = DiscordNotifier(discordBot.getJDA())
+    private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
+
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (args.isEmpty()) {
@@ -126,10 +132,22 @@ class NewTransferCommand : CommandExecutor {
         if (operation) {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully",
                 "amount" to amount.toString(),
-                "currency1" to currency1,
+                "currency" to currency1,
                 "target" to target.toString(),
                 "senderWalletID" to sourceWalletID.toString(),
                 "targetWalletID" to targetWalletID.toString()))
+
+
+            discordNotifier.sendMessageChannel(channelIdLogger, localizationManager.getMessage("localisation.discord.logger.transfer-successfully",
+                "walletIDSender" to sourceWalletID.toString(),
+                "sender" to sender.name,
+                "walletIDTarget" to targetWalletID.toString(),
+                "target" to target.name,
+                "amount" to amount.toString(),
+                "currency" to currency1))
+
+            //todo пофиксить сообщение
+            //todo добавить сообщение для игрока если он в сети
         } else {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer-unsuccessfully"))
         }

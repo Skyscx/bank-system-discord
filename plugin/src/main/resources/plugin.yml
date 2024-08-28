@@ -14,9 +14,9 @@ commands:
   #set-balance:
   #  description: Установить значение "Баланс".
   #  usage: /set-balance <игрок> <сумма>
-  #add-balance:
-  #  description: Добавить значение к балансу.
-  #  usage: /add-balance <игрок> <сумма>
+  balance-add:
+    description: Добавить значение к балансу.
+    usage: /balance-add <walletID> <сумма>
   #open-account:
   #  description: Открыть кошелек.
   #  usage: /open-account

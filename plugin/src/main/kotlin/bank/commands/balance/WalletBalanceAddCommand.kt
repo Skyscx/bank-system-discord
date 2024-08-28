@@ -1,12 +1,12 @@
-package bank.commands
+package bank.commands.balance
 
-import data.Database
+import App.Companion.walletDB
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
-class BalanceSetCommand(private val database: Database) : CommandExecutor {
+class WalletBalanceAddCommand() : CommandExecutor {
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
@@ -21,9 +21,9 @@ class BalanceSetCommand(private val database: Database) : CommandExecutor {
             return true
         }
         if (args.size != 2) return false
-        val walletID= database.getWalletID(args[0])
+        val walletID= walletDB.getWalletID(args[0])
         if (walletID == null) {
-            sender.sendMessage("Кошелек не найден.")
+            sender.sendMessage("Кошелек не найден.") //todo: сделать +по имени
             return true
         }
         val amount = args[1].toInt()
@@ -31,9 +31,9 @@ class BalanceSetCommand(private val database: Database) : CommandExecutor {
             sender.sendMessage("Неверная сумма.")
             return true
         }
-        val isSet = database.setWalletBalance(walletID, amount)
+        val isSet = walletDB.updateWalletBalance(walletID, amount)
         if (isSet){
-            sender.sendMessage("Вы установили $amount валюты на кошелек #$walletID")
+            sender.sendMessage("Вы добавили $amount валюты на кошелек #$walletID")
             //TODO: Сообщение для получателя в игре
             //TODO: Сообщение для получателя в боте
             //TODO: Сообщение для логирования.

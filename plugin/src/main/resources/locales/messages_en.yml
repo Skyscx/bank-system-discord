@@ -27,7 +27,7 @@ localisation.messages.out.wallet.overflow.target: "Операция невозм
 localisation.messages.out.wallet.overflow.sender: "Операция невозможна! На ваш счет можно пополнить на $free"
 localisation.messages.out.wallet.currency.mismatch: "Валюты кошельков не совпадают! ($currencyS -> $currencyT)"
 localisation.messages.out.wallet.target-not-found: "Получатель не найден!"
-localisation.messages.out.wallet.transfer-successfully: "Вы перевели $amount $currency1 игроку $target (#$senderWalletID -> #$targetWalletID)"
+localisation.messages.out.wallet.transfer-successfully: "Вы перевели $amount $currency игроку $target (#$senderWalletID -> #$targetWalletID)"
 localisation.messages.out.wallet.transfer-unsuccessfully: "Ошибка при выполнении перевода."
 localisation.messages.out.wallet.back-deposit: "Вам вернули $amount x $currency."
 localisation.messages.out.wallet.back-deposit.full-inventory: "У вас недостаточно места в инвентаре для получения депозита."
@@ -85,3 +85,4 @@ localisation.account.open.confirmation.item.accept.lore: "Подтвердив �
 # Информационные сообщения для логирования в Discord
 
 localisation.discord.logger.back-deposit: "Игроку $playerName вернули $amount $currency."
+localisation.discord.logger.transfer-successfully: "Была выполнена банковская операция: \n С кошелька $walletIDSender игрока $sender \n на кошелек $walletIDTarget игрока $target \n перевели $amount $currency!"

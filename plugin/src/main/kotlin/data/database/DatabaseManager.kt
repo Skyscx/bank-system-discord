@@ -140,8 +140,8 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
         val sql = """
             CREATE TABLE IF NOT EXISTS bank_history (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
-                SenderIdAccount INTEGER NOT NULL,
-                TargetIdAccount INTEGER NOT NULL,
+                SenderIdWallet INTEGER NOT NULL,
+                TargetIdWallet INTEGER NOT NULL,
                 Amount INTEGER NOT NULL,
                 Currency TEXT NOT NULL,
                 SenderName TEXT NOT NULL,

@@ -1,5 +1,6 @@
 
 
+import bank.commands.balance.WalletBalanceAddCommand
 import bank.commands.banker.WalletVerificationCommand
 import bank.commands.tabcompleter.WalletsCommandCompleter
 import bank.commands.transfers.NewTransferCommand
@@ -98,12 +99,12 @@ class App : JavaPlugin(), Listener {
         //getCommand("pay")?.setExecutor(PayCommand(database))
         //getCommand("balance")?.setExecutor(BalanceCommand(database))
         //getCommand("add-balance")?.setExecutor(BalanceAddCommand(database))
-        //getCommand("set-balance")?.setExecutor(BalanceSetCommand(database))
+        getCommand("balance-add")?.setExecutor(WalletBalanceAddCommand())
         //getCommand("open-account")?.setExecutor(AccountOpenCommand())
         //getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("wallet-verify")?.setExecutor(WalletVerificationCommand())
         //getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
-        getCommand("transfer")?.setExecutor(NewTransferCommand())
+        getCommand("transfer")?.setExecutor(NewTransferCommand(config, discordBot!!))
         //getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
         //getCommand("account-renaming")?.setExecutor(Events())
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
