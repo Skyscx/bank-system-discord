@@ -3,7 +3,7 @@
 import bank.commands.balance.WalletBalanceAddCommand
 import bank.commands.banker.WalletVerificationCommand
 import bank.commands.tabcompleter.WalletsCommandCompleter
-import bank.commands.transfers.NewTransferCommand
+import bank.commands.transfers.TransferCommand
 import bank.commands.wallets.WalletCommands
 import data.Config
 import data.database.DatabaseManager
@@ -94,17 +94,17 @@ class App : JavaPlugin(), Listener {
         copyConfigFile("locales/messages_$language.yml")
 
         //Commands
-        getCommand("wallet")?.setExecutor(WalletCommands())
+        getCommand("wallet")?.setExecutor(WalletCommands(config, discordBot!!))
 
         //getCommand("pay")?.setExecutor(PayCommand(database))
         //getCommand("balance")?.setExecutor(BalanceCommand(database))
         //getCommand("add-balance")?.setExecutor(BalanceAddCommand(database))
-        getCommand("balance-add")?.setExecutor(WalletBalanceAddCommand())
+        getCommand("balance-add")?.setExecutor(WalletBalanceAddCommand(config, discordBot!!))
         //getCommand("open-account")?.setExecutor(AccountOpenCommand())
         //getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("wallet-verify")?.setExecutor(WalletVerificationCommand())
         //getCommand("account-remove")?.setExecutor(AccountRemoveCommand(database))
-        getCommand("transfer")?.setExecutor(NewTransferCommand(config, discordBot!!))
+        getCommand("transfer")?.setExecutor(TransferCommand(config, discordBot!!))
         //getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
         //getCommand("account-renaming")?.setExecutor(Events())
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))

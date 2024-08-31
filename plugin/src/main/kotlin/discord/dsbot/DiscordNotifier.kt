@@ -1,6 +1,7 @@
 package discord.dsbot
 
 import net.dv8tion.jda.api.JDA
+import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
 
@@ -22,6 +23,19 @@ class DiscordNotifier(private val jda: JDA) {
             println("Канал с ID \$channelId не найден.")
         }
     }
+
+    fun sendPrivateMessage(userId: String, message: String) {
+        jda.awaitReady()
+        val user: User? = jda.retrieveUserById(userId).complete()
+        if (user != null) {
+            user.openPrivateChannel().queue { channel ->
+                channel.sendMessage(message).queue()
+            }
+        } else {
+            println("User with ID $userId not found.")
+        }
+    }
+
     fun sendMessageWithButtons(channelId: String, message: String, walletId: String) {
         val channel = jda.getTextChannelById(channelId)
         if (channel != null) {

@@ -10,7 +10,7 @@ class WalletsCommandCompleter : TabCompleter {
                 "open",
                 "remove",
                 "rename",
-                "set-default",
+//                "set-default",
                 "list"
             )
         if (args.size == 2) {
@@ -22,9 +22,9 @@ class WalletsCommandCompleter : TabCompleter {
             if (args[0] == "rename") return listOf(
                 "<id/name>"
             )
-            if (args[0] == "set-default") return listOf(
-                "<id/name>"
-            )
+//            if (args[0] == "set-default") return listOf(
+//                "<id/name>"
+//            )
             return emptyList()
         }
         if (args.size == 3){

@@ -48,6 +48,8 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
         }
     }
 
+
+
     // Получение данных
     fun executeQuery(query: String, vararg args: Any): List<Map<String, Any>> {
         val result = mutableListOf<Map<String, Any>>()

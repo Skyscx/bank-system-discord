@@ -88,6 +88,37 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
     }
 
     /**
+     * Получение DefaultWalletID по UUID пользователя по таблице пользователей.
+     */
+    fun getDefaultWalletByUUID(uuid: String): Int? {
+        val sql = "SELECT DefaultWalletID FROM bank_users WHERE UUID = ?"
+        val result = dbManager.executeQuery(sql, uuid)
+        if (result.isEmpty()) return null
+        val row = result.firstOrNull()
+        println(row)
+        return row?.get("DefaultWalletID") as? Int
+    }
+
+    fun setDefaultWalletByUUID(uuid: String, id: Int): Boolean {
+        val sql = "UPDATE bank_users SET DefaultWalletID = ? WHERE UUID = ?"
+        return dbManager.executeUpdate(sql, id, uuid)
+    }
+
+
+    /**
+     * Получение PlayerName по UUID пользователя по таблице пользователей.
+     */
+    fun getPlayerNameByUUID(uuid: String): String? {
+        val sql = "SELECT PlayerName FROM bank_users WHERE UUID = ?"
+        val result = dbManager.executeQuery(sql, uuid)
+        if (result.isEmpty()) return null
+        val row = result.firstOrNull()
+        return row?.get("PlayerName") as? String
+    }
+
+
+
+    /**
      * Получение UUID по DiscordID пользователя из таблицы пользователей
      */
     fun getUUIDbyDiscordID(id: String): CompletableFuture<String?> {
@@ -129,6 +160,19 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
 
         return uuid
     }
+
+    /**
+     * Получение ID USER по UUID пользователя по таблице пользователей.
+     */
+    fun getIdUserByUUID(uuid: String): Int? {
+        val sql = "SELECT ID FROM bank_users WHERE UUID = ?"
+        val result = dbManager.executeQuery(sql, uuid)
+        if (result.isEmpty()) return null
+        val row = result.firstOrNull()
+        return row?.get("ID") as? Int
+    }
+
+
 
     companion object {
         @Volatile

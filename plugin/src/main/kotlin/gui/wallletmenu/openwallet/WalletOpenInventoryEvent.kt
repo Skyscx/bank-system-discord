@@ -19,11 +19,14 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
     //private val functionsDiscord = FunctionsDiscord(discordBot)
     //private val discordBot = DiscordBot.getInstance(database, config)
     private val discordNotifier = DiscordNotifier(discordBot.getJDA())
-    private val countAccountConfig = config.getInt("count-free-accounts")
+    //private val countAccountConfig = config.getInt("count-free-accounts") TODO: Вернуть в будущем когда будет система разных кошельков.
+    private val countAccountConfig = 1
     private val priceAccountConfig = config.getInt("price-account")
     private val currencyAccountConfig = config.getString("currency-block-default")
     private val verificationAccountConfig = config.getBoolean("checker-banker")
     private val channelIdBankerNotifier = config.getString("channel-id-banker")
+    private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
+
     @EventHandler
     fun onClick(e: InventoryClickEvent) {
         val player = e.whoClicked as Player
@@ -70,8 +73,10 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                 walletDB.insertWallet(player, currencyAccountConfig!!, price, verificationInt).thenAccept { isCreate ->
                                     if (isCreate) {
                                         functions.takeItem(player, currencyAccountConfig, priceAccountConfig)
+                                        discordNotifier.sendMessageChannel(channelIdLogger, localizationManager.getMessage("localisation.discord.logger.open-successfully"))
                                         //functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
                                     } else {
+                                        discordNotifier.sendMessageChannel(channelIdLogger, localizationManager.getMessage("localisation.discord.logger.open-unsuccessfully"))
                                         functions.sendMessagePlayer(player, "Не удалось создать банковский счет.") //todo: сделать сообщение из конфига
                                     }
                                 }

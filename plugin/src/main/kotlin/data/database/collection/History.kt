@@ -14,7 +14,7 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
     /**
      * Создание записи о проделанной операции в таблицу с историей.
      */
-    fun insertBankHistory(sender: Player, target: Player, senderWalletID: Int, targetWalletID: Int, amount: Int, currency: String, status: Int) {
+    fun insertBankHistory(sender: Player, target: String, senderWalletID: Int, targetWalletID: Int, amount: Int, currency: String, status: Int, uuidSender: String, uuidTarget: String) {
         plugin.let {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
                 val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
@@ -30,8 +30,8 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
                 try {
                     dbManager.executeUpdate(sql,
                         senderWalletID, targetWalletID, amount, currency, sender.name,
-                        sender.uniqueId.toString(), userDB.getDiscordIDbyUUID(sender.uniqueId.toString()) as Any,
-                        target.name, target.uniqueId.toString(), userDB.getDiscordIDbyUUID(target.uniqueId.toString()) as Any,
+                        uuidSender, userDB.getDiscordIDbyUUID(uuidSender) as Any,
+                        target, uuidTarget, userDB.getDiscordIDbyUUID(uuidTarget) as Any,
                         currentDate, status
                     )
                 } catch (e: SQLException) {

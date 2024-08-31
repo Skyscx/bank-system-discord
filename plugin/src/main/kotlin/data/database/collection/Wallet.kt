@@ -3,6 +3,7 @@ package data.database.collection
 import App
 import App.Companion.historyDB
 import App.Companion.localizationManager
+import App.Companion.userDB
 import data.database.DatabaseManager
 import discord.FunctionsDiscord
 import org.bukkit.Bukkit
@@ -40,11 +41,13 @@ class Wallet (
         """.trimIndent()
 
             try {
+                val id = userDB.getIdUserByUUID(playerUUID.toString()) ?: 1
                 val result = dbManager.executeUpdate(
                     sql,
                     playerUUID.toString(), discordID!!, currentDate, privateKey, balance, currency, name,
                     verificationInt, amount, inspector, dateVerification, 1
                 )
+                userDB.setDefaultWalletByUUID(playerUUID.toString(), id)
                 future.complete(result)
             } catch (e: SQLException) {
                 e.printStackTrace()
@@ -207,17 +210,19 @@ class Wallet (
      */
     fun transferCash(
         sender: Player,
-        target: Player,
+        target: String,
         senderWalletID: Int,
         targetWalletID: Int,
         amount: Int,
         currency: String,
-        status: Int
+        status: Int,
+        uuidSender: String,
+        uuidTarget: String
     ): Boolean {
         updateWalletBalance(senderWalletID, -amount)
         updateWalletBalance(targetWalletID, amount)
 
-        historyDB.insertBankHistory(sender, target, senderWalletID, targetWalletID, amount, currency, status)
+        historyDB.insertBankHistory(sender, target, senderWalletID, targetWalletID, amount, currency, status, uuidSender, uuidTarget)
         return true
     }
 
@@ -402,6 +407,7 @@ class Wallet (
 
     /**
      * Получение основного кошелька для транзакций по UUID
+     * todo: УДАЛИТЬ
      */
     fun getDefaultWalletIDByUUID(uuid: String): Int? {
         var defaultWalletID: Int? = null
@@ -441,15 +447,17 @@ class Wallet (
 
         return try {
             // Получаем UUID по ID
-            val uuid = getUUIDbyWalletID(id)
-            if (uuid != null) {
-                // Получаем DefaultIDWallet по UUID
-                val defaultIDWallet = getDefaultWalletIDByUUID(uuid)
-                if (defaultIDWallet != null && defaultIDWallet == id) {
-                    // Обновляем DefaultIDWallet в таблице bank_users
-                    dbManager.executeUpdate(sqlUpdateUser, id)
-                }
-            }
+            val uuid = getUUIDbyWalletID(id).toString()
+            //todo: добавить проверки на дб
+            userDB.setDefaultWalletByUUID(uuid, 0)
+//            if (uuid != null) {
+//                // Получаем DefaultIDWallet по UUID
+//                val defaultIDWallet = getDefaultWalletIDByUUID(uuid)
+//                if (defaultIDWallet != null && defaultIDWallet == id) {
+//                    // Обновляем DefaultIDWallet в таблице bank_users
+//                    dbManager.executeUpdate(sqlUpdateUser, id)
+//                }
+//            }
 
             // Обновляем кошелек в таблице bank_wallets
             dbManager.executeUpdate(sqlUpdateWallet, id)

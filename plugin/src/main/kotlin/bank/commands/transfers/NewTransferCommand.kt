@@ -57,7 +57,8 @@ class NewTransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Co
                 return
             }
             walletDB.getDefaultWalletIDByUUID(senderPlayer.uniqueId.toString()) to walletDB.getDefaultWalletIDByUUID(target.uniqueId.toString())
-        } else {
+        }
+        else {
             val sourceWallet = args[0]
             val targetWallet = args[1]
             walletDB.getWalletID(sourceWallet) to walletDB.getWalletID(targetWallet)
@@ -127,17 +128,39 @@ class NewTransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Co
             return
         }
 
-        val operation = walletDB.transferCash(player, target, sourceWalletID, targetWalletID, amount, currency1, 1)
+        val operation = walletDB.transferCash(player, target.name, sourceWalletID, targetWalletID, amount, currency1, 1, "s", "t")
 
         if (operation) {
-            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully",
+            // Сообщение отправителю
+            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully.sender",
                 "amount" to amount.toString(),
                 "currency" to currency1,
-                "target" to target.toString(),
+                "target" to target.name,
                 "senderWalletID" to sourceWalletID.toString(),
                 "targetWalletID" to targetWalletID.toString()))
+            // Сообщение получателю //TODO: Testing
+            if (function.isPlayerOnline(targetUUID.toString())){
+                target.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully.target",
+                    "sender" to sender.name,
+                    "amount" to amount.toString(),
+                    "currency" to currency1.toString(),
+                    "senderWalletID" to sourceWalletID.toString(),
+                    "targetWalletID" to targetWalletID.toString()))
+            } else {
+                // Сообщение в личные сообщения Discord User Target //TODO: Реализовать, обязательно отправлять если игрок не в сети. TESTING
+                val discordTargetID = userDB.getDiscordIDbyUUID(targetUUID.toString()) ?: "608291538207899689"
+                discordNotifier.sendPrivateMessage(discordTargetID, localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully.discord.target",
+                    "targetWalletID" to targetWalletID.toString(),
+                    "sender" to sender.name,
+                    "amount" to amount.toString(),
+                    "currency" to currency1
+                    ))
+            }
+            // Сообщение в личные сообщения Discord User Sender //TODO: Реализовать в доп.обновах (НЕ ВАЖНОЕ ОБНОВЛЕНИЕ)
+            // Сообщение в личные сообщения Discord User Target //TODO: Реализовать в доп.обновах (НЕ ВАЖНОЕ ОБНОВЛЕНИЕ)
 
 
+            // Сообщение лог в дискорд
             discordNotifier.sendMessageChannel(channelIdLogger, localizationManager.getMessage("localisation.discord.logger.transfer-successfully",
                 "walletIDSender" to sourceWalletID.toString(),
                 "sender" to sender.name,
@@ -145,9 +168,6 @@ class NewTransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Co
                 "target" to target.name,
                 "amount" to amount.toString(),
                 "currency" to currency1))
-
-            //todo пофиксить сообщение
-            //todo добавить сообщение для игрока если он в сети
         } else {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer-unsuccessfully"))
         }
