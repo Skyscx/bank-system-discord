@@ -44,3 +44,9 @@ commands:
   wallet:
     description: Работа с кошельками.
     usage: /wallet
+  wallet-force:
+    description: Работа с кошельками. (admin)
+    usage: /wallet-force
+  convert-diamonds:
+    description: Обменик
+    usage: /convert-diamonds

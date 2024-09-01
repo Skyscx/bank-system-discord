@@ -15,7 +15,7 @@ import org.bukkit.entity.Player
 
 class TransferCommand(config: FileConfiguration, discordBot: DiscordBot) : CommandExecutor {
     private val function = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA())
+    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
     private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
     //todo: /transfer [Получатель: Имя пользователя/Id Wallet*] [amount]
 
@@ -103,7 +103,7 @@ class TransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Comma
                 }
 
                 // Сообщение лог в дискорд
-                discordNotifier.sendMessageChannel(channelIdLogger, localizationManager.getMessage("localisation.discord.logger.transfer-successfully",
+                discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.transfer-successfully",
                     "walletIDSender" to senderWalletID,
                     "sender" to sender.name,
                     "walletIDTarget" to targetWalletID,
@@ -137,7 +137,7 @@ class TransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Comma
                 ))
 
                 // Сообщение лог в дискорд
-                discordNotifier.sendMessageChannel(channelIdLogger, localizationManager.getMessage("localisation.discord.logger.transfer-successfully",
+                discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.transfer-successfully",
                     "walletIDSender" to senderWalletID,
                     "sender" to sender.name,
                     "walletIDTarget" to targetWalletID,

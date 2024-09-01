@@ -63,36 +63,48 @@ class Functions {
     fun isWalletNameValid(walletName: String): Boolean {
         return walletName.length in 5..32 && walletName.matches(Regex("^[a-zA-Z][a-zA-Z0-9]*\$"))
     }
-    fun takeItem(player: Player, itemType: String?, amount: Int) {
-        if (itemType == null) {
-            player.sendMessage("Неверный тип предмета.") //todo: сделать сообщение из конфига
-            return
-        }
-
-        val material: Material
-        try {
-            material = Material.valueOf(itemType)
-        } catch (e: IllegalArgumentException) {
-            player.sendMessage("Неверный тип предмета.") //todo: сделать сообщение из конфига
-            return
-        }
+    fun takeItem(player: Player, itemType: Material, amount: Int) {
 
         val inventory = player.inventory
         var count = 0
         for (item in inventory.contents) {
-            if (item != null && item.type == material) {
+            if (item != null && item.type == itemType) {
                 count += item.amount
                 if (count >= amount) {
-                    inventory.removeItem(ItemStack(material, amount))
-                    player.sendMessage("Вы потратили $amount x ${material.name}.") //todo: сделать сообщение из конфига
+                    inventory.removeItem(ItemStack(itemType, amount))
+                    player.sendMessage("Вы потратили $amount x ${itemType.name}.") //todo: сделать сообщение из конфига
                     return
                 }
             }
         }
 
         if (count < amount) {
-            player.sendMessage("У вас недостаточно ${material.name}.") //todo: сделать сообщение из конфига
+            player.sendMessage("У вас недостаточно ${itemType.name}.") //todo: сделать сообщение из конфига
         }
+    }
+    fun convertStringToMaterial(itemType: String?): Pair<Material?, Boolean> {
+        if (itemType == null) {
+            return Pair(null, false)
+        }
+
+        return try {
+            val material = Material.valueOf(itemType.uppercase())
+            Pair(material, true)
+        } catch (e: IllegalArgumentException) {
+            Pair(null, false)
+        }
+    }
+
+
+    fun countBlocksInInventory(player: Player, blockType: Material): Int {
+        var count = 0
+        val inventory = player.inventory
+        for (item in inventory.contents) {
+            if (item != null && item.type == blockType) {
+                count += item.amount
+            }
+        }
+        return count
     }
     fun giveItem(player: Player, item: ItemStack, amount: Int): Boolean {
         val inventory = player.inventory
@@ -119,7 +131,9 @@ class Functions {
         return true
     }
     fun hasPermission(sender: CommandSender, permission: String): Boolean {
-        return sender.hasPermission(permission)
+        return sender.hasPermission(permission) || sender.isOp
     }
+
+
 
 }

@@ -36,7 +36,7 @@ localisation.messages.out.wallet.remove-unsuccessfully.sender: "Ошибка о�
 
 
 localisation.messages.out.wallet.transfer-unsuccessfully: "Ошибка при выполнении перевода."
-localisation.messages.out.wallet.back-deposit: "Вам вернули $amount x $currency."
+localisation.messages.out.wallet.back-deposit: "Вам вернули $amount x $currency ."
 localisation.messages.out.wallet.back-deposit.full-inventory: "У вас недостаточно места в инвентаре для получения депозита."
 localisation.messages.out.wallet.open.not-money: "Для открытия кошелька не хватает $amount $currency NOT USAGE"
 
@@ -68,6 +68,7 @@ localisation.messages.usage.account.remove.boolean: "Необходимо под
 localisation.messages.usage.account.remove.all: "/account remove all true"
 localisation.messages.usage.account.remove.all.boolean: "Необходимо подтвердить - /account remove all true"
 localisation.messages.usage.account.remove.gui: "Открыть меню удаления кошельков - /account remove"
+localisation.messages.usage.account.force.remove: "Используйте /wallet-force remove [player]"
 localisation.messages.usage.account.rename: "Используйте /account rename <id/name> <new name>"
 localisation.messages.usage.account.set-default:
 localisation.messages.usage.account.set-name:

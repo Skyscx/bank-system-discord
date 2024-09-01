@@ -12,8 +12,8 @@ import org.bukkit.entity.Player
 
 class RemoveCommandHandler (config: FileConfiguration, discordBot: DiscordBot) {
     val functions = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA())
-    private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
+    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
+    //private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
 
 
     fun handleRemoveCommand(sender: CommandSender, args: Array<String>) {
@@ -37,7 +37,7 @@ class RemoveCommandHandler (config: FileConfiguration, discordBot: DiscordBot) {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.usage.account.remove.boolean"))
             return
         }
-        val walletID = userDB.getDefaultWalletByUUID(uuid)?.toInt()
+        val walletID = userDB.getDefaultWalletByUUID(uuid)
         if (walletID == null) {
             sender.sendMessage("error")
             return
@@ -47,7 +47,7 @@ class RemoveCommandHandler (config: FileConfiguration, discordBot: DiscordBot) {
         val successful = walletDB.deleteUserWallet(walletID)
         if (successful){
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.remove-successfully.sender"))
-            discordNotifier.sendMessageChannel(channelIdLogger, localizationManager.getMessage("localisation.discord.logger.remove-successfully", "player" to sender.name, "amount" to balance, "currency" to currency))
+            discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.remove-successfully", "player" to sender.name, "amount" to balance, "currency" to currency))
         } else {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.remove-unsuccessfully.sender"))
         }

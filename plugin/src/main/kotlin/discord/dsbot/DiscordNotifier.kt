@@ -4,16 +4,28 @@ import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.interactions.components.buttons.Button
 import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
+import org.bukkit.configuration.file.FileConfiguration
 
-class DiscordNotifier(private val jda: JDA) {
+class DiscordNotifier(private val jda: JDA, configuration: FileConfiguration) {
     //todo: сделать сообщение из конфига!!!!
     //todo: сделать сообщение из конфига!!!!
     //todo: сделать сообщение из конфига!!!!
     //todo: сделать сообщение из конфига!!!!
     //todo: сделать сообщение из конфига!!!!
-
+    private val channelIdLogger = configuration.getString("channel-id-logger") ?: "null"
     fun sendMessageChannel(channelId: String, message: String) {
         val channel = jda.getTextChannelById(channelId)
+        if (channel != null) {
+            channel.sendMessage(message).queue(
+                { println("Сообщение отправлено: $message") },
+                { it.printStackTrace() }
+            )
+        } else {
+            println("Канал с ID \$channelId не найден.")
+        }
+    }
+    fun sendMessageChannelLog(message: String) {
+        val channel = jda.getTextChannelById(channelIdLogger)
         if (channel != null) {
             channel.sendMessage(message).queue(
                 { println("Сообщение отправлено: $message") },

@@ -4,6 +4,7 @@ import App
 import App.Companion.historyDB
 import App.Companion.localizationManager
 import App.Companion.userDB
+import App.Companion.walletDB
 import data.database.DatabaseManager
 import discord.FunctionsDiscord
 import org.bukkit.Bukkit
@@ -41,13 +42,15 @@ class Wallet (
         """.trimIndent()
 
             try {
-                val id = userDB.getIdUserByUUID(playerUUID.toString()) ?: 1
+                val idWallet = walletDB.getLastIDWalletFree() ?: 0
                 val result = dbManager.executeUpdate(
                     sql,
                     playerUUID.toString(), discordID!!, currentDate, privateKey, balance, currency, name,
                     verificationInt, amount, inspector, dateVerification, 1
                 )
-                userDB.setDefaultWalletByUUID(playerUUID.toString(), id)
+                if (result){
+                    userDB.setDefaultWalletByUUID(playerUUID.toString(), idWallet)
+                }
                 future.complete(result)
             } catch (e: SQLException) {
                 e.printStackTrace()
@@ -443,7 +446,7 @@ class Wallet (
      */
     fun deleteUserWallet(id: Int): Boolean {
         val sqlUpdateWallet = "UPDATE bank_wallets SET Name = 'NULL', Deposit = 0, Status = 0 WHERE ID = ?"
-        val sqlUpdateUser = "UPDATE bank_users SET DefaultWalletID = 0 WHERE DefaultWalletID = ?"
+        //val sqlUpdateUser = "UPDATE bank_users SET DefaultWalletID = 0 WHERE DefaultWalletID = ?"
 
         return try {
             // Получаем UUID по ID

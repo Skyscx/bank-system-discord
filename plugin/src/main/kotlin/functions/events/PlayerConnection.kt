@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 
 class PlayerConnection(config: FileConfiguration, discordBot: DiscordBot) : Listener{
     private val functions = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA())
+    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
     private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
 
 
@@ -34,7 +34,7 @@ class PlayerConnection(config: FileConfiguration, discordBot: DiscordBot) : List
                 val item = ItemStack(Material.DIAMOND_ORE) // TODO:Брать из конфигурации
 
                 if (functions.giveItem(player, item, deposit!!)) {
-                    discordNotifier.sendMessageChannel(channelIdLogger, localizationManager.getMessage("localisation.discord.logger.back-deposit",
+                    discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.back-deposit",
                         "playerName" to player.name, "amount" to deposit.toString(), "currency" to currency.toString()))
                     walletDB.deleteUserWallet(id)
                 }

@@ -1,10 +1,7 @@
 package bank.commands.wallets
 
 import App.Companion.localizationManager
-import bank.commands.wallets.collection.ListCommandHandler
-import bank.commands.wallets.collection.OpenCommandHandler
-import bank.commands.wallets.collection.RemoveCommandHandler
-import bank.commands.wallets.collection.RenameCommandHandler
+import bank.commands.wallets.collection.*
 import discord.dsbot.DiscordBot
 import functions.Functions
 import org.bukkit.command.Command
@@ -35,18 +32,38 @@ class WalletCommands(private val config: FileConfiguration, private val discordB
                 val removeCommandHandler = RemoveCommandHandler(config, discordBot)
                 removeCommandHandler.handleRemoveCommand(sender, argsArray)
             }
-            "rename" -> {
-                val renameCommandHandler = RenameCommandHandler()
-                renameCommandHandler.handleRenameCommand(sender, argsArray)
+            "balance" -> {
+                if (args.size == 1) {
+                    val balanceCommandHandler = BalanceCommandHandler()
+                    balanceCommandHandler.handleBalanceCommand(sender, argsArray)
+                } else {
+                    when (args[1].lowercase()) {
+                        "add" -> {
+                            val balanceAddCommandHandler = AddBalanceCommandHandler()
+                            balanceAddCommandHandler.handleAddBalanceCommand(sender, argsArray)
+                        }
+                        "remove" -> {
+                            val balanceRemoveCommandHandler = RemoveBalanceCommandHandler()
+                            balanceRemoveCommandHandler.handleRemoveBalanceCommand(sender, argsArray)
+                        }
+                        else -> {
+                            functions.unknownCommand(sender)
+                        }
+                    }
+                }
             }
+//            "rename" -> {
+//                val renameCommandHandler = RenameCommandHandler()
+//                renameCommandHandler.handleRenameCommand(sender, argsArray)
+//            }
 //            "set-default" -> {
 //                val setDefaultCommandHandler = SetDefaultCommandHandler()
 //                setDefaultCommandHandler.handleSetDefaultCommand(sender, argsArray)
 //            }
-            "list" -> {
-                val listCommandHandler = ListCommandHandler()
-                listCommandHandler.handleListCommand(sender)
-            }
+//            "list" -> {
+//                val listCommandHandler = ListCommandHandler()
+//                listCommandHandler.handleListCommand(sender)
+//            }
             else -> {
                 functions.unknownCommand(sender)
             }

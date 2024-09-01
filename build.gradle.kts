@@ -11,7 +11,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            url = uri("https://papermc.io/repo/repository/maven-public/")
+            url = uri("https://repo.papermc.io/repository/maven-public/")
         }
         maven {
             url = uri("https://nexus.scarsz.me/content/groups/public/")
@@ -29,7 +29,7 @@ subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
 
     java {
-        toolchain.languageVersion.set(JavaLanguageVersion.of(8))
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
         withSourcesJar()
     }
 
@@ -37,7 +37,7 @@ subprojects {
         withType<JavaCompile>().configureEach { options.encoding = "UTF-8" }
         withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
             kotlinOptions {
-                jvmTarget = "1.8"
+                jvmTarget = "17"
             }
         }
     }
