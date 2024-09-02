@@ -30,11 +30,13 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.HOPPER) {
             val title = e.view.title()
-            val expectedTitle = localizationManager.getMessage("localisation.account.open.confirmation.title")
+            val expectedTitle = localizationManager.getMessage("localisation.inventory.title.wallet-open-confirmation")
             if (functions.isComponentEqual(title, expectedTitle)) { //todo: сделать сообщение из конфига
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
                 if (itemMeta.hasDisplayName()) {
+                    e.isCancelled
+                    player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
                     val titleAccept = localizationManager.getMessage("localisation.inventory.item.accept")
                     val titleReject = localizationManager.getMessage("localisation.inventory.item.reject")
@@ -120,8 +122,6 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                     if (functions.isComponentEqual(displayNameComponent, titleReject)) {
                         functions.sendMessagePlayer(player, "Отклонено.")
                     } //todo: сделать сообщение из конфига
-                    e.isCancelled
-                    player.closeInventory()
                     return
                 }
             }
