@@ -2,6 +2,7 @@ package gui.wallletmenu.removewallet
 
 import gui.InventoryCreator
 import gui.SystemGUI
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -10,7 +11,7 @@ import org.bukkit.inventory.Inventory
 class WalletRemoveInventory : InventoryCreator {
     private val systemGUI = SystemGUI()
     override fun createInventory(player: Player) : Inventory {
-        val removeAccount = Bukkit.createInventory(null, 54, "Удаление кошелька")
+        val removeAccount = Bukkit.createInventory(null, 54, Component.text("Удаление кошелька"))
         // default
         val removeMyAccountID = systemGUI.createItem(Material.APPLE, "Удалить мой кошелек.", listOf("Нажав, выйдет окно с вводом номера кошелька.\n После ввода необходимо будет подтвердить удаление"))
         val removeMyAccountName = systemGUI.createItem(Material.IRON_BLOCK, "Удалить мой кошелек", listOf("Нажав, выйдет окно с вводом названия кошелька.\n После ввода необходимо будет подтвердить удаление"))

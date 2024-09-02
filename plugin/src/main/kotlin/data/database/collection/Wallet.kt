@@ -66,15 +66,14 @@ class Wallet (
      *
      * 1 - одобрен || 0 - ожидание || -1 - отказан
      */
-    fun getVerificationWallet(id: Int): Int {
-        var verification = 0
+    fun getVerificationWallet(id: Int): Int? {
         val sql = "SELECT Verification FROM bank_wallets WHERE ID = ?"
         val result = dbManager.executeQuery(sql, id)
         if (result.isNotEmpty()) {
             val row = result.firstOrNull()
-            verification = row?.get("Verification") as? Int ?: 0
+            return row?.get("Verification") as? Int
         }
-        return verification
+        return null
     }
 
     /**
@@ -452,7 +451,7 @@ class Wallet (
             // Получаем UUID по ID
             val uuid = getUUIDbyWalletID(id).toString()
             //todo: добавить проверки на дб
-            userDB.setDefaultWalletByUUID(uuid, 0)
+            userDB.setDefaultWalletByUUID(uuid, -1)
 //            if (uuid != null) {
 //                // Получаем DefaultIDWallet по UUID
 //                val defaultIDWallet = getDefaultWalletIDByUUID(uuid)

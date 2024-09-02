@@ -4,10 +4,12 @@ import App.Companion.localizationManager
 import bank.commands.wallets.collection.*
 import discord.dsbot.DiscordBot
 import functions.Functions
+import gui.InventoryManager
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.FileConfiguration
+import org.bukkit.entity.Player
 
 class WalletCommands(private val config: FileConfiguration, private val discordBot: DiscordBot) : CommandExecutor{
     private val functions = Functions()
@@ -19,6 +21,9 @@ class WalletCommands(private val config: FileConfiguration, private val discordB
         }
         if (args.isEmpty()){
             //TODO: Сделать открытие меню инвентаря со всеми доступными функциями.
+            val inventoryManager = InventoryManager()
+            val player = sender as Player
+            inventoryManager.openInventory(player, "menu")
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.developing"))
             return true
         }

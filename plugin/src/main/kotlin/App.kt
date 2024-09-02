@@ -30,6 +30,7 @@ lateinit var app: App
 
 class App : JavaPlugin(), Listener {
     companion object {
+        lateinit var instance: App
         lateinit var configPlugin: Config
         var discordBot: DiscordBot? = null
         lateinit var localizationManager: LocalisationManager
@@ -41,6 +42,7 @@ class App : JavaPlugin(), Listener {
     }
 
     override fun onEnable() {
+        instance = this
         // Folder
         val pluginFolder = dataFolder
         if (!pluginFolder.exists()) {

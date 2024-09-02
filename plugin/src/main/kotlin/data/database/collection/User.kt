@@ -95,7 +95,6 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
         val result = dbManager.executeQuery(sql, uuid)
         if (result.isEmpty()) return null
         val row = result.firstOrNull()
-        println(row)
         return row?.get("DefaultWalletID") as? Int
     }
 

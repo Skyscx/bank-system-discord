@@ -79,19 +79,6 @@ localisation.messages.usage.transfer.default: "Используйте: /transfer
 localisation.messages.usage.balance-add: "Используйте: /balance-add [nick] [amount]"
 
 
-
-
-# Текстовые поля для оформления GUI
-
-localisation.inventory.item.accept: "Подтвердить!"
-localisation.inventory.item.reject: "Отклонить"
-
-## Подтверждение открытия кошелька
-
-localisation.account.open.confirmation.title: "Подтверждение открытия кошелька."
-localisation.account.open.confirmation.item.accept.lore: "Подтвердив операцию, с вашего инвентаря заберутся $amount алмазной руды."
-
-
 # Информационные сообщения для логирования в Discord
 
 localisation.discord.logger.back-deposit: "Игроку $playerName вернули $amount $currency."
@@ -99,5 +86,66 @@ localisation.discord.logger.transfer-successfully: "Была выполнена 
 localisation.discord.logger.remove-successfully: "Игрок $player удалил свой кошелек.\nБаланс кошелька составлял $amount $currency."
 localisation.discord.logger.open-successfully: "Игрок $player открыл кошелек."
 localisation.discord.logger.open-unsuccessfully: "Игрок пытался открыть кошелек. Но возникли трудности с обработкой данных в Базе Данных. \n Срочно! Обратитесь к администратору!"
+
+
+#### Инвентари
+
+#Названия
+localisation.inventory.title: "{NameInventory}"
+localisation.inventory.title.wallet-open-confirmation: "Подтверждения открытия кошелька"
+localisation.inventory.title.menu-wallet: "Банковское меню"
+
+#Предметы
+localisation.inventory.item: "{ItemName}"
+localisation.inventory.item.accept: "Подтвердить!"
+localisation.inventory.item.reject: "Отклонить!"
+localisation.inventory.item.profile: "Ваш профиль"
+localisation.inventory.item.open-wallet: "Оформить банковскую карту."
+localisation.inventory.item.close-wallet: "Деактивировать банковскую карту."
+
+localisation.inventory.item.guid-book: "Справочник"
+localisation.inventory.item.report: "Сообщить о проблеме"
+localisation.inventory.item.send-banker-message: "Связь с банкиром."
+
+localisation.inventory.item.replenish: "Пополнить баланс"
+localisation.inventory.item.take-off: "Снять"
+localisation.inventory.item.transfer: "Перевести"
+
+localisation.inventory.item.fine-list: "Список штрафов [DEV]"
+localisation.inventory.item.pay-fine: "Оплатить штраф [DEV]"
+localisation.inventory.item.appeal-fine: "Обжаловать штраф [DEV]"
+
+localisation.inventory.item.bill-list: "Список счетов [DEV]"
+localisation.inventory.item.pay-bill: "Оплатить счет [DEV]"
+localisation.inventory.item.put-bill: "Выставить счет [DEV]"
+
+#Описания
+localisation.inventory.lore: "{LoreItem}"
+localisation.inventory.lore.profile.menu: "{Заполнить | profile}"
+
+localisation.inventory.lore.accept.open-wallet: "Подтвердив операцию, с вашего инвентаря заберутся $amount алмазной руды."
+localisation.inventory.lore.open-wallet.menu: "Оформите банковскую карту нашего банка по выгодным условиям! \n Стоимость открытия - $amount"
+localisation.inventory.lore.close-wallet.menu: "{Заполнить | close wallet}"
+
+localisation.inventory.lore.guid-book.menu: "{Заполнить | guid book}"
+localisation.inventory.lore.report.menu: "{Заполнить | Report}"
+localisation.inventory.lore.send-banker-message.menu: "{Заполнить | Send Banker Message}"
+
+localisation.inventory.lore.replenish.menu: "{Заполнить | replenish}"
+localisation.inventory.lore.take-off.menu: "{Заполнить | take-off}"
+localisation.inventory.lore.transfer.menu: "{Заполнить | transfer}"
+
+localisation.inventory.lore.fine-list.menu: "{Заполнить | fine-list}"
+localisation.inventory.lore.pay-fine.menu: "{Заполнить | pay fine}"
+localisation.inventory.lore.appeal-fine: "{Заполнить | appeal fine}"
+
+localisation.inventory.lore.bill-list.menu: "{Заполнить | bill-list}"
+localisation.inventory.lore.pay-bill.menu: "{Заполнить | pay-bill}"
+localisation.inventory.lore.put-bill.menu: "{Заполнить | put-bill}"
+
+
+
+
+
 
 

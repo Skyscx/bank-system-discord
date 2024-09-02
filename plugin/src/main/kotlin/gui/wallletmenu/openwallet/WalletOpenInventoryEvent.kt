@@ -13,12 +13,9 @@ import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
-import java.util.*
 
 class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot: DiscordBot) : Listener {
     private val functions = Functions()
-    //private val functionsDiscord = FunctionsDiscord(discordBot)
-    //private val discordBot = DiscordBot.getInstance(database, config)
     private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
     //private val countAccountConfig = config.getInt("count-free-accounts") TODO: Вернуть в будущем когда будет система разных кошельков.
     private val countAccountConfig = 1
@@ -32,11 +29,16 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
     fun onClick(e: InventoryClickEvent) {
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.HOPPER) {
-            if (e.view.title == localizationManager.getMessage("localisation.account.open.confirmation.title")) { //todo: сделать сообщение из конфига
-                if (Objects.requireNonNull(e.currentItem)?.itemMeta != null){
-                    //accept
-                    if (e.currentItem!!.itemMeta.displayName == localizationManager.getMessage("localisation.inventory.item.accept")) { //todo: сделать сообщение из конфига
-
+            val title = e.view.title()
+            val expectedTitle = localizationManager.getMessage("localisation.account.open.confirmation.title")
+            if (functions.isComponentEqual(title, expectedTitle)) { //todo: сделать сообщение из конфига
+                val currentItem = e.currentItem ?: return
+                val itemMeta = currentItem.itemMeta ?: return
+                if (itemMeta.hasDisplayName()) {
+                    val displayNameComponent = itemMeta.displayName() ?: return
+                    val titleAccept = localizationManager.getMessage("localisation.inventory.item.accept")
+                    val titleReject = localizationManager.getMessage("localisation.inventory.item.reject")
+                    if (functions.isComponentEqual(displayNameComponent, titleAccept)) {
                         val walletCurrency = currencyAccountConfig
                         if (walletCurrency == null){
                             player.sendMessage("ошибка валюты")
@@ -115,10 +117,9 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                             functions.sendMessagePlayer(player, "У вас уже максимальное количество счетов!") //todo: сделать сообщение из конфига
                         }
                     }
-                    //close
-                    if (e.currentItem!!.itemMeta.displayName == localizationManager.getMessage("localisation.inventory.item.reject")) { //todo: сделать сообщение из конфига
-                        functions.sendMessagePlayer(player, "Отклонено.") //todo: сделать сообщение из конфига
-                    }
+                    if (functions.isComponentEqual(displayNameComponent, titleReject)) {
+                        functions.sendMessagePlayer(player, "Отклонено.")
+                    } //todo: сделать сообщение из конфига
                     e.isCancelled
                     player.closeInventory()
                     return

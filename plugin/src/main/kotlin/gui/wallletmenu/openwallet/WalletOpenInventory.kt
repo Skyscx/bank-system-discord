@@ -3,6 +3,7 @@ package gui.wallletmenu.openwallet
 import App.Companion.localizationManager
 import gui.InventoryCreator
 import gui.SystemGUI
+import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -15,8 +16,12 @@ class WalletOpenInventory : InventoryCreator {
         //todo: сделать получение цены создания кошелька.
         val amount = 0.toString() //todo: СЮДА
 
-        val openAccount = Bukkit.createInventory(null, InventoryType.HOPPER, localizationManager.getMessage("localisation.account.open.confirmation.title"))
-        val accept = systemGUI.createItem(Material.GREEN_WOOL, localizationManager.getMessage("localisation.inventory.item.accept"), listOf(localizationManager.getMessage("localisation.account.open.confirmation.item.accept.lore",
+        val openAccount = Bukkit.createInventory(null, InventoryType.HOPPER,
+            Component.text(localizationManager.getMessage("localisation.inventory.title.wallet-open-confirmation")))
+        val accept = systemGUI.createItem(
+            Material.GREEN_WOOL,
+            localizationManager.getMessage("localisation.inventory.item.accept"),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.accept.open-wallet",
             "amount" to amount
         )))
         openAccount.setItem(1, accept)

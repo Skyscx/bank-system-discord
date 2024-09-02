@@ -1,6 +1,8 @@
 package functions
 
 import App.Companion.localizationManager
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.command.CommandSender
@@ -121,6 +123,14 @@ class Functions {
         println(message)
         player.sendMessage(message)
         return true
+    }
+
+
+    // Сравнение Component и String
+    fun isComponentEqual(component: Component, expectedText: String): Boolean {
+        val plainTextSerializer = PlainTextComponentSerializer.plainText()
+        val text = plainTextSerializer.serialize(component)
+        return text == expectedText
     }
 
     fun checkArguments(sender: CommandSender, expectedArgs: Int, args: Array<out String>, errorMessage: String): Boolean {
