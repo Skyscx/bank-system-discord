@@ -1,15 +1,19 @@
 package gui
 
 import gui.wallletmenu.WalletMenuInventory
+import gui.wallletmenu.actionwallet.WalletActionsInventory
+import gui.wallletmenu.closewallet.WalletCloseInventory
 import gui.wallletmenu.openwallet.WalletOpenInventory
-import gui.wallletmenu.removewallet.WalletRemoveInventory
+import oldnotusagefiles.removewallet.WalletRemoveInventory
 import org.bukkit.entity.Player
 
 class InventoryManager {
     private val inventoryCreators = mapOf(
         "open" to WalletOpenInventory(),
-        "remove" to WalletRemoveInventory(),
-        "menu" to WalletMenuInventory()
+        "remove" to WalletRemoveInventory(), //todo: remove
+        "menu" to WalletMenuInventory(),
+        "close" to WalletCloseInventory(),
+        "actions" to WalletActionsInventory()
         /**more inventory**/
     )
 

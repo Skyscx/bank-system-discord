@@ -34,6 +34,9 @@ class PlayerConnection(config: FileConfiguration, discordBot: DiscordBot) : List
                 val item = ItemStack(Material.DIAMOND_ORE) // TODO:Брать из конфигурации
 
                 if (functions.giveItem(player, item, deposit!!)) {
+                    val message = localizationManager.getMessage("localisation.messages.out.wallet.back-deposit",
+                        "amount" to deposit.toString(), "currency" to item.type.name)
+                    player.sendMessage(message)
                     discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.back-deposit",
                         "playerName" to player.name, "amount" to deposit.toString(), "currency" to currency.toString()))
                     walletDB.deleteUserWallet(id)

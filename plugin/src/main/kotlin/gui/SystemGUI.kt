@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemStack
 class SystemGUI {
     fun createItem(
         material: Material,
-        name: String,
+        name: String? = null,
         lore: List<String> = emptyList(),
         customModelData: Int? = null,
         italic: Boolean = false,
@@ -21,12 +21,16 @@ class SystemGUI {
         val meta = item.itemMeta
 
         // Установка уникального названия с различными стилями текста
-        val nameComponent = Component.text(name)
-            .decoration(TextDecoration.ITALIC, italic)
-            .decoration(TextDecoration.BOLD, bold)
-            .decoration(TextDecoration.UNDERLINED, underlined)
-            .decoration(TextDecoration.STRIKETHROUGH, strikethrough)
-            .decoration(TextDecoration.OBFUSCATED, obfuscated)
+        val nameComponent = if (name.isNullOrBlank()) {
+            Component.text(material.name)
+        } else {
+            Component.text(name)
+                .decoration(TextDecoration.ITALIC, italic)
+                .decoration(TextDecoration.BOLD, bold)
+                .decoration(TextDecoration.UNDERLINED, underlined)
+                .decoration(TextDecoration.STRIKETHROUGH, strikethrough)
+                .decoration(TextDecoration.OBFUSCATED, obfuscated)
+        }
 
         meta?.displayName(nameComponent)
 

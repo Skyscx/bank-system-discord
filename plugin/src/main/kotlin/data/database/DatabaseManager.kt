@@ -111,7 +111,8 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
             LastOperation TEXT NOT NULL,
             USDT INTEGER NOT NULL,
             Level INTEGER NOT NULL,
-            DefaultWalletID INTEGER NOT NULL
+            DefaultWalletID INTEGER NOT NULL,
+            Style TEXT NOT NULL
         );
     """.trimIndent()
         createTable(sql)
@@ -132,7 +133,8 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
                 Deposit INTEGER NOT NULL,
                 Inspector TEXT NOT NULL,
                 VerificationDate TEXT NOT NULL,
-                Status INTEGER NOT NULL
+                Status INTEGER NOT NULL,
+                Tariff INTEGER NOT NULL
                 );
         """.trimIndent()
         createTable(sql)

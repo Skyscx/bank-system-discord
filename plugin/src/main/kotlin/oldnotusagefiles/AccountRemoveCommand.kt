@@ -3,7 +3,7 @@ package oldnotusagefiles
 import data.Database
 import functions.Functions
 import gui.InventoryManager
-import gui.wallletmenu.removewallet.WalletRemoveInventory
+import oldnotusagefiles.removewallet.WalletRemoveInventory
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender

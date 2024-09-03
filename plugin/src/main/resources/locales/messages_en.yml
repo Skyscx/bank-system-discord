@@ -32,6 +32,7 @@ localisation.messages.out.wallet.transfer-successfully.target: "Пополнен
 localisation.messages.out.wallet.transfer-successfully.discord.target: "Пополнение кошелька #$targetWalletID от $sender на $amount $currency."
 localisation.messages.out.wallet.remove-successfully.sender: "Ваш кошелек был удален."
 localisation.messages.out.wallet.remove-unsuccessfully.sender: "Ошибка операции. Ваш кошелек не был удален."
+localisation.messages.out.guid-link: "Воспользуйтесь справочник по ссылке ниже."
 
 
 
@@ -92,8 +93,12 @@ localisation.discord.logger.open-unsuccessfully: "Игрок пытался от
 
 #Названия
 localisation.inventory.title: "{NameInventory}"
-localisation.inventory.title.wallet-open-confirmation: "Подтверждения открытия кошелька"
+localisation.inventory.title.wallet-open-confirmation: "Подтверждение открытия кошелька"
+localisation.inventory.title.wallet-close-confirmation: "Подтверждение закрытия кошелька"
+
 localisation.inventory.title.menu-wallet: "Банковское меню"
+localisation.inventory.title.menu-actions-wallet: "Действия с кошельком"
+
 
 #Предметы
 localisation.inventory.item: "{ItemName}"
@@ -101,11 +106,13 @@ localisation.inventory.item.accept: "Подтвердить!"
 localisation.inventory.item.reject: "Отклонить!"
 localisation.inventory.item.profile: "Ваш профиль"
 localisation.inventory.item.open-wallet: "Оформить банковскую карту."
-localisation.inventory.item.close-wallet: "Деактивировать банковскую карту."
+localisation.inventory.item.close-wallet: "§4Деактивировать банковскую карту."
 
 localisation.inventory.item.guid-book: "Справочник"
 localisation.inventory.item.report: "Сообщить о проблеме"
 localisation.inventory.item.send-banker-message: "Связь с банкиром."
+
+localisation.inventory.item.actions: "Действия с кошельком"
 
 localisation.inventory.item.replenish: "Пополнить баланс"
 localisation.inventory.item.take-off: "Снять"
@@ -119,17 +126,28 @@ localisation.inventory.item.bill-list: "Список счетов [DEV]"
 localisation.inventory.item.pay-bill: "Оплатить счет [DEV]"
 localisation.inventory.item.put-bill: "Выставить счет [DEV]"
 
+localisation.inventory.item.add-balance: "Пополнить на"
+localisation.inventory.item.get-balance: "Пополнить на"
+
+localisation.inventory.item.wallet: "Кошелек"
+
 #Описания
 localisation.inventory.lore: "{LoreItem}"
 localisation.inventory.lore.profile.menu: "{Заполнить | profile}"
 
 localisation.inventory.lore.accept.open-wallet: "Подтвердив операцию, с вашего инвентаря заберутся $amount алмазной руды."
+localisation.inventory.lore.accept.close-wallet: "[Заполнить лор для закрытия / accept]"
+localisation.inventory.lore.reject.open-wallet: "[Заполнить лор для открытия / reject]"
+localisation.inventory.lore.reject.close-wallet: "[Заполнить лор для закрытия / reject]"
+
 localisation.inventory.lore.open-wallet.menu: "Оформите банковскую карту нашего банка по выгодным условиям! \n Стоимость открытия - $amount"
 localisation.inventory.lore.close-wallet.menu: "{Заполнить | close wallet}"
 
 localisation.inventory.lore.guid-book.menu: "{Заполнить | guid book}"
 localisation.inventory.lore.report.menu: "{Заполнить | Report}"
 localisation.inventory.lore.send-banker-message.menu: "{Заполнить | Send Banker Message}"
+
+localisation.inventory.lore.actions.menu: "{Заполнить | actions}"
 
 localisation.inventory.lore.replenish.menu: "{Заполнить | replenish}"
 localisation.inventory.lore.take-off.menu: "{Заполнить | take-off}"
@@ -143,6 +161,10 @@ localisation.inventory.lore.bill-list.menu: "{Заполнить | bill-list}"
 localisation.inventory.lore.pay-bill.menu: "{Заполнить | pay-bill}"
 localisation.inventory.lore.put-bill.menu: "{Заполнить | put-bill}"
 
+localisation.inventory.lore.add-balance.actions-menu: "§2$amount $currencyName"
+localisation.inventory.lore.get-balance.actions-menu: "§2$amount $currencyName"
+
+localisation.inventory.lore.wallet.actions-menu: "{Заполнить | wallet}"
 
 
 

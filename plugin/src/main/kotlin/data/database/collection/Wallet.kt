@@ -37,8 +37,8 @@ class Wallet (
             val sql = """
             INSERT INTO bank_wallets(
                 UUID, DiscordID, Registration, PrivateKey, Balance, Currency,
-                Name, Verification, Deposit, Inspector, VerificationDate, Status
-            ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+                Name, Verification, Deposit, Inspector, VerificationDate, Status, Tariff
+            ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
         """.trimIndent()
 
             try {
@@ -46,7 +46,7 @@ class Wallet (
                 val result = dbManager.executeUpdate(
                     sql,
                     playerUUID.toString(), discordID!!, currentDate, privateKey, balance, currency, name,
-                    verificationInt, amount, inspector, dateVerification, 1
+                    verificationInt, amount, inspector, dateVerification, 1, 0
                 )
                 if (result){
                     userDB.setDefaultWalletByUUID(playerUUID.toString(), idWallet)

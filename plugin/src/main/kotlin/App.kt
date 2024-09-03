@@ -17,6 +17,9 @@ import discord.DiscordSRVHook
 import discord.FunctionsDiscord
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
+import gui.wallletmenu.WalletMenuInventoryEvent
+import gui.wallletmenu.actionwallet.WalletActionsInventoryEvent
+import gui.wallletmenu.closewallet.WalletCloseInventoryEvent
 import gui.wallletmenu.openwallet.WalletOpenInventoryEvent
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
@@ -119,7 +122,12 @@ class App : JavaPlugin(), Listener {
         //account-close
 
         Bukkit.getPluginManager().registerEvents(PlayerConnection(config, discordBot!!), this)
+
         Bukkit.getPluginManager().registerEvents(WalletOpenInventoryEvent(config, discordBot!!), this)
+        Bukkit.getPluginManager().registerEvents(WalletMenuInventoryEvent(), this)
+        Bukkit.getPluginManager().registerEvents(WalletCloseInventoryEvent(config, discordBot!!), this)
+        Bukkit.getPluginManager().registerEvents(WalletActionsInventoryEvent(), this)
+
 
         //todo: 07/08/2024 21/10 переделать команды, сделать локализацию
         //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)

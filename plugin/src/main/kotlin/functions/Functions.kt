@@ -2,6 +2,10 @@ package functions
 
 import App.Companion.localizationManager
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
+import net.kyori.adventure.text.event.HoverEvent
+import net.kyori.adventure.text.format.TextColor
+import net.kyori.adventure.text.format.TextDecoration
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import org.bukkit.Bukkit
 import org.bukkit.Material
@@ -41,6 +45,16 @@ class Functions {
     }
     fun sendMessagePlayer(player: Player, message: String){
         player.sendMessage(message)
+    }
+
+    fun sendClickableLink(player: Player, message: String, url: String) {
+        val clickableMessage = Component.text(message)
+            .color(TextColor.color(0x55FF55))
+            .decoration(TextDecoration.UNDERLINED, true)
+            .hoverEvent(HoverEvent.showText(Component.text("Click to open link")))
+            .clickEvent(ClickEvent.openUrl(url))
+
+        player.sendMessage(clickableMessage)
     }
     fun unknownCommand(sender: CommandSender){
         sender.sendMessage("localisation.messages.out.unknown-command")
@@ -118,10 +132,6 @@ class Functions {
         val newItem = item.clone()
         newItem.amount = amount
         inventory.addItem(newItem)
-        val message = localizationManager.getMessage("localisation.messages.out.wallet.back-deposit",
-            "amount" to amount.toString(), "currency" to item.type.name)
-        println(message)
-        player.sendMessage(message)
         return true
     }
 

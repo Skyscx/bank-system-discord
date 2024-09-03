@@ -26,3 +26,5 @@ count-donate-accounts: 0
 price-account: 15
 # Максимальная вместимость кошелька
 wallet-limit: 1000000000
+# Ссылка на гайд по плагину
+guid-link: "https://google.com"

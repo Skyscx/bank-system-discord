@@ -114,7 +114,13 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                     functions.sendMessagePlayer(player, "Не удалось создать банковский счет.") //todo: сделать сообщение из конфига
                                 }
                             }
-                            functions.sendMessagePlayer(player, "Банковский счет был успешно создан!") //todo: сделать сообщение из конфига
+                            if (verificationInt == 1){
+                                functions.sendMessagePlayer(player, "Банковский счет был успешно создан!") //todo: сделать сообщение из конфига
+                            } else {
+                                functions.sendMessagePlayer(player, "Заявление передано банкиру") //todo: сделать сообщение из конфига
+
+                            }
+
                         }else{
                             functions.sendMessagePlayer(player, "У вас уже максимальное количество счетов!") //todo: сделать сообщение из конфига
                         }

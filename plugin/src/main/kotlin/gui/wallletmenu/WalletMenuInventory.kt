@@ -14,7 +14,7 @@ import org.bukkit.inventory.Inventory
 
 class WalletMenuInventory : InventoryCreator {
     private val systemGUI = SystemGUI()
-    val title = Component.text(localizationManager.getMessage("localisation.inventory.title.menu-wallet"), TextColor.color(6, 178, 0))
+    private val title = Component.text(localizationManager.getMessage("localisation.inventory.title.menu-wallet"), TextColor.color(6, 178, 0))
     override fun createInventory(player: Player): Inventory {
 
         val uuid = player.uniqueId.toString()
@@ -35,7 +35,7 @@ class WalletMenuInventory : InventoryCreator {
         val profile = systemGUI.createItem(
             Material.PLAYER_HEAD,
             localizationManager.getMessage("localisation.inventory.item.profile"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.profile.menu", "amount" to "[todo AMOUNT]")),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.profile.menu")),
             1
         )
         // Кнопка для создания кошелька
@@ -94,7 +94,7 @@ class WalletMenuInventory : InventoryCreator {
         )
         // Кнопка для Репорта
         val report = systemGUI.createItem(
-            Material.RED_WOOL,
+            Material.FIRE_CHARGE,
             localizationManager.getMessage("localisation.inventory.item.report"),
             listOf(localizationManager.getMessage("localisation.inventory.lore.report.menu")),
             1
@@ -106,20 +106,27 @@ class WalletMenuInventory : InventoryCreator {
             listOf(localizationManager.getMessage("localisation.inventory.lore.send-banker-message.menu")),
             1
         )
-        //Кнопка пополнения
-        val replenish = systemGUI.createItem(
+        //Кнопка для действий с кошельком
+        val actionsWallet = systemGUI.createItem(
             Material.PURPLE_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.replenish"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.replenish.menu")),
-            1
+            localizationManager.getMessage("localisation.inventory.item.actions"),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.actions.menu")),
+            2
         )
-        //Кнопка снятия
-        val takeOff = systemGUI.createItem(
-            Material.BLUE_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.take-off"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.take-off.menu")),
-            1
-        )
+//        //Кнопка пополнения
+//        val replenish = systemGUI.createItem(
+//            Material.PURPLE_WOOL,
+//            localizationManager.getMessage("localisation.inventory.item.replenish"),
+//            listOf(localizationManager.getMessage("localisation.inventory.lore.replenish.menu")),
+//            1
+//        )
+//        //Кнопка снятия
+//        val takeOff = systemGUI.createItem(
+//            Material.BLUE_WOOL,
+//            localizationManager.getMessage("localisation.inventory.item.take-off"),
+//            listOf(localizationManager.getMessage("localisation.inventory.lore.take-off.menu")),
+//            1
+//        )
         //Кнопка перевода
         val transfer = systemGUI.createItem(
             Material.CYAN_WOOL,
@@ -172,7 +179,7 @@ class WalletMenuInventory : InventoryCreator {
             listOf(localizationManager.getMessage("localisation.inventory.lore.put-bill.menu")),
             1
         )
-        inventory.addItem(profile, closeWallet, guid, report, sendMessageBanker, replenish, takeOff, transfer, fineList, payFine, appealFine, billList, payBill, putBill)
+        inventory.addItem(profile, closeWallet, guid, report, sendMessageBanker, actionsWallet, transfer, fineList, payFine, appealFine, billList, payBill, putBill)
         return inventory
     }
 

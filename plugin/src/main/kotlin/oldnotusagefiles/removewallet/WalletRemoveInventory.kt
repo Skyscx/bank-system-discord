@@ -1,4 +1,4 @@
-package gui.wallletmenu.removewallet
+package oldnotusagefiles.removewallet
 
 import gui.InventoryCreator
 import gui.SystemGUI

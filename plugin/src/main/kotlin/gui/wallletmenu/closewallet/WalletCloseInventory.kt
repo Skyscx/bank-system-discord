@@ -1,4 +1,4 @@
-package gui.wallletmenu.openwallet
+package gui.wallletmenu.closewallet
 
 import App.Companion.localizationManager
 import gui.InventoryCreator
@@ -10,23 +10,24 @@ import org.bukkit.entity.Player
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 
-class WalletOpenInventory : InventoryCreator {
+class WalletCloseInventory : InventoryCreator {
     private val systemGUI = SystemGUI()
     override fun createInventory(player: Player): Inventory {
         //todo: сделать получение цены создания кошелька.
-        val amount = 0.toString() //todo: СЮДА
 
         val inventory = Bukkit.createInventory(null, InventoryType.HOPPER,
-            Component.text(localizationManager.getMessage("localisation.inventory.title.wallet-open-confirmation")))
+            Component.text(localizationManager.getMessage("localisation.inventory.title.wallet-close-confirmation")))
         val accept = systemGUI.createItem(
             Material.GREEN_WOOL,
             localizationManager.getMessage("localisation.inventory.item.accept"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.accept.open-wallet", "amount" to amount)),
-            2)
+            listOf(localizationManager.getMessage("localisation.inventory.lore.accept.close-wallet")),
+            2
+        )
+
         val close = systemGUI.createItem(
             Material.RED_WOOL,
             localizationManager.getMessage("localisation.inventory.item.reject"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.reject.open-wallet")),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.reject.close-wallet")),
             2)
         inventory.setItem(1, accept)
         inventory.setItem(3, close)
