@@ -211,8 +211,8 @@ class Wallet (
      * Метод перевода со счета на счет.
      */
     fun transferCash(
-        sender: Player,
-        target: String,
+        senderName: String,
+        targetName: String,
         senderWalletID: Int,
         targetWalletID: Int,
         amount: Int,
@@ -224,7 +224,7 @@ class Wallet (
         updateWalletBalance(senderWalletID, -amount)
         updateWalletBalance(targetWalletID, amount)
 
-        historyDB.insertBankHistory(sender, target, senderWalletID, targetWalletID, amount, currency, status, uuidSender, uuidTarget)
+        historyDB.insertBankHistory(senderName, targetName, senderWalletID, targetWalletID, amount, currency, status, uuidSender, uuidTarget)
         return true
     }
 

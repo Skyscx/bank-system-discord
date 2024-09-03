@@ -36,18 +36,18 @@ class WalletCloseInventoryEvent(config: FileConfiguration, discordBot: DiscordBo
                     val titleReject = localizationManager.getMessage("localisation.inventory.item.reject")
                     if (functions.isComponentEqual(displayNameComponent, titleAccept)) {
                         val uuid = player.uniqueId.toString()
-                        val walletID = userDB.getDefaultWalletByUUID(uuid)
-                        if (walletID == null) {
-                            player.sendMessage("error")
+                        val walletID = userDB.getDefaultWalletByUUID(uuid) ?: return
+                        val balance = walletDB.getWalletBalance(walletID) ?: 0
+                        if (balance < 0) {
+                            player.sendMessage("Вы не можете закрыть счет с отрицательным балансом.")
                             return
                         }
-                        val balance = walletDB.getWalletBalance(walletID).toString()
                         val currency = walletDB.getWalletCurrency(walletID).toString()
                         val successful = walletDB.deleteUserWallet(walletID)
                         if (successful){
                             player.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.remove-successfully.sender"))
                             discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.remove-successfully",
-                                "player" to player.name, "amount" to balance, "currency" to currency))
+                                "player" to player.name, "amount" to balance.toString(), "currency" to currency))
                         } else {
                             player.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.remove-unsuccessfully.sender"))
                         }

@@ -78,6 +78,7 @@ localisation.messages.usage.account.force:
 localisation.messages.usage.transfer: "Используйте: /transfer <WalletID/WalletName (S)> <WalletID/WalletName (T)> <amount>"
 localisation.messages.usage.transfer.default: "Используйте: /transfer default <Player (T)> <amount>"
 localisation.messages.usage.balance-add: "Используйте: /balance-add [nick] [amount]"
+localisation.messages.usage.banker-tumbler: "Используйте: /banker-tumbler true/false"
 
 
 # Информационные сообщения для логирования в Discord

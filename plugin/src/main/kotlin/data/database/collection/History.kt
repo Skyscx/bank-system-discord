@@ -4,7 +4,6 @@ import App
 import App.Companion.userDB
 import data.database.DatabaseManager
 import org.bukkit.Bukkit
-import org.bukkit.entity.Player
 import java.sql.SQLException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -14,7 +13,7 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
     /**
      * Создание записи о проделанной операции в таблицу с историей.
      */
-    fun insertBankHistory(sender: Player, target: String, senderWalletID: Int, targetWalletID: Int, amount: Int, currency: String, status: Int, uuidSender: String, uuidTarget: String) {
+    fun insertBankHistory(senderName: String, targetName: String, senderWalletID: Int, targetWalletID: Int, amount: Int, currency: String, status: Int, uuidSender: String, uuidTarget: String) {
         plugin.let {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
                 val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
@@ -29,9 +28,9 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
 
                 try {
                     dbManager.executeUpdate(sql,
-                        senderWalletID, targetWalletID, amount, currency, sender.name,
+                        senderWalletID, targetWalletID, amount, currency, senderName,
                         uuidSender, userDB.getDiscordIDbyUUID(uuidSender) as Any,
-                        target, uuidTarget, userDB.getDiscordIDbyUUID(uuidTarget) as Any,
+                        targetName, uuidTarget, userDB.getDiscordIDbyUUID(uuidTarget) as Any,
                         currentDate, status
                     )
                 } catch (e: SQLException) {

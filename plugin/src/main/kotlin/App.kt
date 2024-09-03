@@ -1,5 +1,6 @@
 
 
+import bank.commands.BankerTumblerCommand
 import bank.commands.ConvertDarkOnLightDiamondOre
 import bank.commands.banker.WalletVerificationCommand
 import bank.commands.tabcompleter.WalletsCommandCompleter
@@ -86,7 +87,7 @@ class App : JavaPlugin(), Listener {
             return
         }
 
-        discordBot = DiscordBot.getInstance(dbManager, config)
+        discordBot = DiscordBot.getInstance(config)
         discordBot?.start(token)
 
         // Инициализация Database Collection
@@ -108,6 +109,7 @@ class App : JavaPlugin(), Listener {
         //getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("wallet-verify")?.setExecutor(WalletVerificationCommand())
         getCommand("transfer")?.setExecutor(TransferCommand(config, discordBot!!))
+        getCommand("banker-tumbler")?.setExecutor(BankerTumblerCommand())
         //getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
         //getCommand("account-renaming")?.setExecutor(Events())
         //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))

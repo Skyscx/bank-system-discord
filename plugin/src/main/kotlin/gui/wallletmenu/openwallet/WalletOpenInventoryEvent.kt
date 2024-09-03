@@ -41,20 +41,12 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                     val titleAccept = localizationManager.getMessage("localisation.inventory.item.accept")
                     val titleReject = localizationManager.getMessage("localisation.inventory.item.reject")
                     if (functions.isComponentEqual(displayNameComponent, titleAccept)) {
-                        val walletCurrency = currencyAccountConfig
-                        if (walletCurrency == null){
-                            player.sendMessage("ошибка валюты")
-                            return
-                        }
+                        val walletCurrency = currencyAccountConfig ?: return
                         val currency = functions.convertStringToMaterial(walletCurrency)
                         val typeBlock : Material
                         if (currency.second) {
                             typeBlock = currency.first!! //Преобразованный материал
-                        } else {
-                            player.sendMessage("Ошибка иницилизации валюты")
-                            return
-
-                        }
+                        } else return
                         val blocksInInventory = functions.countBlocksInInventory(player, typeBlock)
                         if (blocksInInventory < priceAccountConfig){
                             player.sendMessage("Недостаточно средств")
@@ -94,7 +86,7 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                     functions.sendMessagePlayer(player, "Не удалось найти идентификатор Discord.") //todo: сделать сообщение из конфига
                                 }
                             }
-                            walletDB.insertWallet(player, currencyAccountConfig!!, price, verificationInt).thenAccept { isCreate ->
+                            walletDB.insertWallet(player, currencyAccountConfig, price, verificationInt).thenAccept { isCreate ->
                                 if (isCreate) {
 
                                     val currency = functions.convertStringToMaterial(currencyAccountConfig)
@@ -118,9 +110,7 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                 functions.sendMessagePlayer(player, "Банковский счет был успешно создан!") //todo: сделать сообщение из конфига
                             } else {
                                 functions.sendMessagePlayer(player, "Заявление передано банкиру") //todo: сделать сообщение из конфига
-
                             }
-
                         }else{
                             functions.sendMessagePlayer(player, "У вас уже максимальное количество счетов!") //todo: сделать сообщение из конфига
                         }

@@ -82,7 +82,7 @@ class TransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Comma
         val target = function.getPlayerByUUID(uuidTarget)
         if (target != null){
             //Сообщение в игру
-            val operation = walletDB.transferCash(sender, target.name, senderWalletID.toInt(), targetWalletID.toInt(), amount, currency1, 1, uuidSender, uuidTarget)
+            val operation = walletDB.transferCash(sender.name, target.name, senderWalletID.toInt(), targetWalletID.toInt(), amount, currency1, 1, uuidSender, uuidTarget)
             if (operation){
                 // Сообщение отправителю
                 sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully.sender",
@@ -116,7 +116,7 @@ class TransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Comma
             return true
         } else {
             val targetName = userDB.getPlayerNameByUUID(uuidTarget) ?: "Unknown"
-            val operation = walletDB.transferCash(sender, targetName, senderWalletID.toInt(), targetWalletID.toInt(), amount, currency1, 1, uuidSender, uuidTarget)
+            val operation = walletDB.transferCash(sender.name, targetName, senderWalletID.toInt(), targetWalletID.toInt(), amount, currency1, 1, uuidSender, uuidTarget)
             if (operation){
                 // Сообщение отправителю
                 sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully.sender",
