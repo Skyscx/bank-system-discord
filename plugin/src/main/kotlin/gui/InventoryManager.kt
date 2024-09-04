@@ -4,6 +4,7 @@ import gui.wallletmenu.WalletMenuInventory
 import gui.wallletmenu.actionwallet.WalletActionsInventory
 import gui.wallletmenu.closewallet.WalletCloseInventory
 import gui.wallletmenu.openwallet.WalletOpenInventory
+import gui.wallletmenu.reportwallet.WalletReportInventory
 import oldnotusagefiles.removewallet.WalletRemoveInventory
 import org.bukkit.entity.Player
 
@@ -13,7 +14,8 @@ class InventoryManager {
         "remove" to WalletRemoveInventory(), //todo: remove
         "menu" to WalletMenuInventory(),
         "close" to WalletCloseInventory(),
-        "actions" to WalletActionsInventory()
+        "actions" to WalletActionsInventory(),
+        "reports" to WalletReportInventory()
         /**more inventory**/
     )
 
@@ -26,4 +28,5 @@ class InventoryManager {
             player.sendMessage("Unknown inventory type: $inventoryType") //todo: переделать сообщение на конфиг месседж
         }
     }
+
 }

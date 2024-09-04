@@ -105,7 +105,7 @@ localisation.inventory.title.menu-actions-wallet: "Действия с коше�
 localisation.inventory.item: "{ItemName}"
 localisation.inventory.item.accept: "Подтвердить!"
 localisation.inventory.item.reject: "Отклонить!"
-localisation.inventory.item.profile: "Ваш профиль"
+localisation.inventory.item.profile: "Ваш профиль [DEV]"
 localisation.inventory.item.open-wallet: "Оформить банковскую карту."
 localisation.inventory.item.close-wallet: "§4Деактивировать банковскую карту."
 
@@ -127,10 +127,15 @@ localisation.inventory.item.bill-list: "Список счетов [DEV]"
 localisation.inventory.item.pay-bill: "Оплатить счет [DEV]"
 localisation.inventory.item.put-bill: "Выставить счет [DEV]"
 
+localisation.inventory.item.wait-banker: "В ожидании банкира"
+
 localisation.inventory.item.add-balance: "Пополнить на"
 localisation.inventory.item.get-balance: "Пополнить на"
 
 localisation.inventory.item.wallet: "Кошелек"
+localisation.inventory.item.back-wallet-menu: "Вернуться в главное меню"
+localisation.inventory.item.info: "Информация [DEV]"
+
 
 #Описания
 localisation.inventory.lore: "{LoreItem}"
@@ -162,10 +167,15 @@ localisation.inventory.lore.bill-list.menu: "{Заполнить | bill-list}"
 localisation.inventory.lore.pay-bill.menu: "{Заполнить | pay-bill}"
 localisation.inventory.lore.put-bill.menu: "{Заполнить | put-bill}"
 
+localisation.inventory.lore.wait-banker.menu: "{Заполнить | wait-banker}"
+localisation.inventory.lore.info.menu: "{Заполнить | info}"
+
+
 localisation.inventory.lore.add-balance.actions-menu: "§2$amount $currencyName"
 localisation.inventory.lore.get-balance.actions-menu: "§2$amount $currencyName"
 
-localisation.inventory.lore.wallet.actions-menu: "{Заполнить | wallet}"
+localisation.inventory.lore.wallet.actions-menu: "Владелец - $owner \n Баланс - $balance \n Дата открытия - $date"
+localisation.inventory.lore.wallet.back-wallet-menu: ""
 
 
 

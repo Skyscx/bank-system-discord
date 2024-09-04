@@ -22,6 +22,7 @@ import gui.wallletmenu.WalletMenuInventoryEvent
 import gui.wallletmenu.actionwallet.WalletActionsInventoryEvent
 import gui.wallletmenu.closewallet.WalletCloseInventoryEvent
 import gui.wallletmenu.openwallet.WalletOpenInventoryEvent
+import gui.wallletmenu.reportwallet.WalletReportInventoryEvent
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
 import org.bukkit.plugin.java.JavaPlugin
@@ -129,7 +130,7 @@ class App : JavaPlugin(), Listener {
         Bukkit.getPluginManager().registerEvents(WalletMenuInventoryEvent(), this)
         Bukkit.getPluginManager().registerEvents(WalletCloseInventoryEvent(config, discordBot!!), this)
         Bukkit.getPluginManager().registerEvents(WalletActionsInventoryEvent(), this)
-
+        Bukkit.getPluginManager().registerEvents(WalletReportInventoryEvent(), this)
 
         //todo: 07/08/2024 21/10 переделать команды, сделать локализацию
         //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)

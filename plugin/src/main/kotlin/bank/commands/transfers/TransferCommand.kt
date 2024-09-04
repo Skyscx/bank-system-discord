@@ -15,7 +15,7 @@ import org.bukkit.entity.Player
 
 class TransferCommand(config: FileConfiguration, discordBot: DiscordBot) : CommandExecutor {
     private val function = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
+    private val discordNotifier = DiscordNotifier(config)
     private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
     //todo: /transfer [Получатель: Имя пользователя/Id Wallet*] [amount]
 

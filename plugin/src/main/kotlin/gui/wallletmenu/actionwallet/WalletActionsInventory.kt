@@ -20,6 +20,8 @@ class WalletActionsInventory : InventoryCreator {
         val uuid = player.uniqueId.toString()
         val walletD = userDB.getDefaultWalletByUUID(uuid) ?: 0
         val currency = walletDB.getWalletCurrency(walletD) ?: "[Missing currency]"
+        val balance = walletDB.getWalletBalance(walletD) ?: "[Missing balance]"
+        val dateReg = walletDB.getVerificationWalletDate(walletD) ?: "[Missing dateReg]"
         // Кнопка пополнения 1
         val addBalance1 = systemGUI.createItem(
             Material.LIME_WOOL,
@@ -49,7 +51,7 @@ class WalletActionsInventory : InventoryCreator {
             Material.LIME_WOOL,
             "§a+ALL",
             listOf(localizationManager.getMessage("localisation.inventory.lore.add-balance.actions-menu",
-                "amount" to "Все", "currencyName" to currency)),
+                "amount" to "[DEV]", "currencyName" to "[DEV]")),
             4
         )
         // Кнопка снятия 1
@@ -81,16 +83,28 @@ class WalletActionsInventory : InventoryCreator {
             Material.ORANGE_WOOL,
             "§4-ALL",
             listOf(localizationManager.getMessage("localisation.inventory.lore.get-balance.actions-menu",
-                "amount" to "Все", "currencyName" to currency)),
+                "amount" to "[DEV]", "currencyName" to "[DEV]")),
             4
         )
         // Кнопка кошелька
         val walletPrivate = systemGUI.createItem(
             Material.PAPER,
             localizationManager.getMessage("localisation.inventory.item.wallet"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.actions-menu")),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.actions-menu",
+                "owner" to player.name,
+                "balance" to balance.toString(),
+                "date" to dateReg)),
             1
         )
+        // Вернуться в меню
+        val backMenu = systemGUI.createItem(
+            Material.DARK_OAK_DOOR,
+            localizationManager.getMessage("localisation.inventory.item.back-wallet-menu"),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.back-wallet-menu")),
+            1
+        )
+
+        inventory.setItem(4, backMenu)
 
         inventory.setItem(12, addBalance1)
         inventory.setItem(11, addBalance16)
@@ -104,5 +118,26 @@ class WalletActionsInventory : InventoryCreator {
         inventory.setItem(16, getBalance64)
         inventory.setItem(17, getBalanceAll)
         return inventory
+    }
+
+    fun updateWalletItem(player: Player, inventory: Inventory) {
+        val uuid = player.uniqueId.toString()
+        val walletD = userDB.getDefaultWalletByUUID(uuid) ?: 0
+        val currency = walletDB.getWalletCurrency(walletD) ?: "[Missing currency]"
+        val balance = walletDB.getWalletBalance(walletD) ?: "[Missing balance]"
+        val dateReg = walletDB.getVerificationWalletDate(walletD) ?: "[Missing dateReg]"
+
+        // Кнопка кошелька
+        val walletPrivate = systemGUI.createItem(
+            Material.PAPER,
+            localizationManager.getMessage("localisation.inventory.item.wallet"),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.actions-menu",
+                "owner" to player.name,
+                "balance" to balance.toString(),
+                "date" to dateReg)),
+            1
+        )
+
+        inventory.setItem(13, walletPrivate)
     }
 }

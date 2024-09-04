@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 
 class WalletBalanceRemoveForceHandler(config: FileConfiguration, discordBot: DiscordBot){
     val functions = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
+    private val discordNotifier = DiscordNotifier(config)
     fun handleBalanceRemoveForceCommand(sender: CommandSender, args: Array<String>){
         val senderName = if (sender !is Player) { "SERVER" } else  { sender.name }
         if (!functions.hasPermission(sender, "skybank.banker")) {

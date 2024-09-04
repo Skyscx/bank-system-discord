@@ -1,11 +1,15 @@
 package gui.wallletmenu.openwallet
 
+import App.Companion.configPlugin
 import App.Companion.localizationManager
 import App.Companion.userDB
 import App.Companion.walletDB
 import discord.dsbot.DiscordBot
 import discord.dsbot.DiscordNotifier
 import functions.Functions
+import net.dv8tion.jda.api.entities.MessageEmbed
+import net.dv8tion.jda.api.interactions.components.buttons.Button
+import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
 import org.bukkit.Material
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
@@ -16,13 +20,12 @@ import org.bukkit.event.inventory.InventoryType
 
 class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot: DiscordBot) : Listener {
     private val functions = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
+    private val discordNotifier = DiscordNotifier(config)
     //private val countAccountConfig = config.getInt("count-free-accounts") TODO: Вернуть в будущем когда будет система разных кошельков.
     private val countAccountConfig = 1
     private val priceAccountConfig = config.getInt("price-account")
     private val currencyAccountConfig = config.getString("currency-block-default")
     private val verificationAccountConfig = config.getBoolean("checker-banker")
-    private val channelIdBankerNotifier = config.getString("channel-id-banker")
     private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
 
     @EventHandler
@@ -66,21 +69,40 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                 val discordID = userDB.getDiscordIDbyUUID(player.uniqueId.toString())
                                 val mention = discordBot.getMentionUser(discordID.toString())
                                 if (discordID != null){
-                                    discordNotifier.sendMessageChannel(
-                                        channelIdBankerNotifier.toString(),
-                                        "/././././././././././././././././\n" + //todo: сделать сообщение из конфига
-                                                "Пришел новый запрос на открытие кошелька!\n" +
-                                                "Пользователь - `${player.name}`\n" +
-                                                "Дискорд - $mention\n" +
-                                                "Номер кошелька - `$lastID`\n" +
-                                                "/././././././././././././././././"
+                                    val channelIdBankerNotifier = configPlugin.getString("channel-id-banker") ?: return
+
+                                    discordNotifier.sendEmbedMessageAndButtons(
+                                        channelId = channelIdBankerNotifier,
+                                        color = 1,
+                                        buttons = listOf(
+                                            Button.of(ButtonStyle.SUCCESS, "acceptAccount:$lastID", "Принять"),
+                                            Button.of(ButtonStyle.DANGER, "rejectAccount:$lastID", "Отклонить")
+                                        ),
+                                        title = "Заявка на открытие кошелька!",
+                                        description = "Вам необходимо подтвердить или отклонить запрос.",
+                                        fields = listOf(
+                                            MessageEmbed.Field("Пользователь", player.name, false),
+                                            MessageEmbed.Field("Дискорд", mention, false),
+                                            MessageEmbed.Field("Номер кошелька", lastID, false)
+                                            )
+
                                     )
 
-                                    discordNotifier.sendMessageWithButtons(
-                                        channelIdBankerNotifier.toString(),
-                                        "Вам необходимо подтвердить или отклонить запрос.", //todo: сделать сообщение из конфига
-                                        lastID
-                                    )
+//                                    discordNotifier.sendMessageChannel(
+//                                        channelIdBankerNotifier.toString(),
+//                                        "/././././././././././././././././\n" + //todo: сделать сообщение из конфига
+//                                                "Пришел новый запрос на открытие кошелька!\n" +
+//                                                "Пользователь - `${player.name}`\n" +
+//                                                "Дискорд - $mention\n" +
+//                                                "Номер кошелька - `$lastID`\n" +
+//                                                "/././././././././././././././././"
+//                                    )
+//
+//                                    discordNotifier.sendMessageWithButtons(
+//                                        channelIdBankerNotifier.toString(),
+//                                        "Вам необходимо подтвердить или отклонить запрос.", //todo: сделать сообщение из конфига
+//                                        lastID
+//                                    )
                                 }else {
                                     // Обработка случая, когда discordID == null
                                     functions.sendMessagePlayer(player, "Не удалось найти идентификатор Discord.") //todo: сделать сообщение из конфига
@@ -123,5 +145,6 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
             }
         }
     }
+
 
 }

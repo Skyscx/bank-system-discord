@@ -17,6 +17,8 @@ import org.bukkit.inventory.ItemStack
 class WalletActionsInventoryEvent:Listener {
     private val functions = Functions()
     private val inventoryManager = InventoryManager()
+    private val walletActionsInventory = WalletActionsInventory()
+
     //private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
     //private val countAccountConfig = config.getInt("count-free-accounts") TODO: Вернуть в будущем когда будет система разных кошельков.
 
@@ -34,6 +36,7 @@ class WalletActionsInventoryEvent:Listener {
                     val plainTextSerializer = PlainTextComponentSerializer.plainText()
                     val displayNameText = plainTextSerializer.serialize(displayName!!)
                     handleClick(player, displayNameText)
+                    walletActionsInventory.updateWalletItem(player, player.openInventory.topInventory)
                 }
                 e.isCancelled = true
             }

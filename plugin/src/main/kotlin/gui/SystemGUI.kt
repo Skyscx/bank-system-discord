@@ -35,13 +35,15 @@ class SystemGUI {
         meta?.displayName(nameComponent)
 
         // Установка уникального описания (lore) с различными стилями текста
-        val loreComponents = lore.map {
-            Component.text(it)
-                .decoration(TextDecoration.ITALIC, italic)
-                .decoration(TextDecoration.BOLD, bold)
-                .decoration(TextDecoration.UNDERLINED, underlined)
-                .decoration(TextDecoration.STRIKETHROUGH, strikethrough)
-                .decoration(TextDecoration.OBFUSCATED, obfuscated)
+        val loreComponents = lore.flatMap { line ->
+            line.split("\n").map {
+                Component.text(it)
+                    .decoration(TextDecoration.ITALIC, italic)
+                    .decoration(TextDecoration.BOLD, bold)
+                    .decoration(TextDecoration.UNDERLINED, underlined)
+                    .decoration(TextDecoration.STRIKETHROUGH, strikethrough)
+                    .decoration(TextDecoration.OBFUSCATED, obfuscated)
+            }
         }
         meta?.lore(loreComponents)
 

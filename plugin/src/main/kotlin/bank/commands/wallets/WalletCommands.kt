@@ -57,6 +57,10 @@ class WalletCommands(private val config: FileConfiguration, private val discordB
                     }
                 }
             }
+            "report" -> {
+                val reportCommandHandler = ReportCommandHandler(config)
+                reportCommandHandler.handleReportCommand(sender, argsArray)
+            }
 //            "rename" -> {
 //                val renameCommandHandler = RenameCommandHandler()
 //                renameCommandHandler.handleRenameCommand(sender, argsArray)

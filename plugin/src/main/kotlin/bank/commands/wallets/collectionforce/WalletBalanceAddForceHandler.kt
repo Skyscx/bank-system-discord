@@ -12,7 +12,7 @@ import org.bukkit.entity.Player
 
 class WalletBalanceAddForceHandler(config: FileConfiguration, discordBot: DiscordBot){
     val functions = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
+    private val discordNotifier = DiscordNotifier(config)
     private val walletLimit = config.getString("wallet-limit") ?: "100000"
     //todo: переделать сообщения на конфиг
     fun handleBalanceAddForceCommand(sender: CommandSender, args: Array<String>){

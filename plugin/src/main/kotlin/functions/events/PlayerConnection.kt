@@ -16,7 +16,7 @@ import org.bukkit.inventory.ItemStack
 
 class PlayerConnection(config: FileConfiguration, discordBot: DiscordBot) : Listener{
     private val functions = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
+    private val discordNotifier = DiscordNotifier(config)
     private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
 
 

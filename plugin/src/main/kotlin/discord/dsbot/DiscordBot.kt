@@ -1,6 +1,7 @@
 package discord.dsbot
 //import discord.dsbot.commands.PayCommandDiscord
 import discord.dsbot.commands.BalanceCommandDiscord
+import discord.dsbot.commands.TransferCommandDiscord
 import net.dv8tion.jda.api.JDA
 import net.dv8tion.jda.api.JDABuilder
 import net.dv8tion.jda.api.entities.UserSnowflake
@@ -18,6 +19,9 @@ class DiscordBot private constructor(private val config: FileConfiguration) {
             instance ?: synchronized(this) {
                 instance ?: DiscordBot(config).also { instance = it }
             }
+        fun getJDA(): JDA? {
+            return instance?.jda
+        }
     }
 
     lateinit var jda: JDA
@@ -28,14 +32,10 @@ class DiscordBot private constructor(private val config: FileConfiguration) {
     //todo: сделать сообщение из конфига!!!!
 
     fun start(token: String?) {
-        jda = JDABuilder.createDefault(token)
-            //.addEventListeners(PayCommandDiscord(database, config))
-            .addEventListeners(BalanceCommandDiscord(config))
-            .addEventListeners(DiscordNotifierEvents())
-            // .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
-            .build()
-        updateCommands()
+        jda = JDABuilder.createDefault(token).build()
         jda.awaitReady()
+        updateCommands()
+        registerEventListeners()
     }
 
     private fun updateCommands() {
@@ -58,11 +58,18 @@ class DiscordBot private constructor(private val config: FileConfiguration) {
         })
 
     }
+
+    private fun registerEventListeners() {
+        jda.addEventListener(BalanceCommandDiscord(config))
+        jda.addEventListener(TransferCommandDiscord(config))
+        jda.addEventListener(DiscordNotifierEvents(config))
+        // .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
+    }
     fun getMentionUser(discordID: String): String {
         val mention = UserSnowflake.fromId(discordID).asMention
         return mention
     }
-    fun getJDA(): JDA {
-        return jda
-    }
+//    fun getJDA(): JDA {
+//        return jda
+//    }
 }

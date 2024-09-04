@@ -32,6 +32,7 @@ class WalletMenuInventoryEvent : Listener {
                     val titleCloseWallet = localizationManager.getMessage("localisation.inventory.item.close-wallet")
                     val titleGuidButton = localizationManager.getMessage("localisation.inventory.item.guid-book")
                     val titleActionsWallet = localizationManager.getMessage("localisation.inventory.item.actions")
+                    val titleReportButton = localizationManager.getMessage("localisation.inventory.item.report")
                     if (functions.isComponentEqual(displayNameComponent, titleOpenWallet)) {
                         inventoryManager.openInventory(player, "open")
                     }
@@ -46,9 +47,13 @@ class WalletMenuInventoryEvent : Listener {
                     if (functions.isComponentEqual(displayNameComponent,titleActionsWallet)){
                         inventoryManager.openInventory(player, "actions")
                     }
+                    if (functions.isComponentEqual(displayNameComponent, titleReportButton)){
+                        inventoryManager.openInventory(player, "reports")
+                    }
                     return
                 }
             }
         }
     }
+
 }

@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration
 
 class RemoveForceCommandHandler(config: FileConfiguration, discordBot: DiscordBot) {
     val functions = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
+    private val discordNotifier = DiscordNotifier(config)
     fun handleRemoveForceCommand(sender: CommandSender, args: Array<String>){
         if (!functions.checkArguments(sender, 2, args, localizationManager.getMessage("localisation.messages.usage.account.force.remove"))) return
 

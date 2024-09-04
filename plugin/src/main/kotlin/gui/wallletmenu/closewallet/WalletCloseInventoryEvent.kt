@@ -15,7 +15,7 @@ import org.bukkit.event.inventory.InventoryType
 
 class WalletCloseInventoryEvent(config: FileConfiguration, discordBot: DiscordBot) : Listener{
     private val functions = Functions()
-    private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
+    private val discordNotifier = DiscordNotifier(config)
     //private val countAccountConfig = config.getInt("count-free-accounts") TODO: Вернуть в будущем когда будет система разных кошельков.
 
 

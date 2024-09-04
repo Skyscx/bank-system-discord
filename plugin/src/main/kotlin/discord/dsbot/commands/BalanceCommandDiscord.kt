@@ -17,7 +17,7 @@ class BalanceCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
 
         // проверяем ID канала
         if (channel.idLong != allowedChannelId) {
-            event.reply("Эту команду можно использовать только в <#$allowedChannelId> канале.").queue()
+            event.reply("Эту команду можно использовать только в <#$allowedChannelId> канале.").setEphemeral(true).queue()
             return
         }
 

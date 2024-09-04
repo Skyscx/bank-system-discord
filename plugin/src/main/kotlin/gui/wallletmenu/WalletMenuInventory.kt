@@ -45,28 +45,46 @@ class WalletMenuInventory : InventoryCreator {
             listOf(localizationManager.getMessage("localisation.inventory.lore.open-wallet.menu", "amount" to "[todo AMOUNT]")),
             1
         )
-        // Кнопка для гайда
-        val guid = systemGUI.createItem(
-            Material.BOOKSHELF,
-            localizationManager.getMessage("localisation.inventory.item.guid-book"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.guid-book.menu")),
+//        TODO: Перенести в отдельное меню -> INFO
+//        // Кнопка для гайда
+//        val guid = systemGUI.createItem(
+//            Material.BOOKSHELF,
+//            localizationManager.getMessage("localisation.inventory.item.guid-book"),
+//            listOf(localizationManager.getMessage("localisation.inventory.lore.guid-book.menu")),
+//            1
+//        )
+//        // Кнопка для Репорта
+//        val report = systemGUI.createItem(
+//            Material.FIRE_CHARGE,
+//            localizationManager.getMessage("localisation.inventory.item.report"),
+//            listOf(localizationManager.getMessage("localisation.inventory.lore.report.menu")),
+//            1
+//        )
+//        //Кнопка связи с банкиром
+//        val sendMessageBanker = systemGUI.createItem(
+//            Material.WRITABLE_BOOK,
+//            localizationManager.getMessage("localisation.inventory.item.send-banker-message"),
+//            listOf(localizationManager.getMessage("localisation.inventory.lore.send-banker-message.menu")),
+//            1
+//        )
+        //Заполнитель по бокам
+        val filler = systemGUI.createItem(
+            Material.GREEN_STAINED_GLASS_PANE,
+            "", listOf(""), 1
+        )
+        // Кнопка информации
+        val info = systemGUI.createItem(
+            Material.TORCH,
+            localizationManager.getMessage("localisation.inventory.item.info"),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.wait-banker.menu")),
             1
         )
-        // Кнопка для Репорта
-        val report = systemGUI.createItem(
-            Material.FIRE_CHARGE,
-            localizationManager.getMessage("localisation.inventory.item.report"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.report.menu")),
-            1
-        )
-        //Кнопка связи с банкиром
-        val sendMessageBanker = systemGUI.createItem(
-            Material.WRITABLE_BOOK,
-            localizationManager.getMessage("localisation.inventory.item.send-banker-message"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.send-banker-message.menu")),
-            1
-        )
-        inventory.addItem(profile, openWallet, guid, report, sendMessageBanker)
+
+        inventory.setItem(10, profile)
+        inventory.setItem(12, filler)
+        inventory.setItem(13, openWallet)
+        inventory.setItem(14, filler)
+        inventory.setItem(16, info)
         return inventory
     }
 
@@ -179,13 +197,77 @@ class WalletMenuInventory : InventoryCreator {
             listOf(localizationManager.getMessage("localisation.inventory.lore.put-bill.menu")),
             1
         )
-        inventory.addItem(profile, closeWallet, guid, report, sendMessageBanker, actionsWallet, transfer, fineList, payFine, appealFine, billList, payBill, putBill)
+
+        inventory.setItem(10, profile)
+        inventory.setItem(16, closeWallet)
+
+        inventory.setItem(39, guid)
+        inventory.setItem(40, report)
+        inventory.setItem(41, sendMessageBanker)
+
+        inventory.setItem(12, actionsWallet)
+        inventory.setItem(14, transfer)
+
+        inventory.setItem(28, fineList)
+        inventory.setItem(37, payFine)
+        inventory.setItem(46, appealFine)
+
+        inventory.setItem(34, billList)
+        inventory.setItem(43, payBill)
+        inventory.setItem(52, putBill)
+
+//        inventory.addItem(
+//            profile,
+//            closeWallet,
+//            guid,
+//            report,
+//            sendMessageBanker,
+//            actionsWallet,
+//            transfer,
+//            fineList,
+//            payFine,
+//            appealFine,
+//            billList,
+//            payBill,
+//            putBill)
         return inventory
     }
 
     private fun createFailureInventory(): Inventory {
-        val inventory = Bukkit.createInventory(null, 54, title) //todo: если ожидание
-        // Добавьте предметы в инвентарь неудачи
+        val inventory = Bukkit.createInventory(null, 27, title) //todo: если ожидание
+        // Кнопка профиля
+        val profile = systemGUI.createItem(
+            Material.PLAYER_HEAD,
+            localizationManager.getMessage("localisation.inventory.item.profile"),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.profile.menu")),
+            1
+        )
+        // Информация ожидания
+        val waitBanker = systemGUI.createItem(
+            Material.YELLOW_WOOL,
+            localizationManager.getMessage("localisation.inventory.item.wait-banker"),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.wait-banker.menu")),
+            1
+        )
+        //Заполнитель по бокам
+        val filler = systemGUI.createItem(
+            Material.YELLOW_STAINED_GLASS_PANE,
+            "", listOf(""), 1
+        )
+        // Кнопка информации
+        val info = systemGUI.createItem(
+            Material.TORCH,
+            localizationManager.getMessage("localisation.inventory.item.info"),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.wait-banker.menu")),
+            1
+        )
+
+        inventory.setItem(10, profile)
+        inventory.setItem(12, filler)
+        inventory.setItem(13, waitBanker)
+        inventory.setItem(14, filler)
+        inventory.setItem(16, info)
+
         return inventory
     }
 }
