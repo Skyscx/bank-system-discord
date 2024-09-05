@@ -36,8 +36,6 @@ class DiscordNotifierEvents(config: FileConfiguration): ListenerAdapter() {
                 -1 -> "Запрос был отклонен."
                 else -> "Статус запроса неизвестен."
             }
-            println("Verification status for wallet ID $walletId: $verificationDatabase")
-
             // Проверка, было ли взаимодействие уже подтверждено
             if (event.isAcknowledged) {
                 println("Interaction already acknowledged")

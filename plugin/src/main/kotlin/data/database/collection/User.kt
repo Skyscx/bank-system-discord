@@ -29,10 +29,13 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
         val sql = """
                     INSERT INTO bank_users(
                         PlayerName, UUID, DiscordID, ActivatedBank, Registration,
-                        `2f Auth`, PrivateKey, LastOperation, USDT, Level, DefaultWalletID, Style
-                    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+                        `2f Auth`, PrivateKey, LastOperation, USDT, Level, DefaultWalletID, Wallet1, Wallet2, Wallet3, Wallet4, Wallet5, Style
+                    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """.trimIndent()
-        return dbManager.executeUpdate(sql, playerName, playerUUID, discordID!!, false, currentDate, false, privateKey, currentDate, usdt, level, defaultWallet, style)
+        return dbManager.executeUpdate(
+            sql, playerName, playerUUID, discordID!!, false, currentDate, false,
+            privateKey, currentDate, usdt, level, defaultWallet, "0", "0", "0", "0", "0", style
+        )
 
     }
 

@@ -22,7 +22,7 @@ class Wallet (
     /**
      * Создание кошелька в таблице кошельков
      */
-    fun insertWallet(player: Player, currency: String, amount: Int, verificationInt: Int): CompletableFuture<Boolean> {
+    fun insertWallet(player: Player, currency: String, amount: Int, verificationInt: Int, type: String): CompletableFuture<Boolean> {
         val playerUUID = player.uniqueId
         val discordID = functionsDiscord.getPlayerDiscordID(playerUUID)
         val privateKey = "Admin: create function"
@@ -36,16 +36,16 @@ class Wallet (
             val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
             val sql = """
             INSERT INTO bank_wallets(
-                UUID, DiscordID, Registration, PrivateKey, Balance, Currency,
+                TYPE, UUID, DiscordID, Registration, PrivateKey, Balance, Currency,
                 Name, Verification, Deposit, Inspector, VerificationDate, Status, Tariff
-            ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+            ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
         """.trimIndent()
 
             try {
                 val idWallet = walletDB.getLastIDWalletFree() ?: 0
                 val result = dbManager.executeUpdate(
                     sql,
-                    playerUUID.toString(), discordID!!, currentDate, privateKey, balance, currency, name,
+                    type, playerUUID.toString(), discordID!!, currentDate, privateKey, balance, currency, name,
                     verificationInt, amount, inspector, dateVerification, 1, 0
                 )
                 if (result){
@@ -83,6 +83,8 @@ class Wallet (
      */
     fun setVerificationWallet(id: Int, verification: Int): Boolean {
         val sql = "UPDATE bank_wallets SET Verification = ? WHERE ID = ?"
+        val uuid = walletDB.getUUIDbyWalletID(id) ?: return false
+        if (verification == -1) userDB.setDefaultWalletByUUID(uuid, id)
         return dbManager.executeUpdate(sql, verification, id)
     }
 

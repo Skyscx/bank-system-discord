@@ -7,7 +7,6 @@ import App.Companion.walletDB
 import discord.dsbot.DiscordNotifier
 import functions.Functions
 import net.dv8tion.jda.api.entities.Member
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.bukkit.configuration.file.FileConfiguration
@@ -15,21 +14,13 @@ import org.bukkit.configuration.file.FileConfiguration
 class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
     private val functions = Functions()
     private val discordNotifier = DiscordNotifier(config)
-    private val allowedChannelId = config.getLong("allowed-channel-id-for-bank-commands")
 
     override fun onSlashCommandInteraction(event: SlashCommandInteractionEvent) {
         if (event.name != "transfer") return
-        val channel = event.channel as MessageChannel
         val user = event.user
-        if (channel.idLong != allowedChannelId) {
-            event.reply("Эту команду можно использовать только в <#$allowedChannelId> канале.").setEphemeral(true).queue()
-            return
-        }
-
         val targetMember = event.getOption("user")?.asMember ?: return
         val amount = event.getOption("amount")?.asLong ?: return
 
-        // Проверяем, что сумма перевода положительная
         if (amount <= 0) {
             event.reply("Сумма перевода должна быть положительной.").setEphemeral(true).queue()
             return

@@ -1,9 +1,8 @@
 package bank.commands.wallets.collection
 
 import App.Companion.configPlugin
-import discord.dsbot.DiscordBot
 import discord.dsbot.DiscordNotifier
-import net.dv8tion.jda.api.JDA
+//import functions.CooldownManager
 import net.dv8tion.jda.api.entities.EmbedType
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.interactions.components.buttons.Button
@@ -11,10 +10,10 @@ import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 
-class ReportCommandHandler(config: FileConfiguration) {
-    private val jda: JDA = DiscordBot.getJDA() ?: throw IllegalStateException("JDA is not initialized")
-    private val discordNotifier = DiscordNotifier(config)
 
+class ReportCommandHandler(config: FileConfiguration) {
+    private val discordNotifier = DiscordNotifier(config)
+    //private val cooldownManager = CooldownManager()
 
     fun handleReportCommand(sender: CommandSender, args: Array<String>) {
         if (sender !is Player) {
@@ -26,6 +25,9 @@ class ReportCommandHandler(config: FileConfiguration) {
             sender.sendMessage("Используйте: /wallet report [TYPE] [MESSAGE]")
             return
         }
+
+//        val timeLeft: java.time.Duration = cooldownManager.getRemainingCooldown(sender.uniqueId)
+//        if (timeLeft.isZero || timeLeft.isNegative) {return}
 
         val type = args[1]
         val message = args.drop(2).joinToString(" ")
@@ -55,33 +57,10 @@ class ReportCommandHandler(config: FileConfiguration) {
                 MessageEmbed.Field("Жалоба", message, false)
             )
         )
-
-//        val embed = createEmbed(sender.name, reason, message)
-//        val channel = jda.getTextChannelById(channelIdTarget)
-//        channel?.sendMessage(MessageCreateBuilder().setEmbeds(embed).setActionRow(buttons).build())?.queue()
-//
+        sender.sendMessage("Жалоба отправлена!")
+        // Устанавливаем кулдаун на 1 час
+        //cooldownManager.setCooldown(sender.uniqueId, java.time.Duration.ofSeconds(CooldownManager.DEFAULT_COOLDOWN))
     }
-
-//    private fun createEmbed(playerName: String, reason: String, message: String): MessageEmbed {
-//        return MessageEmbed(
-//            null, // url
-//            "Жалоба от игрока", // title
-//            "Игрок $playerName жалуется.", // description
-//            EmbedType.RICH, // type
-//            null, // timestamp
-//            1, // color
-//            null, // thumbnail
-//            null, // siteProvider
-//            null, // author
-//            null, // videoInfo
-//            null, // footer
-//            null, // image
-//            listOf(
-//                MessageEmbed.Field("Причина жалобы", reason, false),
-//                MessageEmbed.Field("Жалоба", message, false)
-//            ) // fields
-//        )
-//    }
 
     private fun createButtons(): List<Button> {
         return listOf(

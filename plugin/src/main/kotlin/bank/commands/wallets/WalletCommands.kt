@@ -1,6 +1,5 @@
 package bank.commands.wallets
 
-import App.Companion.localizationManager
 import bank.commands.wallets.collection.*
 import discord.dsbot.DiscordBot
 import functions.Functions
@@ -20,11 +19,9 @@ class WalletCommands(private val config: FileConfiguration, private val discordB
             return true
         }
         if (args.isEmpty()){
-            //TODO: Сделать открытие меню инвентаря со всеми доступными функциями.
             val inventoryManager = InventoryManager()
             val player = sender as Player
             inventoryManager.openInventory(player, "menu")
-            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.developing"))
             return true
         }
         val argsArray = args.toList().toTypedArray()
@@ -57,10 +54,10 @@ class WalletCommands(private val config: FileConfiguration, private val discordB
                     }
                 }
             }
-            "report" -> {
-                val reportCommandHandler = ReportCommandHandler(config)
-                reportCommandHandler.handleReportCommand(sender, argsArray)
-            }
+//            "report" -> {
+//                val reportCommandHandler = ReportCommandHandler(config)
+//                reportCommandHandler.handleReportCommand(sender, argsArray)
+//            }
 //            "rename" -> {
 //                val renameCommandHandler = RenameCommandHandler()
 //                renameCommandHandler.handleRenameCommand(sender, argsArray)

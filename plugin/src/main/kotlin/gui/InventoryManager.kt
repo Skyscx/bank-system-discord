@@ -5,6 +5,7 @@ import gui.wallletmenu.actionwallet.WalletActionsInventory
 import gui.wallletmenu.closewallet.WalletCloseInventory
 import gui.wallletmenu.openwallet.WalletOpenInventory
 import gui.wallletmenu.reportwallet.WalletReportInventory
+import gui.wallletmenu.transferwallet.SelectPlayerInventory
 import oldnotusagefiles.removewallet.WalletRemoveInventory
 import org.bukkit.entity.Player
 
@@ -15,7 +16,8 @@ class InventoryManager {
         "menu" to WalletMenuInventory(),
         "close" to WalletCloseInventory(),
         "actions" to WalletActionsInventory(),
-        "reports" to WalletReportInventory()
+        "reports" to WalletReportInventory(),
+        "selectPlayerForTransfer" to SelectPlayerInventory()
         /**more inventory**/
     )
 

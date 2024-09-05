@@ -1,6 +1,7 @@
 package bank.commands
 
 import App.Companion.configPlugin
+import App.Companion.instance
 import App.Companion.localizationManager
 import functions.Functions
 import org.bukkit.command.Command
@@ -32,6 +33,8 @@ class BankerTumblerCommand : CommandExecutor {
             sender.sendMessage("Уже стоит")
         } else {
             configPlugin.getConfig().set("checker-banker", bool)
+            instance.saveConfig()
+            configPlugin.loadConfig()
             sender.sendMessage(if (bool) "Вы включили банкира" else "Вы выключили банкира")
         }
 

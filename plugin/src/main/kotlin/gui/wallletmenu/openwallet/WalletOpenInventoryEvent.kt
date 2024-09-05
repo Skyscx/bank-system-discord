@@ -108,7 +108,8 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                     functions.sendMessagePlayer(player, "Не удалось найти идентификатор Discord.") //todo: сделать сообщение из конфига
                                 }
                             }
-                            walletDB.insertWallet(player, currencyAccountConfig, price, verificationInt).thenAccept { isCreate ->
+                            val type = "DEFAULT"
+                            walletDB.insertWallet(player, currencyAccountConfig, price, verificationInt, type).thenAccept { isCreate ->
                                 if (isCreate) {
 
                                     val currency = functions.convertStringToMaterial(currencyAccountConfig)

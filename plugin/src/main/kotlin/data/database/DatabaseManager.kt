@@ -112,6 +112,11 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
             USDT INTEGER NOT NULL,
             Level INTEGER NOT NULL,
             DefaultWalletID INTEGER NOT NULL,
+            Wallet1 INTEGER NOT NULL,
+            Wallet2 INTEGER NOT NULL,
+            Wallet3 INTEGER NOT NULL,
+            Wallet4 INTEGER NOT NULL,
+            Wallet5 INTEGER NOT NULL,
             Style TEXT NOT NULL
         );
     """.trimIndent()
@@ -122,6 +127,7 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
         val sql = """
             CREATE TABLE IF NOT EXISTS bank_wallets (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                TYPE TEXT NOT NULL,
                 UUID TEXT NOT NULL,
                 DiscordID TEXT NOT NULL,
                 Registration TEXT NOT NULL,

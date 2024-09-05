@@ -32,7 +32,6 @@ class WalletReportInventoryEvent : Listener {
                     val displayNameComponent = itemMeta.displayName() ?: return
 
                     val typeMap = mapOf(
-                        "Выбор проблемы" to "OTHER",
                         "Ошибка данных" to "DATA",
                         "Не работает" to "WORK",
                         "Медленная загрузка" to "PING",

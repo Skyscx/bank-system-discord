@@ -1,5 +1,6 @@
 package bank.commands.wallets.collection
 
+import App.Companion.configPlugin
 import App.Companion.localizationManager
 import App.Companion.userDB
 import App.Companion.walletDB
@@ -42,6 +43,14 @@ class AddBalanceCommandHandler() {
             sender.sendMessage("Ошибка иницилизации валюты")
             return
 
+        }
+
+        val limit = configPlugin.getInt("wallet-limit")
+        val balance = walletDB.getWalletBalance(walletDefault) ?: 0
+        if (balance + amount > limit){
+            val free = (balance + amount - limit).toString()
+            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.balance.overflow", "free" to free))
+            return
         }
         val countPlayerBlock = functions.countBlocksInInventory(player, typeBlock)
         if (amount > countPlayerBlock) {
