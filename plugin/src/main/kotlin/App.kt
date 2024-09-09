@@ -9,6 +9,7 @@ import bank.commands.transfers.TransferCommand
 import bank.commands.wallets.ForceWalletCommands
 import bank.commands.wallets.WalletCommands
 import data.Config
+import data.TransferDataManager
 import data.database.DatabaseManager
 import data.database.collection.History
 import data.database.collection.User
@@ -23,7 +24,9 @@ import gui.wallletmenu.actionwallet.WalletActionsInventoryEvent
 import gui.wallletmenu.closewallet.WalletCloseInventoryEvent
 import gui.wallletmenu.openwallet.WalletOpenInventoryEvent
 import gui.wallletmenu.reportwallet.WalletReportInventoryEvent
-import gui.wallletmenu.transferwallet.AmountInventoryCreator
+import gui.wallletmenu.transferwallet.AmountPlayerInventory
+import gui.wallletmenu.transferwallet.ConfirmTransferInventory
+import gui.wallletmenu.transferwallet.SelectPlayerInventory
 import gui.wallletmenu.transferwallet.SelectPlayerInventoryEvent
 import org.bukkit.Bukkit
 import org.bukkit.event.Listener
@@ -133,9 +136,22 @@ class App : JavaPlugin(), Listener {
         Bukkit.getPluginManager().registerEvents(WalletCloseInventoryEvent(config, discordBot!!), this)
         Bukkit.getPluginManager().registerEvents(WalletActionsInventoryEvent(), this)
         Bukkit.getPluginManager().registerEvents(WalletReportInventoryEvent(), this)
-        val amountInventoryCreator = AmountInventoryCreator()
-        Bukkit.getPluginManager().registerEvents(SelectPlayerInventoryEvent(amountInventoryCreator), this)
+
+
+
+//        Bukkit.getPluginManager().registerEvents(SelectPlayerInventoryEvent { targetPlayerName ->
+//            AmountPlayerInventory(targetPlayerName)
+//        }, this)
+//        Bukkit.getPluginManager().registerEvents(SelectPlayerInventory(), this)
         //Bukkit.getPluginManager().registerEvents()
+
+        val transferDataManager = TransferDataManager.instance
+        val amountPlayerInventory = AmountPlayerInventory(transferDataManager)
+        val confirmTransferInventory = ConfirmTransferInventory(transferDataManager)
+        val selectPlayerInventory = SelectPlayerInventory(transferDataManager)
+
+        // Зарегистрируйте событие
+        Bukkit.getPluginManager().registerEvents(SelectPlayerInventoryEvent(amountPlayerInventory, confirmTransferInventory), this)
 
         //todo: 07/08/2024 21/10 переделать команды, сделать локализацию
         //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)

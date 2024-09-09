@@ -54,6 +54,7 @@ class WalletCommands(private val config: FileConfiguration, private val discordB
                     }
                 }
             }
+            //TODO: Текст вводимый для поля "причина" выводиться другими плагинами в чат.!!!
 //            "report" -> {
 //                val reportCommandHandler = ReportCommandHandler(config)
 //                reportCommandHandler.handleReportCommand(sender, argsArray)

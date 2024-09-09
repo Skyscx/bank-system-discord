@@ -1,5 +1,6 @@
 package gui
 
+import data.TransferDataManager
 import gui.wallletmenu.WalletMenuInventory
 import gui.wallletmenu.actionwallet.WalletActionsInventory
 import gui.wallletmenu.closewallet.WalletCloseInventory
@@ -10,6 +11,7 @@ import oldnotusagefiles.removewallet.WalletRemoveInventory
 import org.bukkit.entity.Player
 
 class InventoryManager {
+
     private val inventoryCreators = mapOf(
         "open" to WalletOpenInventory(),
         "remove" to WalletRemoveInventory(), //todo: remove
@@ -17,12 +19,13 @@ class InventoryManager {
         "close" to WalletCloseInventory(),
         "actions" to WalletActionsInventory(),
         "reports" to WalletReportInventory(),
-        "selectPlayerForTransfer" to SelectPlayerInventory()
+        "selectPlayerForTransfer" to SelectPlayerInventory(TransferDataManager.instance)
         /**more inventory**/
     )
 
     fun openInventory(player: Player, inventoryType: String) {
         val creator = inventoryCreators[inventoryType]
+
         if (creator != null) {
             val inventory = creator.createInventory(player)
             player.openInventory(inventory)
@@ -30,5 +33,8 @@ class InventoryManager {
             player.sendMessage("Unknown inventory type: $inventoryType") //todo: переделать сообщение на конфиг месседж
         }
     }
-
+    fun openInitialTransferInventory(player: Player) {
+        val selectPlayerInventory = inventoryCreators["selectPlayerForTransfer"] as? SelectPlayerInventory
+        selectPlayerInventory?.openInitialInventory(player)
+    }
 }

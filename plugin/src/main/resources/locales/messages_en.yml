@@ -54,6 +54,11 @@ localisation.messages.out.banker.list-verify-empty: "Список пуст!"
 
 localisation.sender: "Отправитель"
 localisation.target: "Получатель"
+localisation.other-target: "Другой получатель"
+localisation.next-page: "Следующая страница"
+localisation.previous-page: "Предыдущая страница"
+localisation.select: "Выбрать"
+localisation.error: "Ошибка"
 
 
 
@@ -145,7 +150,12 @@ localisation.inventory.item.wallet: "Кошелек"
 localisation.inventory.item.back-wallet-menu: "Вернуться в главное меню"
 localisation.inventory.item.info: "Информация [DEV]"
 
-localisation.inventory.other-player: "Другой получатель"
+localisation.inventory.item.select-amount: "Выберите сумму"
+localisation.inventory.item.confirm-amount: "Подтвердить сумму!"
+
+localisation.inventory.item.confirm-transfer: "Подтвердить перевод!"
+localisation.inventory.item.transfer-info: "Перевести $amount $currency игроку $player"
+
 
 
 #Описания
@@ -187,6 +197,15 @@ localisation.inventory.lore.get-balance.actions-menu: "§2$amount $currencyName"
 
 localisation.inventory.lore.wallet.actions-menu: "Владелец - $owner \n Баланс - $balance \n Дата открытия - $date"
 localisation.inventory.lore.wallet.back-wallet-menu: ""
+
+localisation.inventory.lore.other-player.transfer-menu: "Выбрать другого получателя"
+localisation.inventory.lore.next-page.transfer-menu: "[Открыть следующую страницу]"
+localisation.inventory.lore.previous-page.transfer-menu: "[Открыть предыдущую страницу]"
+
+localisation.inventory.lore.item.select-amount.transfer-menu: "Текущая сумма: $amount"
+
+localisation.inventory.lore.item.add-amount.transfer-menu: "Добавить сумму"
+localisation.inventory.lore.item.get-amount.transfer-menu: "Добавить сумму"
 
 
 

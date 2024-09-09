@@ -52,7 +52,7 @@ class WalletMenuInventoryEvent : Listener {
                         inventoryManager.openInventory(player, "reports")
                     }
                     if (functions.isComponentEqual(displayNameComponent, titleTransferButton)){
-                        inventoryManager.openInventory(player, "selectPlayerForTransfer")
+                        inventoryManager.openInitialTransferInventory(player)
                     }
                     return
                 }
