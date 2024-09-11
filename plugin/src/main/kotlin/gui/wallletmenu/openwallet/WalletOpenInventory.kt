@@ -1,5 +1,6 @@
 package gui.wallletmenu.openwallet
 
+import App.Companion.configPlugin
 import App.Companion.localizationManager
 import gui.InventoryCreator
 import gui.SystemGUI
@@ -12,9 +13,11 @@ import org.bukkit.inventory.Inventory
 
 class WalletOpenInventory : InventoryCreator {
     private val systemGUI = SystemGUI()
+    private val amount = configPlugin.getInt("price-account").toString()
+    private val currency = configPlugin.getString("currency-block-default")
+
     override fun createInventory(player: Player): Inventory {
         //todo: сделать получение цены создания кошелька.
-        val amount = 0.toString() //todo: СЮДА
 
         val inventory = Bukkit.createInventory(null, InventoryType.HOPPER,
             Component.text(localizationManager.getMessage("localisation.inventory.title.wallet-open-confirmation")))

@@ -24,9 +24,15 @@ class RemoveBalanceCommandHandler {
             sender.sendMessage("Сумма должна быть положительным числом.")
             return
         }
+
         val player = sender as Player
         val uuid = userDB.getUUIDbyPlayerName(player.name) ?: return
         val walletDefault = userDB.getDefaultWalletByUUID(uuid) ?: return
+        val walletVerification = walletDB.getVerificationWallet(walletDefault)
+        if (walletVerification != 1){
+            sender.sendMessage("Ваш кошелек не активирован.")
+            return
+        }
         val walletCurrency = walletDB.getWalletCurrency(walletDefault) ?: return
         val currency = functions.convertStringToMaterial(walletCurrency)
         val typeBlock: Material

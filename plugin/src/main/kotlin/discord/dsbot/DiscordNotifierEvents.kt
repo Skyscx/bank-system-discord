@@ -37,15 +37,12 @@ class DiscordNotifierEvents(config: FileConfiguration): ListenerAdapter() {
                 else -> "Статус запроса неизвестен."
             }
             // Проверка, было ли взаимодействие уже подтверждено
-            if (event.isAcknowledged) {
-                println("Interaction already acknowledged")
-                return
-            }
+            if (event.isAcknowledged) return
 
             event.deferEdit().queue()
 
             event.message.editMessageComponents().queue(
-                { println("Компоненты сообщения успешно удалены") },
+                {  },
                 { it.printStackTrace() }
             )
 
@@ -125,9 +122,8 @@ class DiscordNotifierEvents(config: FileConfiguration): ListenerAdapter() {
                 embedFields
             )
 
-            // Редактирование сообщения с новым Embed
             event.message.editMessageEmbeds(newEmbed).queue(
-                { println("Сообщение отправлено") },
+                { },
                 { it.printStackTrace() }
             )
         } catch (e: Exception) {

@@ -3,6 +3,7 @@ package gui
 import data.TransferDataManager
 import gui.wallletmenu.WalletMenuInventory
 import gui.wallletmenu.actionwallet.WalletActionsInventory
+import gui.wallletmenu.actionwallet.WalletHistoryInventory
 import gui.wallletmenu.closewallet.WalletCloseInventory
 import gui.wallletmenu.openwallet.WalletOpenInventory
 import gui.wallletmenu.reportwallet.WalletReportInventory
@@ -19,7 +20,8 @@ class InventoryManager {
         "close" to WalletCloseInventory(),
         "actions" to WalletActionsInventory(),
         "reports" to WalletReportInventory(),
-        "selectPlayerForTransfer" to SelectPlayerInventory(TransferDataManager.instance)
+        "selectPlayerForTransfer" to SelectPlayerInventory(TransferDataManager.instance),
+        "history" to WalletHistoryInventory()
         /**more inventory**/
     )
 

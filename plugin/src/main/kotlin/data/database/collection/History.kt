@@ -51,6 +51,18 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
             })
         }
     }
+    fun getUserHistory(userUUID: String, pageSize: Int, offset: Int): List<Map<String, Any>> {
+        val query = """
+            SELECT ID, SenderIdWallet, TargetIdWallet, Amount, Currency, SenderName, SenderUUID, SenderDiscordID,
+                   TargetName, TargetUUID, TargetDiscordID, Date, Status, Comment
+            FROM bank_history
+            WHERE SenderUUID = ? OR TargetUUID = ?
+            ORDER BY Date DESC
+            LIMIT ? OFFSET ?
+        """
+
+        return dbManager.executeQuery(query, userUUID, userUUID, pageSize, offset)
+    }
 
     companion object {
         @Volatile

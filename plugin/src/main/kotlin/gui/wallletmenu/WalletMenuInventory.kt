@@ -131,6 +131,13 @@ class WalletMenuInventory : InventoryCreator {
             listOf(localizationManager.getMessage("localisation.inventory.lore.actions.menu")),
             2
         )
+        // Кнопка для просмотра истории транзакций
+        val history = systemGUI.createItem(
+            Material.PAPER,
+            "История транзакций",
+            listOf("{Заполнить | History}"),
+            5
+        )
 //        //Кнопка пополнения
 //        val replenish = systemGUI.createItem(
 //            Material.PURPLE_WOOL,
@@ -201,35 +208,24 @@ class WalletMenuInventory : InventoryCreator {
         inventory.setItem(10, profile)
         inventory.setItem(16, closeWallet)
 
-        inventory.setItem(39, guid)
-        inventory.setItem(40, report)
-        inventory.setItem(41, sendMessageBanker)
+//        todo: Включить когда будет работать
+//        inventory.setItem(39, guid)
+//        inventory.setItem(40, report)
+//        inventory.setItem(41, sendMessageBanker)
 
         inventory.setItem(12, actionsWallet)
+        inventory.setItem(13, history)
         inventory.setItem(14, transfer)
 
-        inventory.setItem(28, fineList)
-        inventory.setItem(37, payFine)
-        inventory.setItem(46, appealFine)
+//        todo: Включить когда будет работать
+//        inventory.setItem(28, fineList)
+//        inventory.setItem(37, payFine)
+//        inventory.setItem(46, appealFine)
+//
+//        inventory.setItem(34, billList)
+//        inventory.setItem(43, payBill)
+//        inventory.setItem(52, putBill)
 
-        inventory.setItem(34, billList)
-        inventory.setItem(43, payBill)
-        inventory.setItem(52, putBill)
-
-//        inventory.addItem(
-//            profile,
-//            closeWallet,
-//            guid,
-//            report,
-//            sendMessageBanker,
-//            actionsWallet,
-//            transfer,
-//            fineList,
-//            payFine,
-//            appealFine,
-//            billList,
-//            payBill,
-//            putBill)
         return inventory
     }
 
@@ -252,7 +248,7 @@ class WalletMenuInventory : InventoryCreator {
         //Заполнитель по бокам
         val filler = systemGUI.createItem(
             Material.YELLOW_STAINED_GLASS_PANE,
-            "", listOf(""), 1
+            " ", listOf(""), 1
         )
         // Кнопка информации
         val info = systemGUI.createItem(

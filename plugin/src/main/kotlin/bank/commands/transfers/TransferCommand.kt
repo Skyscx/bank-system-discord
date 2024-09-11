@@ -54,6 +54,18 @@ class TransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Comma
             sender.sendMessage("todo: У получателя нет доступного кошелька")
             return true
         }
+
+
+        val walletSenderVerification = walletDB.getVerificationWallet(senderWalletID.toInt())
+        val walletTargetVerification = walletDB.getVerificationWallet(targetWalletID.toInt())
+        if (walletSenderVerification != 1){
+            sender.sendMessage("Ваш кошелек не активирован.")
+            return true
+        }
+        if (walletTargetVerification != 1){
+            sender.sendMessage("Кошелек получателя не активирован.")
+            return true
+        }
         if (senderWalletID == targetWalletID){
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet-same-thing"))
             return true
@@ -70,7 +82,7 @@ class TransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Comma
         val targetBalance = walletDB.getWalletBalance(targetWalletID.toInt()) ?: 0
         val limit = configPlugin.getInt("wallet-limit")
         if (senderBalance == null || senderBalance < amount) {
-            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.not-balance"))
+            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.not-balance", "balance" to senderBalance.toString()))
             return true
         }
         if (targetBalance + amount > limit){

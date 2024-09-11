@@ -2,13 +2,15 @@ package data.localisation
 
 import App
 import org.bukkit.configuration.file.YamlConfiguration
-import org.bukkit.entity.Player
 import java.io.File
-import java.util.*
 
 class LocalisationManager(private val app: App) {
     private val locales = mutableMapOf<String, YamlConfiguration>()
     private lateinit var currentLocale: String
+
+    private val replacementsMap = mapOf(
+        "DIAMOND_ORE" to "Алмазная руда", //todo: Добавить в локализацию
+    )
 
     init {
         loadCurrentLocale()
@@ -52,22 +54,15 @@ class LocalisationManager(private val app: App) {
         return replaceVariables(message, *replacements)
     }
 
-    fun getMessageForPlayer(player: Player, key: String, vararg replacements: Pair<String, String>): String {
-        val locale = player.locale.lowercase(Locale.getDefault())
-        return getMessageForLocale(locale, key, *replacements)
-    }
-
-    private fun getMessageForLocale(locale: String, key: String, vararg replacements: Pair<String, String>): String {
-        val config = locales[locale]
-        val message = config?.getString(key) ?: "Message not found"
-        return replaceVariables(message, *replacements)
-    }
-
     private fun replaceVariables(message: String, vararg replacements: Pair<String, String>): String {
         var result = message
         for ((variable, value) in replacements) {
             result = result.replace("$$variable", value)
         }
+        for ((key, value) in replacementsMap) {
+            result = result.replace(key, value)
+        }
         return result
     }
+
 }

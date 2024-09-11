@@ -30,6 +30,11 @@ class AddBalanceCommandHandler() {
             sender.sendMessage("Ошибка иницилизации кошелькап")
             return
         }
+        val walletVerification = walletDB.getVerificationWallet(walletDefault)
+        if (walletVerification != 1){
+            sender.sendMessage("Ваш кошелек не активирован.")
+            return
+        }
         val walletCurrency = walletDB.getWalletCurrency(walletDefault)
         if (walletCurrency == null){
             sender.sendMessage("ошибка валюты")

@@ -30,9 +30,9 @@ localisation.messages.out.wallet.balance.overflow: "Операция невоз�
 
 localisation.messages.out.wallet.currency.mismatch: "Валюты кошельков не совпадают! ($currencyS -> $currencyT)"
 localisation.messages.out.wallet.target-not-found: "Получатель не найден!"
-localisation.messages.out.wallet.transfer-successfully.sender: "Вы перевели $amount $currency игроку $target! \n Сообщение: $comment)"
-localisation.messages.out.wallet.transfer-successfully.target: "Пополнение кошелька от $sender на $amount $currency! \n Сообщение: $comment)"
-localisation.messages.out.wallet.transfer-successfully.discord.target: "Пополнение кошелька #$targetWalletID от $sender на $amount $currency. \n Сообщение: $comment"
+localisation.messages.out.wallet.transfer-successfully.sender: "Вы перевели $amount $currency игроку $target! \nСообщение: $comment"
+localisation.messages.out.wallet.transfer-successfully.target: "Пополнение кошелька от $sender на $amount $currency! \nСообщение: $comment"
+localisation.messages.out.wallet.transfer-successfully.discord.target: "Пополнение кошелька #$targetWalletID от $sender на $amount $currency. \nСообщение: $comment"
 localisation.messages.out.wallet.remove-successfully.sender: "Ваш кошелек был удален."
 localisation.messages.out.wallet.remove-unsuccessfully.sender: "Ошибка операции. Ваш кошелек не был удален."
 localisation.messages.out.guid-link: "Воспользуйтесь справочник по ссылке ниже."
@@ -63,6 +63,7 @@ localisation.select: "Выбрать"
 localisation.error: "Ошибка"
 localisation.comment: "Комментарий"
 
+localisation.diamond_ore: "Алмазная руда"
 
 
 

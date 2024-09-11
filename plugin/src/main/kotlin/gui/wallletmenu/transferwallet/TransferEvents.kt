@@ -141,7 +141,7 @@ class TransferEvents(
                             val displayNameComponent = itemMeta.displayName() ?: return
                             if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.add-comment"))) {
                                 player.closeInventory()
-                                player.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer.input-comment"))
+//                                player.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer.input-comment"))
                                 awaitingComment.add(player)
                                 openAnvilGUI(player)
 

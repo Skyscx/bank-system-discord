@@ -81,8 +81,6 @@ class App : JavaPlugin(), Listener {
             logger.severe("DiscordSRV plugin not found. Disabling plugin.")
             server.pluginManager.disablePlugin(this)
             return
-        } else {
-            DiscordSRVHook.register()
         }
 
         // DiscordBot

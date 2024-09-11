@@ -54,7 +54,11 @@ class WalletCommands(private val config: FileConfiguration, private val discordB
                     }
                 }
             }
-            //TODO: Текст вводимый для поля "причина" выводиться другими плагинами в чат.!!!
+            "history" -> {
+                val historyCommandHandler = HistoryCommandHandler()
+                historyCommandHandler.handleHistoryCommand(sender, argsArray)
+            }
+            //TODO: Репорт сделать как в TransferEvent -> AnvilGUI
 //            "report" -> {
 //                val reportCommandHandler = ReportCommandHandler(config)
 //                reportCommandHandler.handleReportCommand(sender, argsArray)

@@ -23,7 +23,7 @@ class DiscordNotifier(configuration: FileConfiguration) {
         val channel = jda.getTextChannelById(channelId)
         if (channel != null) {
             channel.sendMessage(message).queue(
-                { println("Сообщение отправлено: $message") },
+                { },
                 { it.printStackTrace() }
             )
         } else {
@@ -34,7 +34,7 @@ class DiscordNotifier(configuration: FileConfiguration) {
         val channel = jda.getTextChannelById(channelIdLogger)
         if (channel != null) {
             channel.sendMessage(message).queue(
-                { println("Сообщение отправлено: $message") },
+                {  },
                 { it.printStackTrace() }
             )
         } else {
@@ -61,7 +61,7 @@ class DiscordNotifier(configuration: FileConfiguration) {
                 Button.of(ButtonStyle.SUCCESS, "acceptAccount:$walletId", "Принять"),
                 Button.of(ButtonStyle.DANGER, "rejectAccount:$walletId", "Отклонить")
             ).queue(
-                { println("Сообщение с кнопками отправлено: $message") },
+                {  },
                 { it.printStackTrace() }
             )
         } else {

@@ -9,7 +9,8 @@ class WalletsCommandCompleter : TabCompleter {
         if (args.size == 1)  return listOf(
                 "open",
                 "remove",
-                "balance"
+                "balance",
+                "history"
 //                "rename",
 //                "set-default",
 //                "list"
