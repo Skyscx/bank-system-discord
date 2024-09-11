@@ -48,8 +48,10 @@ commands:
     description: Работа с кошельками. (admin)
     usage: /wallet-force
   convert-diamonds:
-    description: Обменик
+    description: Обменник
     usage: /convert-diamonds
   banker-tumbler:
     description: Включить/Выключить возможности банкира
     usage: /banker-tumbler true/false
+  #itext:
+  #  description: Секрет

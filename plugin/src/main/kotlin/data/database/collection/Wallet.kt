@@ -221,12 +221,13 @@ class Wallet (
         currency: String,
         status: Int,
         uuidSender: String,
-        uuidTarget: String
+        uuidTarget: String,
+        comment: String
     ): Boolean {
         updateWalletBalance(senderWalletID, -amount)
         updateWalletBalance(targetWalletID, amount)
 
-        historyDB.insertBankHistory(senderName, targetName, senderWalletID, targetWalletID, amount, currency, status, uuidSender, uuidTarget)
+        historyDB.insertBankHistory(senderName, targetName, senderWalletID, targetWalletID, amount, currency, status, uuidSender, uuidTarget, comment)
         return true
     }
 

@@ -1,11 +1,13 @@
 package gui.wallletmenu.transferwallet
 
+import App.Companion.instance
 import App.Companion.localizationManager
 import data.TransferDataManager
 import functions.Functions
 import gui.SystemGUI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import net.wesjd.anvilgui.AnvilGUI
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -16,15 +18,20 @@ import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
-class SelectPlayerInventoryEvent(
+class TransferEvents(
     private val amountPlayerInventory: AmountPlayerInventory,
-    private val confirmTransferInventory: ConfirmTransferInventory
+    private val confirmTransferInventory: ConfirmTransferInventory,
+    private val addCommentInventory: AddCommentInventory,
+//    private val iTextCommand: ITextCommand
 ) : Listener {
     private val systemGUI = SystemGUI()
     private val functions = Functions()
 
     // Хранилище текущей страницы для каждого игрока
     private val playerPages = mutableMapOf<Player, Int>()
+
+    // Хранилище игроков, ожидающих ввода комментария
+    private val awaitingComment = mutableSetOf<Player>()
 
     fun createInventory(player: Player): Inventory {
         val title = Component.text(localizationManager.getMessage("localisation.inventory.title.select-player-transfer"))
@@ -94,7 +101,7 @@ class SelectPlayerInventoryEvent(
                     }
                 }
             } else {
-                val expectedTitleAmount = localizationManager.getMessage("localisation.inventory.item.select-amount")
+                 val expectedTitleAmount = localizationManager.getMessage("localisation.inventory.title.select-amount-transfer")
                 if (functions.isComponentEqual(title, expectedTitleAmount)) {
                     val currentItem = e.currentItem ?: return
                     val itemMeta = currentItem.itemMeta ?: return
@@ -113,28 +120,53 @@ class SelectPlayerInventoryEvent(
                             val amount = displayNameText.substring(3).toIntOrNull() ?: return
                             val transferData = TransferDataManager.instance.getTransferData(player) ?: return
                             val newAmount = transferData.amount - amount
-                            TransferDataManager.instance.setAmount(player, newAmount)
+                            if (newAmount < 0) {
+                                TransferDataManager.instance.setAmount(player, 0)
+                            } else {
+                                TransferDataManager.instance.setAmount(player, newAmount)
+                            }
                             amountPlayerInventory.updateItem(player, player.openInventory.topInventory)
                         } else if (displayNameText == localizationManager.getMessage("localisation.inventory.item.confirm-amount")) {
-                            val confirmInventory = confirmTransferInventory.createInventory(player)
-                            player.openInventory(confirmInventory)
+                            val addCommentInventory = addCommentInventory.createInventory(player)
+                            player.openInventory(addCommentInventory)
                         }
                     }
                 } else {
-                    val expectedTitleConfirm = "Confirm Transfer"
-                    if (functions.isComponentEqual(title, expectedTitleConfirm)) {
+                    val expectedTitleAddComment = localizationManager.getMessage("localisation.inventory.title.add-comment")
+                    if (functions.isComponentEqual(title, expectedTitleAddComment)) {
                         val currentItem = e.currentItem ?: return
                         val itemMeta = currentItem.itemMeta ?: return
                         if (itemMeta.hasDisplayName()) {
                             e.isCancelled = true
-                            player.closeInventory()
                             val displayNameComponent = itemMeta.displayName() ?: return
-                            if (functions.isComponentEqual(displayNameComponent, "Confirm")) {
-                                val transferData = TransferDataManager.instance.getTransferData(player) ?: return
-                                Bukkit.dispatchCommand(player, "transfer ${transferData.targetPlayerName} ${transferData.amount}")
-                                TransferDataManager.instance.removeTransferData(player)
-                            } else if (functions.isComponentEqual(displayNameComponent, "Cancel")) {
-                                TransferDataManager.instance.removeTransferData(player)
+                            if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.add-comment"))) {
+                                player.closeInventory()
+                                player.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer.input-comment"))
+                                awaitingComment.add(player)
+                                openAnvilGUI(player)
+
+                            } else if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.confirm-without-comment"))) {
+                                val confirmInventory = confirmTransferInventory.createInventory(player)
+                                player.openInventory(confirmInventory)
+                            }
+                        }
+                    } else {
+                        val expectedTitleConfirm = localizationManager.getMessage("localisation.inventory.title.confirm-transfer")
+                        if (functions.isComponentEqual(title, expectedTitleConfirm)) {
+                            val currentItem = e.currentItem ?: return
+                            val itemMeta = currentItem.itemMeta ?: return
+                            if (itemMeta.hasDisplayName()) {
+                                e.isCancelled = true
+                                val displayNameComponent = itemMeta.displayName() ?: return
+                                if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.accept"))) {
+                                    val transferData = TransferDataManager.instance.getTransferData(player) ?: return
+                                    Bukkit.dispatchCommand(player, "transfer ${transferData.targetPlayerName} ${transferData.amount} ${transferData.comment}")
+                                    TransferDataManager.instance.removeTransferData(player)
+                                    player.closeInventory()
+                                } else if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.reject"))) {
+                                    TransferDataManager.instance.removeTransferData(player)
+                                    player.closeInventory()
+                                }
                             }
                         }
                     }
@@ -142,6 +174,36 @@ class SelectPlayerInventoryEvent(
             }
         }
     }
+
+    private fun openAnvilGUI(player: Player) {
+        val item = systemGUI.createItem(
+            Material.PAPER,
+            name = localizationManager.getMessage("localisation.comment"),
+            customModelData = 2
+
+        )
+        AnvilGUI.Builder()
+            .onClick { slot, stateSnapshot ->
+                if (slot == AnvilGUI.Slot.OUTPUT) {
+                    val text = stateSnapshot.text
+                    TransferDataManager.instance.setComment(player, text)
+                    awaitingComment.remove(player)
+
+                    val confirmInventory = confirmTransferInventory.createInventory(player)
+                    player.openInventory(confirmInventory)
+
+                    return@onClick listOf(AnvilGUI.ResponseAction.close())
+                }
+                return@onClick emptyList()
+            }
+            .text(" ")
+            .itemLeft(item)
+            .title(localizationManager.getMessage("localisation.inventory.title.add-comment"))
+            .plugin(instance)
+            .open(player)
+
+    }
+
 
     private fun createOtherPlayerItem(): ItemStack {
         return systemGUI.createItem(
@@ -185,7 +247,4 @@ class SelectPlayerInventoryEvent(
         )
     }
 
-    fun openInitialInventory(player: Player) {
-        player.openInventory(createInventory(player))
-    }
 }

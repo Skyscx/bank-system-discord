@@ -161,7 +161,8 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
                 TargetUUID TEXT NOT NULL,
                 TargetDiscordID TEXT NOT NULL,
                 Date TEXT NOT NULL,
-                Status INTEGER NOT NULL
+                Status INTEGER NOT NULL,
+                Comment TEXT NOT NULL
                 );
         """.trimIndent()
         createTable(sql)

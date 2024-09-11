@@ -3,58 +3,81 @@ package gui.wallletmenu.transferwallet
 import App.Companion.localizationManager
 import data.TransferDataManager
 import gui.InventoryCreator
+import gui.SystemGUI
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.SkullMeta
 
 class ConfirmTransferInventory(private val transferDataManager: TransferDataManager) : InventoryCreator {
+    private val systemGUI = SystemGUI()
 
     override fun createInventory(player: Player): Inventory {
-        val transferData = transferDataManager.getTransferData(player) ?: return Bukkit.createInventory(null, 54, Component.text("Error"))
+        val transferData = transferDataManager.getTransferData(player) ?: return Bukkit.createInventory(null, 54, Component.text(
+            localizationManager.getMessage("localisation.error")))
         val targetPlayerName = transferData.targetPlayerName
         val amount = transferData.amount
+        val comment = transferData.comment ?: ""
 
-        val inventory = Bukkit.createInventory(null, 54, Component.text(localizationManager.getMessage("localisation.inventory.item.confirm-transfer")))
+        val inventory = Bukkit.createInventory(null, 54, Component.text(localizationManager.getMessage("localisation.inventory.title.confirm-transfer")))
 
         // Добавьте предмет с названием выбранной головы в центр
-        val centerItem = createCenterItem(targetPlayerName, amount)
+        val centerItem = createCenterItem(targetPlayerName, amount, comment)
         inventory.setItem(22, centerItem)
 
-        // Добавьте кнопки подтверждения и отмены
-        val confirmItem = createConfirmItem()
-        val cancelItem = createCancelItem()
+        // Добавьте кнопки для подтверждения и отмены
+//        val confirmItem = createConfirmItem()
+        val confirmItem = systemGUI.createItem(
+            Material.GREEN_WOOL,
+            localizationManager.getMessage("localisation.inventory.item.accept"),
+            customModelData = 2
+        )
+//        val cancelItem = createCancelItem()
+        val cancelItem = systemGUI.createItem(
+            Material.RED_WOOL,
+            localizationManager.getMessage("localisation.inventory.item.reject"),
+            customModelData = 2
+        )
+
         inventory.setItem(20, confirmItem)
         inventory.setItem(24, cancelItem)
 
         return inventory
     }
 
-    private fun createCenterItem(targetPlayerName: String, amount: Int): ItemStack {
+    private fun createCenterItem(targetPlayerName: String, amount: Int, comment: String): ItemStack {
+        return systemGUI.createItem(
+            Material.PAPER,
+            targetPlayerName,
+            listOf(localizationManager.getMessage("localisation.inventory.lore.item.confirm-head.transfer-menu", "amount" to amount.toString(), "comment" to comment)),
+            3
+        )
 
-        return ItemStack(Material.PLAYER_HEAD).apply {
-            val meta = itemMeta as SkullMeta
-            meta.displayName(Component.text(localizationManager.getMessage("localisation.inventory.item.transfer-info", "amount" to amount.toString(), "player" to targetPlayerName)))
-            itemMeta = meta
-        }
+//        return ItemStack(Material.PLAYER_HEAD).apply {
+//            val meta = itemMeta as SkullMeta
+//            meta.displayName(Component.text(targetPlayerName).decoration(TextDecoration.BOLD, true))
+//            meta.lore(listOf(
+//                Component.text(localizationManager.getMessage("localisation.inventory.lore.item.confirm-head.transfer-menu", "amount" to amount.toString(), "comment" to comment)).decoration(TextDecoration.ITALIC, true),
+//            ))
+//            itemMeta = meta
+//        }
     }
 
-    private fun createConfirmItem(): ItemStack {
-        return ItemStack(Material.GREEN_WOOL).apply {
-            val meta = itemMeta
-            meta?.displayName(Component.text(localizationManager.getMessage("localisation.inventory.item.accept")))
-            itemMeta = meta
-        }
-    }
-
-    private fun createCancelItem(): ItemStack {
-        return ItemStack(Material.RED_WOOL).apply {
-            val meta = itemMeta
-            meta?.displayName(Component.text(localizationManager.getMessage("localisation.inventory.item.reject")))
-            itemMeta = meta
-        }
-    }
+//    private fun createConfirmItem(): ItemStack {
+//        return ItemStack(Material.GREEN_WOOL).apply {
+//            val meta = itemMeta
+//            meta?.displayName(Component.text(localizationManager.getMessage("localisation.inventory.item.accept")).decoration(TextDecoration.BOLD, true))
+//            itemMeta = meta
+//        }
+//    }
+//
+//    private fun createCancelItem(): ItemStack {
+//        return ItemStack(Material.RED_WOOL).apply {
+//            val meta = itemMeta
+//            meta?.displayName(Component.text(localizationManager.getMessage("localisation.inventory.item.reject")).decoration(TextDecoration.BOLD, true))
+//            itemMeta = meta
+//        }
+//    }
 }

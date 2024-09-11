@@ -5,13 +5,11 @@ import data.TransferDataManager
 import gui.InventoryCreator
 import gui.SystemGUI
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
-import org.bukkit.inventory.meta.SkullMeta
 
 class AmountPlayerInventory(private val transferDataManager: TransferDataManager) : InventoryCreator {
     private val systemGUI = SystemGUI()
@@ -21,7 +19,7 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
             localizationManager.getMessage("localisation.error")))
         val targetPlayerName = transferData.targetPlayerName
 
-        val inventory = Bukkit.createInventory(null, 54, Component.text(localizationManager.getMessage("localisation.inventory.item.select-amount")))
+        val inventory = Bukkit.createInventory(null, 54, Component.text(localizationManager.getMessage("localisation.inventory.title.select-amount-transfer")))
 
         // Добавьте предметы для выбора суммы
         val add1 = systemGUI.createItem(
@@ -73,8 +71,13 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
         inventory.setItem(22, centerItem)
 
         // Добавьте кнопку для подтверждения суммы
-        val confirmAmountItem = createConfirmAmountItem()
-        inventory.setItem(26, confirmAmountItem)
+        //val confirmAmountItem = createConfirmAmountItem()
+        val confirmAmountItem = systemGUI.createItem(
+            Material.GREEN_WOOL,
+            localizationManager.getMessage("localisation.inventory.item.confirm-amount"),
+            customModelData = 4
+        )
+        inventory.setItem(31, confirmAmountItem)
 
         return inventory
     }
@@ -89,19 +92,25 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
     }
 
     private fun createCenterItem(targetPlayerName: String, amount: Int): ItemStack {
-        return ItemStack(Material.PLAYER_HEAD).apply {
-            val meta = itemMeta as SkullMeta
-            meta.displayName(Component.text(targetPlayerName).decoration(TextDecoration.BOLD, true))
-            meta.lore(listOf(Component.text(localizationManager.getMessage("localisation.inventory.lore.item.select-amount.transfer-menu", "amount" to amount.toString())).decoration(TextDecoration.ITALIC, true)))
-            itemMeta = meta
-        }
+        return systemGUI.createItem(
+            Material.PAPER,
+            targetPlayerName,
+            listOf(localizationManager.getMessage("localisation.inventory.lore.item.select-amount.transfer-menu", "amount" to amount.toString())),
+            3
+        )
+//        return ItemStack(Material.PLAYER_HEAD).apply {
+//            val meta = itemMeta as SkullMeta
+//            meta.displayName(Component.text(targetPlayerName).decoration(TextDecoration.BOLD, true))
+//            meta.lore(listOf(Component.text(localizationManager.getMessage("localisation.inventory.lore.item.select-amount.transfer-menu", "amount" to amount.toString())).decoration(TextDecoration.ITALIC, true)))
+//            itemMeta = meta
+//        }
     }
 
-    private fun createConfirmAmountItem(): ItemStack {
-        return ItemStack(Material.GREEN_WOOL).apply {
-            val meta = itemMeta
-            meta?.displayName(Component.text(localizationManager.getMessage("localisation.inventory.item.confirm-amount")).decoration(TextDecoration.BOLD, true))
-            itemMeta = meta
-        }
-    }
+//    private fun createConfirmAmountItem(): ItemStack {
+//        return ItemStack(Material.GREEN_WOOL).apply {
+//            val meta = itemMeta
+//            meta?.displayName(Component.text(localizationManager.getMessage("")).decoration(TextDecoration.BOLD, true))
+//            itemMeta = meta
+//        }
+//    }
 }

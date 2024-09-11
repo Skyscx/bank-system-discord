@@ -48,6 +48,7 @@ class DiscordBot private constructor(private val config: FileConfiguration) {
             Commands.slash("transfer", "Переводы  между игроками")
                 .addOption(OptionType.USER, "user", "Получатель", true)
                 .addOption(OptionType.INTEGER, "amount", "Сумма перевода", true)
+                .addOption(OptionType.STRING, "comment", "Комментарий", false)
         )
 
         jda.updateCommands().addCommands(commands).queue({

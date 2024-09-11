@@ -14,6 +14,7 @@ localisation.messages.out.developing: "Данная возможность на�
 localisation.messages.out.not-owner: "Вы не владелец данного кошелька!"
 localisation.messages.out.wallet-same-thing: "Транзакция не может быть произведена на одинаковых кошельках."
 localisation.messages.out.amount-incorrect: "Неверно указана сумма."
+localisation.messages.out.comment-too-long: "Комментарий слишком длинный. Максимум 128 символов!"
 
 localisation.messages.out.error-search-data-in-database: "Произошла ошибка инициализации данных. Обратитесь к администратору или банкиру."
 localisation.messages.out.empty-wallets-list: "Открытых кошельков нету, чтобы их закрыть."
@@ -29,9 +30,9 @@ localisation.messages.out.wallet.balance.overflow: "Операция невоз�
 
 localisation.messages.out.wallet.currency.mismatch: "Валюты кошельков не совпадают! ($currencyS -> $currencyT)"
 localisation.messages.out.wallet.target-not-found: "Получатель не найден!"
-localisation.messages.out.wallet.transfer-successfully.sender: "Вы перевели $amount $currency игроку $target (#$senderWalletID -> #$targetWalletID)"
-localisation.messages.out.wallet.transfer-successfully.target: "Пополнение кошелька от $sender на $amount $currency (#$senderWalletID -> #$targetWalletID)"
-localisation.messages.out.wallet.transfer-successfully.discord.target: "Пополнение кошелька #$targetWalletID от $sender на $amount $currency."
+localisation.messages.out.wallet.transfer-successfully.sender: "Вы перевели $amount $currency игроку $target! \n Сообщение: $comment)"
+localisation.messages.out.wallet.transfer-successfully.target: "Пополнение кошелька от $sender на $amount $currency! \n Сообщение: $comment)"
+localisation.messages.out.wallet.transfer-successfully.discord.target: "Пополнение кошелька #$targetWalletID от $sender на $amount $currency. \n Сообщение: $comment"
 localisation.messages.out.wallet.remove-successfully.sender: "Ваш кошелек был удален."
 localisation.messages.out.wallet.remove-unsuccessfully.sender: "Ошибка операции. Ваш кошелек не был удален."
 localisation.messages.out.guid-link: "Воспользуйтесь справочник по ссылке ниже."
@@ -43,6 +44,7 @@ localisation.messages.out.wallet.back-deposit: "Вам вернули $amount x 
 localisation.messages.out.wallet.back-deposit.full-inventory: "У вас недостаточно места в инвентаре для получения депозита."
 localisation.messages.out.wallet.open.not-money: "Для открытия кошелька не хватает $amount $currency NOT USAGE"
 
+localisation.messages.out.wallet.transfer.input-comment: "Введите ваш комментарий в чат"
 
 
 localisation.messages.out.banker.wallet.open: "Вы открыли счет игроку $player."
@@ -59,6 +61,7 @@ localisation.next-page: "Следующая страница"
 localisation.previous-page: "Предыдущая страница"
 localisation.select: "Выбрать"
 localisation.error: "Ошибка"
+localisation.comment: "Комментарий"
 
 
 
@@ -94,7 +97,7 @@ localisation.messages.usage.banker-tumbler: "Используйте: /banker-tum
 # Информационные сообщения для логирования в Discord
 
 localisation.discord.logger.back-deposit: "Игроку $playerName вернули $amount $currency."
-localisation.discord.logger.transfer-successfully: "Была выполнена банковская операция: \n С кошелька $walletIDSender игрока $sender \n на кошелек $walletIDTarget игрока $target \n перевели $amount $currency!"
+localisation.discord.logger.transfer-successfully: "Была выполнена банковская операция: \n С кошелька #$walletIDSender игрока $sender \n на кошелек #$walletIDTarget игрока $target \n перевели $amount $currency! \n Комментарий: $comment"
 localisation.discord.logger.remove-successfully: "Игрок $player удалил свой кошелек.\nБаланс кошелька составлял $amount $currency."
 localisation.discord.logger.open-successfully: "Игрок $player открыл кошелек."
 localisation.discord.logger.open-unsuccessfully: "Игрок пытался открыть кошелек. Но возникли трудности с обработкой данных в Базе Данных. \n Срочно! Обратитесь к администратору!"
@@ -112,8 +115,9 @@ localisation.inventory.title.menu-actions-wallet: "Действия с коше�
 
 localisation.inventory.title.select-player-transfer: "Транзакция | Выбор получателя"
 localisation.inventory.title.select-amount-transfer: "Транзакция | Выбор суммы"
-localisation.inventory.title.select-choice-transfer: "Транзакция | Подтверждение"
-
+#№localisation.inventory.title.select-choice-transfer: "Транзакция | Подтверждение"
+localisation.inventory.title.confirm-transfer: "Транзакция | Подтверждение"
+localisation.inventory.title.add-comment: "Транзакция | Комментарий"
 
 #Предметы
 localisation.inventory.item: "{ItemName}"
@@ -153,9 +157,11 @@ localisation.inventory.item.info: "Информация [DEV]"
 localisation.inventory.item.select-amount: "Выберите сумму"
 localisation.inventory.item.confirm-amount: "Подтвердить сумму!"
 
-localisation.inventory.item.confirm-transfer: "Подтвердить перевод!"
+
 localisation.inventory.item.transfer-info: "Перевести $amount $currency игроку $player"
 
+localisation.inventory.item.add-comment: "Добавить комментарий"
+localisation.inventory.item.confirm-without-comment: "Отправить без комментария"
 
 
 #Описания
@@ -207,7 +213,10 @@ localisation.inventory.lore.item.select-amount.transfer-menu: "Текущая с
 localisation.inventory.lore.item.add-amount.transfer-menu: "Добавить сумму"
 localisation.inventory.lore.item.get-amount.transfer-menu: "Добавить сумму"
 
+localisation.inventory.lore.item.confirm-head.transfer-menu: "Сумма: $amount \n Комментарий: $comment"
 
+localisation.inventory.lore.item.add-comment.transfer-menu: "Отправьте получателю любой комментарий :)"
+localisation.inventory.lore.item.confirm-without-comment.transfer-menu: "Отправить без комментария"
 
 
 

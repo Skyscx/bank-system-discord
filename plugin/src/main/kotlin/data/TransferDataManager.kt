@@ -1,30 +1,41 @@
 package data
 
 import org.bukkit.entity.Player
-import java.util.concurrent.ConcurrentHashMap
 
-class TransferDataManager {
-    private val transferData = ConcurrentHashMap<Player, TransferData>()
+class TransferDataManager private constructor() {
 
-    fun setTargetPlayer(sender: Player, targetPlayerName: String) {
-        transferData[sender] = TransferData(sender, targetPlayerName, 0)
-    }
-
-    fun setAmount(sender: Player, amount: Int) {
-        val data = transferData[sender] ?: return
-        transferData[sender] = data.copy(amount = amount)
-    }
-
-    fun getTransferData(sender: Player): TransferData? {
-        return transferData[sender]
-    }
-
-    fun removeTransferData(sender: Player) {
-        transferData.remove(sender)
-    }
-
-    data class TransferData(val sender: Player, val targetPlayerName: String, val amount: Int)
     companion object {
         val instance = TransferDataManager()
     }
+
+    private val transferDataMap = mutableMapOf<Player, TransferData>()
+
+    fun setTargetPlayer(player: Player, targetPlayerName: String) {
+        val transferData = transferDataMap.getOrPut(player) { TransferData() }
+        transferData.targetPlayerName = targetPlayerName
+    }
+
+    fun setAmount(player: Player, amount: Int) {
+        val transferData = transferDataMap.getOrPut(player) { TransferData() }
+        transferData.amount = amount
+    }
+
+    fun setComment(player: Player, comment: String) {
+        val transferData = transferDataMap.getOrPut(player) { TransferData() }
+        transferData.comment = comment
+    }
+
+    fun getTransferData(player: Player): TransferData? {
+        return transferDataMap[player]
+    }
+
+    fun removeTransferData(player: Player) {
+        transferDataMap.remove(player)
+    }
 }
+
+data class TransferData(
+    var targetPlayerName: String = "",
+    var amount: Int = 0,
+    var comment: String? = null
+)

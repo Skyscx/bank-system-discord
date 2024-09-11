@@ -20,6 +20,7 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
         val user = event.user
         val targetMember = event.getOption("user")?.asMember ?: return
         val amount = event.getOption("amount")?.asLong ?: return
+        val comment = event.getOption("comment")?.asString ?: return
 
         if (amount <= 0) {
             event.reply("Сумма перевода должна быть положительной.").setEphemeral(true).queue()
@@ -45,7 +46,7 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
                     return@target
                 }
 
-                handleTransfer(event, uuidSender, uuidTarget, discordIDSender, discordIDTarget, amount, targetMember)
+                handleTransfer(event, uuidSender, uuidTarget, discordIDSender, discordIDTarget, amount, targetMember, comment)
             }
         }
     }
@@ -57,7 +58,8 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
         discordIDSender: String,
         discordIDTarget: String,
         amount: Long,
-        targetMember: Member
+        targetMember: Member,
+        comment: String
     ) {
         val walletSender = userDB.getDefaultWalletByUUID(uuidSender) ?: return
         val walletTarget = userDB.getDefaultWalletByUUID(uuidTarget) ?: return
@@ -110,11 +112,11 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
         val targetName = userDB.getPlayerNameByUUID(uuidTarget) ?: return
 
         val successful = walletDB.transferCash(
-            senderName, targetName, walletSender, walletTarget, amount.toInt(), currency1, 1, uuidSender, uuidTarget
+            senderName, targetName, walletSender, walletTarget, amount.toInt(), currency1, 1, uuidSender, uuidTarget, comment
         )
 
         if (successful) {
-            event.reply("Вы перевели $amount $currency1 игроку ${targetMember.asMention}.").setEphemeral(true).queue()
+            event.reply("Вы перевели $amount $currency1 игроку ${targetMember.asMention}. \n Сообщение: $comment").setEphemeral(true).queue()
 
             discordNotifier.sendPrivateMessage(
                 discordIDSender,
@@ -123,7 +125,8 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
                     "currency" to currency1,
                     "target" to targetName,
                     "senderWalletID" to walletSender.toString(),
-                    "targetWalletID" to walletTarget.toString())
+                    "targetWalletID" to walletTarget.toString(),
+                    "comment" to comment)
             )
 
             discordNotifier.sendPrivateMessage(
@@ -133,7 +136,8 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
                     "currency" to currency1,
                     "target" to targetName,
                     "senderWalletID" to walletSender.toString(),
-                    "targetWalletID" to walletTarget.toString())
+                    "targetWalletID" to walletTarget.toString(),
+                    "comment" to comment)
             )
 
             if (functions.isPlayerOnline(uuidSender)) {
@@ -148,7 +152,8 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
                         "amount" to amount.toString(),
                         "currency" to currency1,
                         "senderWalletID" to walletSender.toString(),
-                        "targetWalletID" to walletTarget.toString())
+                        "targetWalletID" to walletTarget.toString(),
+                        "comment" to comment)
                 )
             }
             // Сообщение лог в дискорд
@@ -158,7 +163,8 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
                 "walletIDTarget" to walletTarget.toString(),
                 "target" to targetName,
                 "amount" to amount.toString(),
-                "currency" to currency1))
+                "currency" to currency1,
+                "comment" to comment))
         } else {
             event.reply("Ошибка операции").setEphemeral(true).queue()
         }
