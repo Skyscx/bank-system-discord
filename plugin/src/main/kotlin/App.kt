@@ -12,6 +12,7 @@ import data.Config
 import data.TransferDataManager
 import data.database.DatabaseManager
 import data.database.collection.History
+import data.database.collection.Reports
 import data.database.collection.User
 import data.database.collection.Wallet
 import data.localisation.LocalisationManager
@@ -21,6 +22,7 @@ import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
 import gui.wallletmenu.WalletMenuInventoryEvent
 import gui.wallletmenu.actionwallet.WalletActionsInventoryEvent
+import gui.wallletmenu.actionwallet.WalletHistoryInventory
 import gui.wallletmenu.closewallet.WalletCloseInventoryEvent
 import gui.wallletmenu.openwallet.WalletOpenInventoryEvent
 import gui.wallletmenu.reportwallet.WalletReportInventoryEvent
@@ -48,7 +50,7 @@ class App : JavaPlugin(), Listener {
         lateinit var walletDB: Wallet
         lateinit var userDB: User
         lateinit var historyDB: History
-
+        lateinit var reportsDB: Reports
     }
 
     override fun onEnable() {
@@ -99,6 +101,7 @@ class App : JavaPlugin(), Listener {
         walletDB = Wallet.getInstance(dbManager, this, functionsDiscord)
         userDB = User.getInstance(dbManager, this, functionsDiscord)
         historyDB = History.getInstance(dbManager, this)
+        reportsDB = Reports(dbManager, functionsDiscord, this)
 
         // Localisation
         localizationManager = LocalisationManager(this)
@@ -134,6 +137,7 @@ class App : JavaPlugin(), Listener {
         Bukkit.getPluginManager().registerEvents(WalletCloseInventoryEvent(config, discordBot!!), this)
         Bukkit.getPluginManager().registerEvents(WalletActionsInventoryEvent(), this)
         Bukkit.getPluginManager().registerEvents(WalletReportInventoryEvent(), this)
+        Bukkit.getPluginManager().registerEvents(WalletHistoryInventory(), this)
 
         val transferDataManager = TransferDataManager.instance
         val amountPlayerInventory = AmountPlayerInventory(transferDataManager)

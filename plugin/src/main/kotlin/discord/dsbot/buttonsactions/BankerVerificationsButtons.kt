@@ -1,8 +1,9 @@
-package discord.dsbot
+package discord.dsbot.buttonsactions
 
 import App.Companion.discordBot
 import App.Companion.userDB
 import App.Companion.walletDB
+import discord.dsbot.DiscordNotifier
 import functions.Functions
 import net.dv8tion.jda.api.entities.EmbedType
 import net.dv8tion.jda.api.entities.MessageEmbed
@@ -10,7 +11,7 @@ import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import net.dv8tion.jda.api.hooks.ListenerAdapter
 import org.bukkit.configuration.file.FileConfiguration
 
-class DiscordNotifierEvents(config: FileConfiguration): ListenerAdapter() {
+class BankerVerificationsButtons(config: FileConfiguration): ListenerAdapter() {
 
     private val functions = Functions()
     private val discordNotifier = DiscordNotifier(config)

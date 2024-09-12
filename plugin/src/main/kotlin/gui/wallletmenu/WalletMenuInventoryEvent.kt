@@ -56,7 +56,7 @@ class WalletMenuInventoryEvent : Listener {
                         inventoryManager.openInitialTransferInventory(player)
                     }
                     if (functions.isComponentEqual(displayNameComponent, titleHistoryButton)){
-                        inventoryManager.openInventory(player, "history")
+                        inventoryManager.openInitialHistoryInventory(player)
                     }
                     return
                 }

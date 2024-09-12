@@ -160,7 +160,7 @@ class TransferEvents(
                                 val displayNameComponent = itemMeta.displayName() ?: return
                                 if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.accept"))) {
                                     val transferData = TransferDataManager.instance.getTransferData(player) ?: return
-                                    Bukkit.dispatchCommand(player, "transfer ${transferData.targetPlayerName} ${transferData.amount} ${transferData.comment}")
+                                    Bukkit.dispatchCommand(player, "transfer ${transferData.targetPlayerName} ${transferData.amount} ${transferData.comment ?: ""}")
                                     TransferDataManager.instance.removeTransferData(player)
                                     player.closeInventory()
                                 } else if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.reject"))) {

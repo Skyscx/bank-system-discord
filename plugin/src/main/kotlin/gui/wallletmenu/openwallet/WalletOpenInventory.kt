@@ -17,7 +17,7 @@ class WalletOpenInventory : InventoryCreator {
     private val currency = configPlugin.getString("currency-block-default")
 
     override fun createInventory(player: Player): Inventory {
-        //todo: сделать получение цены создания кошелька.
+        //todo: сделать получение цены создания кошелька. (Валюта)
 
         val inventory = Bukkit.createInventory(null, InventoryType.HOPPER,
             Component.text(localizationManager.getMessage("localisation.inventory.title.wallet-open-confirmation")))

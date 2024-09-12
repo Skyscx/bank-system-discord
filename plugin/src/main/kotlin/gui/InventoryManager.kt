@@ -39,4 +39,8 @@ class InventoryManager {
         val selectPlayerInventory = inventoryCreators["selectPlayerForTransfer"] as? SelectPlayerInventory
         selectPlayerInventory?.openInitialInventory(player)
     }
+    fun openInitialHistoryInventory(player: Player) {
+        val walletHistoryInventory = inventoryCreators["history"] as? WalletHistoryInventory
+        walletHistoryInventory?.openInitialInventory(player)
+    }
 }

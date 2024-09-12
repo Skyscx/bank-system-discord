@@ -51,58 +51,39 @@ class WalletActionsInventoryEvent:Listener {
             "§4-1" to -1,
             "§4-16" to -16,
             "§4-64" to -64,
-            "§4-ALL" to 0
+            "§4-ALL" to 0,
+            localizationManager.getMessage("localisation.inventory.item.back-wallet-menu") to "menu"
         )
 
-        val amount = titleMap[displayName] ?: return
+        val action = titleMap[displayName]
+
+        if (action == "menu") {
+            inventoryManager.openInventory(player, "menu")
+            return
+        }
+
+        val amount = action as? Int ?: return
+
 
         val uuid = userDB.getUUIDbyPlayerName(player.name) ?: return
         val walletDefault = userDB.getDefaultWalletByUUID(uuid) ?: return
         val walletCurrency = walletDB.getWalletCurrency(walletDefault) ?: return
         val currency = functions.convertStringToMaterial(walletCurrency)
-        val typeBlock = currency.first ?: return
+        val typeBlock = currency.first ?: return //todo: Потом реализовать
 
         if (!currency.second) {
-            player.sendMessage("Ошибка иницилизации валюты")
+            player.sendMessage("Ошибка инициализации валюты")
             return
         }
 
         if (amount > 0) {
             player.performCommand("wallet balance add $amount")
-            //handleAddBalance(player, walletDefault, typeBlock, amount)
         } else if (amount < 0) {
             val absoluteAmount = amount.absoluteValue
             player.performCommand("wallet balance remove $absoluteAmount")
-            //handleGetBalance(player, walletDefault, typeBlock, amount)
         } else {
             player.sendMessage("[DEV] Функция в разработке")
         }
     }
 
-//    private fun handleAddBalance(player: Player, walletDefault: Int, typeBlock: Material, amount: Int) {
-//        val countPlayerBlock = functions.countBlocksInInventory(player, typeBlock)
-//        if (amount > countPlayerBlock) {
-//            player.sendMessage("У вас нет столько предметов в инвентаре.")
-//            return
-//        }
-//        functions.takeItem(player, typeBlock, amount)
-//        walletDB.updateWalletBalance(walletDefault, amount)
-//    }
-//
-//    private fun handleGetBalance(player: Player, walletDefault: Int, typeBlock: Material, amount: Int) {
-//        val balance = walletDB.getWalletBalance(walletDefault) ?: 0
-//        if (balance < -amount) {
-//            player.sendMessage("У вас недостаточно средств на балансе.")
-//            return
-//        }
-//
-//        val item = ItemStack(typeBlock)
-//        val successful = functions.giveItem(player, item, -amount)
-//        if (successful) {
-//            walletDB.updateWalletBalance(walletDefault, amount)
-//            player.sendMessage("Вы сняли ${-amount} $typeBlock")
-//        } else {
-//            player.sendMessage("Операция прервана")
-//        }
-//    }
 }

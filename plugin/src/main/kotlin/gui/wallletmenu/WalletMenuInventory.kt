@@ -70,7 +70,8 @@ class WalletMenuInventory : InventoryCreator {
         //Заполнитель по бокам
         val filler = systemGUI.createItem(
             Material.GREEN_STAINED_GLASS_PANE,
-            "", listOf(""), 1
+            "·",
+            customModelData = 1
         )
         // Кнопка информации
         val info = systemGUI.createItem(
@@ -248,7 +249,8 @@ class WalletMenuInventory : InventoryCreator {
         //Заполнитель по бокам
         val filler = systemGUI.createItem(
             Material.YELLOW_STAINED_GLASS_PANE,
-            " ", listOf(""), 1
+            "·",
+            customModelData = 1
         )
         // Кнопка информации
         val info = systemGUI.createItem(

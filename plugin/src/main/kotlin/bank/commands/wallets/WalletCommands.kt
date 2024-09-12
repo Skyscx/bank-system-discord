@@ -59,10 +59,10 @@ class WalletCommands(private val config: FileConfiguration, private val discordB
                 historyCommandHandler.handleHistoryCommand(sender, argsArray)
             }
             //TODO: Репорт сделать как в TransferEvent -> AnvilGUI
-//            "report" -> {
-//                val reportCommandHandler = ReportCommandHandler(config)
-//                reportCommandHandler.handleReportCommand(sender, argsArray)
-//            }
+            "report" -> {
+                val reportCommandHandler = ReportCommandHandler(config)
+                reportCommandHandler.handleReportCommand(sender, argsArray)
+            }
 //            "rename" -> {
 //                val renameCommandHandler = RenameCommandHandler()
 //                renameCommandHandler.handleRenameCommand(sender, argsArray)

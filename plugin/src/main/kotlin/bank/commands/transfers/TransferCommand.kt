@@ -29,11 +29,18 @@ class TransferCommand(config: FileConfiguration, discordBot: DiscordBot) : Comma
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.amount-incorrect"))
             return true
         }
-        val comment = if (args.size > 2) args.drop(2).joinToString(" ") else ""
+        var comment = "Отсутствует"
+        if (args.size > 2) {
+            val potentialComment = args.drop(2).joinToString(" ")
+            if (potentialComment.isNotBlank()) {
+                comment = potentialComment
+            }
+        }
         if (comment.length > 128) {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.comment-too-long"))
             return true
         }
+
 
         val senderPlayer = sender as Player
         val targetName = args[0]

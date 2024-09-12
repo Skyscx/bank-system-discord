@@ -26,7 +26,6 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
     private val priceAccountConfig = config.getInt("price-account")
     private val currencyAccountConfig = config.getString("currency-block-default")
     private val verificationAccountConfig = config.getBoolean("checker-banker")
-    private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
 
     @EventHandler
     fun onClick(e: InventoryClickEvent) {
@@ -85,6 +84,7 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                             MessageEmbed.Field("Дискорд", mention, false),
                                             MessageEmbed.Field("Номер кошелька", lastID, false)
                                             )
+
 
                                     )
 

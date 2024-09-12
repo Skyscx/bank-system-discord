@@ -16,6 +16,7 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
             createTableUsers()
             createTableWallets()
             createTableHistory()
+            createTableReports()
         } catch (e: SQLException) {
             e.printStackTrace()
             plugin.logger.severe("Failed to initialize database: ${e.message}")
@@ -163,6 +164,44 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
                 Date TEXT NOT NULL,
                 Status INTEGER NOT NULL,
                 Comment TEXT NOT NULL
+                );
+        """.trimIndent()
+        createTable(sql)
+    }
+
+    /**
+     * ID - идентификатор
+     * SenderName - Игровое имя MC
+     * SenderUUID - Идентификатор игрока MC
+     * SenderDID - Идентификатор игрока в Discord
+     * DateDispatch - Время и дата когда было отправлено
+     * Type - Тип жалобы (Подробнее в команде wallet report)
+     * Reason - Текст жалобы
+     * From - Откуда поступила - MC | Discord
+     * Inspector - Кто закрыт жалобу
+     * ResponseType - Тип закрытия жалобы
+     * ResponseText - Текст закрытия жалобы
+     * DateResponse - Дата закрытия жалобы
+     * Status - Переменная для проверки открыта или закрыта жалоба. [1 - открыта | 0 - закрыта]
+     */
+
+    private fun createTableReports() {
+        val sql = """
+            CREATE TABLE IF NOT EXISTS bank_reports (
+                ID INTEGER PRIMARY KEY AUTOINCREMENT,
+                SenderName TEXT NOT NULL,
+                SenderUUID TEXT NOT NULL,
+                SenderDID TEXT NOT NULL,
+                DateDispatch TEXT NOT NULL,
+                Type TEXT NOT NULL,
+                Reason TEXT NOT NULL,
+                From TEXT NOT NULL, 
+                Inspector TEXT,
+                ResponseType TEXT,
+                ResponseText TEXT,
+                DateResponse TEXT,
+                ReportID INTEGER NOT NULL,
+                Status INTEGER NOT NULL
                 );
         """.trimIndent()
         createTable(sql)
