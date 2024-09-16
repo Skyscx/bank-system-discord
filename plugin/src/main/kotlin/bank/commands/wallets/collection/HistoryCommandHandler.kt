@@ -21,7 +21,8 @@ class HistoryCommandHandler {
         showHistory(player, page)
         return
     }
-    //todo: После первого релиза с нормальными сообщениями, перенести сообщения в конфиг.
+
+    // todo: После первого релиза с нормальными сообщениями, перенести сообщения в конфиг.
     private fun showHistory(player: Player, page: Int = 1): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
         val pageSize = 7
@@ -47,20 +48,41 @@ class HistoryCommandHandler {
                     val senderName = row["SenderName"] as String
                     val targetName = row["TargetName"] as String
                     val dateStr = row["Date"] as String
+                    val typeOperation = row["TypeOperation"] as String
 
                     val date = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").parse(dateStr)
                     val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
                     val formattedDate = dateFormat.format(date)
 
-                    val icon = if (senderUUID == userUUID) "📤" else "📥"
-                    val description = if (senderUUID == userUUID) {
-                        "Отправлено $amount $currency пользователю $targetName"
-                    } else {
-                        "Получено $amount $currency от пользователя $senderName"
+                    val icon = when (typeOperation) {
+                        "TRANSFER" -> if (senderUUID == userUUID) "📤" else "📥"
+                        "OPEN_WALLET" -> "🔓"
+                        "ATTEMPT_OPEN_WALLET" -> "🔒"
+                        "RENAMING" -> "📝"
+                        "CLOSE_WALLET" -> "🔒"
+                        "ADD_BALANCE" -> "➡"
+                        "GET_BALANCE" -> "⬅"
+                        else -> "❓"
+                    }
+
+                    val description = when (typeOperation) {
+                        "TRANSFER" -> if (senderUUID == userUUID) {
+                            "Отправлено $amount $currency пользователю $targetName"
+                        } else {
+                            "Получено $amount $currency от пользователя $senderName"
+                        }
+                        "OPEN_WALLET" -> "Открыт кошелек пользователем $senderName"
+                        "ATTEMPT_OPEN_WALLET" -> "Попытка открыть кошелек пользователем $senderName"
+                        "RENAMING" -> "Переименование кошелька пользователем $senderName"
+                        "CLOSE_WALLET" -> "Закрыт кошелек пользователем $senderName"
+                        "ADD_BALANCE" -> "Пополнение баланса на $amount"
+                        "GET_BALANCE" -> "Снятие баланса на  $amount"
+                        else -> "Неизвестная операция"
                     }
 
                     player.sendMessage("$icon $formattedDate - $description")
                 }
+
                 val message = Component.text()
                 if (page > 1) {
                     val prevPage = Component.text("[Предыдущая страница]")

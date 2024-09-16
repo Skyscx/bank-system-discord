@@ -46,7 +46,7 @@ class Reports(private var dbManager: DatabaseManager, private var functionsDisco
                         DateDispatch, 
                         Type,
                         Reason, 
-                        From, 
+                        FromAddress, 
                         ReportID,
                         Status          
                     ) VALUES(?,?,?,?,?,?,?,?,?)
@@ -87,7 +87,7 @@ class Reports(private var dbManager: DatabaseManager, private var functionsDisco
     /**
      * Получение имени отправителя по ID записи из таблицы bank_reports
      */
-    fun getSenderName(id: Int): String? {
+    fun                                                                                                                getSenderName(id: Int): String? {
         val sql = "SELECT SenderName FROM bank_reports WHERE ID = ?"
         val result = dbManager.executeQuery(sql, id)
         if (result.isEmpty()) return null
@@ -201,19 +201,19 @@ class Reports(private var dbManager: DatabaseManager, private var functionsDisco
     /**
      * Получение источника по ID записи из таблицы bank_reports
      */
-    fun getFrom(id: Int): String? {
-        val sql = "SELECT From FROM bank_reports WHERE ID = ?"
+    fun getFromAddress(id: Int): String? {
+        val sql = "SELECT FromAddress FROM bank_reports WHERE ID = ?"
         val result = dbManager.executeQuery(sql, id)
         if (result.isEmpty()) return null
         val row = result.firstOrNull()
-        return row?.get("From") as? String
+        return row?.get("FromAddress") as? String
     }
 
     /**
      * Присвоение источника по ID записи в таблице bank_reports
      */
-    fun setFrom(id: Int, from: String): Boolean {
-        val sql = "UPDATE bank_reports SET From = ? WHERE ID = ?"
+    fun setFromAddress(id: Int, from: String): Boolean {
+        val sql = "UPDATE bank_reports SET FromAddress = ? WHERE ID = ?"
         return dbManager.executeUpdate(sql, from, id)
     }
 

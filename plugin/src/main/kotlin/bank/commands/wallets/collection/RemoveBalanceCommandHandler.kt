@@ -1,5 +1,6 @@
 package bank.commands.wallets.collection
 
+import App.Companion.historyDB
 import App.Companion.localizationManager
 import App.Companion.userDB
 import App.Companion.walletDB
@@ -50,6 +51,20 @@ class RemoveBalanceCommandHandler {
         val successful = functions.giveItem(player, item, amount)
         if (successful) {
             walletDB.updateWalletBalance(walletDefault, -amount)
+            historyDB.insertBankHistory(
+                typeOperation = "GET_BALANCE",
+                senderName = sender.name,
+                senderWalletID = walletDefault,
+                uuidSender = uuid,
+                amount = amount,
+                currency = typeBlock.name,
+                status = 1,
+
+                uuidTarget = "null",
+                comment =  "null",
+                targetWalletID = 0,
+                targetName = "null"
+            )
             sender.sendMessage("Вы сняли $amount $currency")
         } else {
             sender.sendMessage("Операция прервана")

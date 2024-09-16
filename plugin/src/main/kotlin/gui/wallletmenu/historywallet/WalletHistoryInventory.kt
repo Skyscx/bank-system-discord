@@ -3,6 +3,7 @@ package gui.wallletmenu.actionwallet
 import App
 import App.Companion.historyDB
 import App.Companion.localizationManager
+import App.Companion.walletDB
 import functions.Functions
 import gui.InventoryCreator
 import gui.SystemGUI
@@ -18,7 +19,6 @@ import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import java.sql.SQLException
 import java.text.SimpleDateFormat
-import java.util.*
 
 class WalletHistoryInventory : InventoryCreator, Listener {
     private val systemGUI = SystemGUI()
@@ -51,39 +51,66 @@ class WalletHistoryInventory : InventoryCreator, Listener {
                         val targetName = row["TargetName"] as String
                         val dateStr = row["Date"] as String
                         val comment = row["Comment"] as String
+                        val typeOperation = row["TypeOperation"] as String
+                        val walletIdSender = row["SenderIdWallet"] as Int
 
                         val date = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").parse(dateStr)
                         val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
                         val formattedDate = dateFormat.format(date)
+                        val balance = walletDB.getWalletBalance(walletIdSender.toInt()) ?: 0
 
-                        val iconUUID = if (senderUUID == userUUID) targetUUID else senderUUID
+                        //val iconUUID = if (senderUUID == userUUID) targetUUID else senderUUID
 
-                        val description = if (senderUUID == userUUID) {
-                            listOf(
+                        val description = when (typeOperation) {
+                            "TRANSFER" -> listOf(
                                 "Отправлено - $amount $currency",
                                 "Игроку - $targetName",
                                 "Комментарий: $comment"
                             )
-                        } else {
-                            listOf(
-                                "Получено - $amount $currency",
-                                "От - $senderName",
-                                "Комментарий: $comment"
+                            "OPEN_WALLET" -> listOf(
+                                "Открыт кошелек",
+                                "Игроком - $senderName"
                             )
+                            "ATTEMPT_OPEN_WALLET" -> listOf(
+                                "Попытка открыть кошелек",
+                                "Игроком - $senderName"
+                            )
+                            "RENAMING" -> listOf(
+                                "Переименование кошелька",
+                                "Игроком - $senderName"
+                            )
+                            "CLOSE_WALLET" -> listOf(
+                                "Закрыт кошелек",
+                                "Игроком - $senderName"
+                            )
+                            "ADD_BALANCE" -> listOf(
+                                "Пополнение баланса",
+                                "Баланс - $balance (+$amount)"
+                            )
+                            "GET_BALANCE" -> listOf(
+                                "Снятие баланса",
+                                "Баланс - $balance (-$amount)"
+                            )
+                            else -> listOf()
                         }
 
-//                        val item = systemGUI.createItem(
-//                            Material.PLAYER_HEAD,
-//                            "$formattedDate",
-//                            description,
-//                            1
-//                        )
+                        val material = when (typeOperation) {
+                            "TRANSFER" -> Material.PAPER
+                            "OPEN_WALLET" -> Material.GREEN_STAINED_GLASS_PANE
+                            "ATTEMPT_OPEN_WALLET" -> Material.YELLOW_STAINED_GLASS_PANE
+                            "RENAMING" -> Material.NAME_TAG
+                            "CLOSE_WALLET" -> Material.RED_STAINED_GLASS_PANE
+                            "ADD_BALANCE" -> Material.GREEN_WOOL
+                            "GET_BALANCE" -> Material.ORANGE_WOOL
+                            else -> Material.BARRIER
+                        }
 
-                        val icon = systemGUI.createSkull(
-                            UUID.fromString(iconUUID),
+                        val icon = systemGUI.createItem(
+                            material,
                             formattedDate,
                             description,
-                            1)
+                            1
+                        )
 
                         val backMenu = systemGUI.createItem(
                             Material.DARK_OAK_DOOR,

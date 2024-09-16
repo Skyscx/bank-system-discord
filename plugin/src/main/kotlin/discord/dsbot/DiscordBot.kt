@@ -1,7 +1,6 @@
 package discord.dsbot
 //import discord.dsbot.commands.PayCommandDiscord
-import discord.dsbot.buttonsactions.BankerVerificationsButtons
-import discord.dsbot.buttonsactions.ReportWalletButtons
+import discord.dsbot.buttonsactions.ButtonInteractionHandler
 import discord.dsbot.commands.BalanceCommandDiscord
 import discord.dsbot.commands.TransferCommandDiscord
 import net.dv8tion.jda.api.JDA
@@ -65,8 +64,10 @@ class DiscordBot private constructor(private val config: FileConfiguration) {
     private fun registerEventListeners() {
         jda.addEventListener(BalanceCommandDiscord(config))
         jda.addEventListener(TransferCommandDiscord(config))
-        jda.addEventListener(BankerVerificationsButtons(config))
-        jda.addEventListener(ReportWalletButtons(config))
+        jda.addEventListener(ButtonInteractionHandler(config));
+
+//        jda.addEventListener(BankerVerificationsButtonsHandler(config))
+//        jda.addEventListener(ReportWalletButtonsHandler(config))
         // .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
     }
     fun getMentionUser(discordID: String): String {

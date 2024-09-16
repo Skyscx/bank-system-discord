@@ -1,6 +1,7 @@
 package bank.commands.wallets.collection
 
 import App.Companion.configPlugin
+import App.Companion.historyDB
 import App.Companion.localizationManager
 import App.Companion.userDB
 import App.Companion.walletDB
@@ -27,7 +28,7 @@ class AddBalanceCommandHandler() {
         }
         val walletDefault = userDB.getDefaultWalletByUUID(uuid)
         if (walletDefault == null) {
-            sender.sendMessage("Ошибка иницилизации кошелькап")
+            sender.sendMessage("Ошибка инициализации кошелька")
             return
         }
         val walletVerification = walletDB.getVerificationWallet(walletDefault)
@@ -45,7 +46,7 @@ class AddBalanceCommandHandler() {
         if (currency.second) {
             typeBlock = currency.first!! //Преобразованный материал
         } else {
-            sender.sendMessage("Ошибка иницилизации валюты")
+            sender.sendMessage("Ошибка инициализации валюты")
             return
 
         }
@@ -64,6 +65,20 @@ class AddBalanceCommandHandler() {
         }
         functions.takeItem(player, typeBlock, amount)
         walletDB.updateWalletBalance(walletDefault, amount)
+        historyDB.insertBankHistory(
+            typeOperation = "ADD_BALANCE",
+            senderName = sender.name,
+            senderWalletID = walletDefault,
+            uuidSender = uuid,
+            amount = amount,
+            currency = typeBlock.name,
+            status = 1,
+
+            uuidTarget = "null",
+            comment =  "null",
+            targetWalletID = 0 ,
+            targetName = "null"
+        )
         return
     }
 

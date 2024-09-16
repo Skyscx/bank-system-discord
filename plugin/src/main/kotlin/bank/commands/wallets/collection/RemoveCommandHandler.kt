@@ -1,5 +1,6 @@
 package bank.commands.wallets.collection
 
+import App.Companion.historyDB
 import App.Companion.localizationManager
 import App.Companion.userDB
 import App.Companion.walletDB
@@ -47,6 +48,20 @@ class RemoveCommandHandler (config: FileConfiguration, discordBot: DiscordBot) {
         val successful = walletDB.deleteUserWallet(walletID)
         if (successful){
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.remove-successfully.sender"))
+            historyDB.insertBankHistory(
+                typeOperation = "ATTEMPT_CLOSE_WALLET",
+                senderName = sender.name,
+                senderWalletID = walletID,
+                uuidSender = uuid.toString(),
+                amount = 15, // todo: Сделать из ДБ
+                currency = "DIAMOND_ORE", //todo: Сделать из дб
+                status = 1,
+
+                uuidTarget = "null",
+                comment =  "null",
+                targetWalletID = 0,
+                targetName = "null"
+            )
             discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.remove-successfully", "player" to sender.name, "amount" to balance, "currency" to currency))
         } else {
             sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.remove-unsuccessfully.sender"))

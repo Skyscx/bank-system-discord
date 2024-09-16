@@ -16,6 +16,7 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
      */
 
     fun insertBankHistory(
+        typeOperation: String,
         senderName: String,
         targetName: String,
         senderWalletID: Int,
@@ -31,19 +32,34 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
                 val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
                 val sql = """
                     INSERT INTO bank_history(
-                        SenderIdWallet, TargetIdWallet, Amount, Currency, SenderName,
+                        TypeOperation, SenderIdWallet, TargetIdWallet, Amount, Currency, SenderName,
                         SenderUUID, SenderDiscordID, TargetName, TargetUUID, TargetDiscordID,
                         Date, Status, Comment
-                    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """.trimIndent()
+                val discordSender = userDB.getDiscordIDbyUUID(uuidSender) ?: return@Runnable
 
+                var discordTarget = "null"
+                if (uuidTarget != "null"){
+                    discordTarget = userDB.getDiscordIDbyUUID(uuidTarget) ?: return@Runnable
+                }
 
                 try {
                     dbManager.executeUpdate(sql,
-                        senderWalletID, targetWalletID, amount, currency, senderName,
-                        uuidSender, userDB.getDiscordIDbyUUID(uuidSender) as Any,
-                        targetName, uuidTarget, userDB.getDiscordIDbyUUID(uuidTarget) as Any,
-                        currentDate, status, comment
+                        typeOperation,
+                        senderWalletID,
+                        targetWalletID,
+                        amount,
+                        currency,
+                        senderName,
+                        uuidSender,
+                        discordSender,
+                        targetName,
+                        uuidTarget,
+                        discordTarget,
+                        currentDate,
+                        status,
+                        comment
                     )
                 } catch (e: SQLException) {
                     e.printStackTrace()
@@ -53,13 +69,13 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
     }
     fun getUserHistory(userUUID: String, pageSize: Int, offset: Int): List<Map<String, Any>> {
         val query = """
-            SELECT ID, SenderIdWallet, TargetIdWallet, Amount, Currency, SenderName, SenderUUID, SenderDiscordID,
-                   TargetName, TargetUUID, TargetDiscordID, Date, Status, Comment
-            FROM bank_history
-            WHERE SenderUUID = ? OR TargetUUID = ?
-            ORDER BY Date DESC
-            LIMIT ? OFFSET ?
-        """
+        SELECT ID, SenderIdWallet, TargetIdWallet, Amount, Currency, SenderName, SenderUUID, SenderDiscordID,
+               TargetName, TargetUUID, TargetDiscordID, Date, Status, Comment, TypeOperation
+        FROM bank_history
+        WHERE SenderUUID = ? OR TargetUUID = ?
+        ORDER BY Date DESC
+        LIMIT ? OFFSET ?
+    """
 
         return dbManager.executeQuery(query, userUUID, userUUID, pageSize, offset)
     }
