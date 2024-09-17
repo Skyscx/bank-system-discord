@@ -3,6 +3,7 @@ package gui.wallletmenu.actionwallet
 import App.Companion.localizationManager
 import App.Companion.userDB
 import App.Companion.walletDB
+import data.ActionDataManager
 import gui.InventoryCreator
 import gui.SystemGUI
 import net.kyori.adventure.text.Component
@@ -10,8 +11,9 @@ import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import org.bukkit.inventory.ItemStack
 
-class WalletActionsInventory : InventoryCreator {
+class WalletActionsInventory(private val actionData: ActionDataManager) : InventoryCreator {
     private val systemGUI = SystemGUI()
     override fun createInventory(player: Player): Inventory {
         //todo: сделать получение цены создания кошелька.
@@ -22,7 +24,10 @@ class WalletActionsInventory : InventoryCreator {
         val currency = walletDB.getWalletCurrency(walletD) ?: "[Missing currency]"
         val balance = walletDB.getWalletBalance(walletD) ?: "[Missing balance]"
         val dateReg = walletDB.getVerificationWalletDate(walletD) ?: "[Missing dateReg]"
-        // Кнопка пополнения 1
+        actionData.setTargetPlayer(player, 0)
+        val actionData = actionData.getActionData(player) ?: return Bukkit.createInventory(null, 54, Component.text(
+            localizationManager.getMessage("localisation.error")))
+            // Кнопка пополнения 1
         val addBalance1 = systemGUI.createItem(
             Material.LIME_WOOL,
             "§a+1",
@@ -87,14 +92,14 @@ class WalletActionsInventory : InventoryCreator {
             4
         )
         // Кнопка кошелька
-        val walletPrivate = systemGUI.createItem(
-            Material.PAPER,
-            localizationManager.getMessage("localisation.inventory.item.wallet"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.actions-menu",
-                "owner" to player.name,
-                "balance" to balance.toString(),
-                "date" to dateReg)),
-            1
+        val amount = actionData.amount
+        val wallet = createWalletItem("ОЖИДАНИЕ", actionData.amount)
+
+        // Кнопка "Произвести транзакцию" todo: СДЕЛАТЬ
+        val confirmItem = systemGUI.createItem(
+            Material.GREEN_WOOL,
+            "Выполнить",
+            customModelData = 4
         )
         // Вернуться в меню
         val backMenu = systemGUI.createItem(
@@ -109,35 +114,58 @@ class WalletActionsInventory : InventoryCreator {
         inventory.setItem(12, addBalance1)
         inventory.setItem(11, addBalance16)
         inventory.setItem(10, addBalance64)
-        inventory.setItem(9, addBalanceAll)
+        //inventory.setItem(9, addBalanceAll)
 
-        inventory.setItem(13, walletPrivate)
+        inventory.setItem(13, wallet)
+        inventory.setItem(22, confirmItem)
 
         inventory.setItem(14, getBalance1)
         inventory.setItem(15, getBalance16)
         inventory.setItem(16, getBalance64)
-        inventory.setItem(17, getBalanceAll)
+        //inventory.setItem(17, getBalanceAll)
         return inventory
     }
 
-    fun updateWalletItem(player: Player, inventory: Inventory) {
-        val uuid = player.uniqueId.toString()
-        val walletD = userDB.getDefaultWalletByUUID(uuid) ?: 0
-        val currency = walletDB.getWalletCurrency(walletD) ?: "[Missing currency]"
-        val balance = walletDB.getWalletBalance(walletD) ?: "[Missing balance]"
-        val dateReg = walletDB.getVerificationWalletDate(walletD) ?: "[Missing dateReg]"
+//    fun updateWalletItem(player: Player, inventory: Inventory) {
+//        val uuid = player.uniqueId.toString()
+//        val walletD = userDB.getDefaultWalletByUUID(uuid) ?: 0
+//        val currency = walletDB.getWalletCurrency(walletD) ?: "[Missing currency]"
+//        val balance = walletDB.getWalletBalance(walletD) ?: "[Missing balance]"
+//        val dateReg = walletDB.getVerificationWalletDate(walletD) ?: "[Missing dateReg]"
+//
+//        // Кнопка кошелька
+//        val walletPrivate = systemGUI.createItem(
+//            Material.PAPER,
+//            localizationManager.getMessage("localisation.inventory.item.wallet"),
+//            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.actions-menu",
+//                "owner" to player.name,
+//                "balance" to balance.toString(),
+//                "date" to dateReg)),
+//            1
+//        )
+//
+//        inventory.setItem(13, walletPrivate)
+//    }
 
-        // Кнопка кошелька
-        val walletPrivate = systemGUI.createItem(
+    fun updateItem(player: Player, inventory: Inventory) {
+        val transferData = actionData.getActionData(player) ?: return
+        val amount = transferData.amount
+        val type = when{
+            amount > 0 -> "Пополнение"
+            amount < 0 -> "Снятие"
+            else -> "Ожидание"
+        }
+        // Обновите предмет с названием выбранной головы в центре
+        val centerItem = createWalletItem(type, transferData.amount)
+        inventory.setItem(13, centerItem)
+    }
+
+    private fun createWalletItem(type: String, amount: Int): ItemStack {
+        return systemGUI.createItem(
             Material.PAPER,
-            localizationManager.getMessage("localisation.inventory.item.wallet"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.actions-menu",
-                "owner" to player.name,
-                "balance" to balance.toString(),
-                "date" to dateReg)),
-            1
+            type,
+            listOf("$amount"),
+            4
         )
-
-        inventory.setItem(13, walletPrivate)
     }
 }

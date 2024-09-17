@@ -53,6 +53,8 @@ class WalletHistoryInventory : InventoryCreator, Listener {
                         val comment = row["Comment"] as String
                         val typeOperation = row["TypeOperation"] as String
                         val walletIdSender = row["SenderIdWallet"] as Int
+                        val oldBalance = row["OldBalance"] as Int
+                        val newBalance = row["NewBalance"] as Int
 
                         val date = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").parse(dateStr)
                         val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
@@ -85,11 +87,11 @@ class WalletHistoryInventory : InventoryCreator, Listener {
                             )
                             "ADD_BALANCE" -> listOf(
                                 "Пополнение баланса",
-                                "Баланс - $balance (+$amount)"
+                                "Баланс - $oldBalance (+${newBalance-oldBalance})"
                             )
                             "GET_BALANCE" -> listOf(
                                 "Снятие баланса",
-                                "Баланс - $balance (-$amount)"
+                                "Баланс - $oldBalance (-${oldBalance-newBalance})"
                             )
                             else -> listOf()
                         }
@@ -178,7 +180,7 @@ class WalletHistoryInventory : InventoryCreator, Listener {
         return systemGUI.createItem(
             material = Material.ARROW,
             name = localizationManager.getMessage("localisation.next-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.next-page.transfer-menu")),
+            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.next-page")),
             customModelData = null,
             italic = false,
             bold = true,
@@ -192,7 +194,7 @@ class WalletHistoryInventory : InventoryCreator, Listener {
         return systemGUI.createItem(
             material = Material.ARROW,
             name = localizationManager.getMessage("localisation.previous-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.previous-page.transfer-menu")),
+            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.previous-page")),
             customModelData = null,
             italic = false,
             bold = true,

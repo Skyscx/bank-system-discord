@@ -4,6 +4,7 @@ import App.Companion.instance
 import App.Companion.localizationManager
 import data.TransferDataManager
 import functions.Functions
+import gui.InventoryManager
 import gui.SystemGUI
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
@@ -84,6 +85,7 @@ class TransferEvents(
                     val displayNameComponent = itemMeta.displayName() ?: return
                     val titleNextPage = localizationManager.getMessage("localisation.next-page")
                     val titlePreviousPage = localizationManager.getMessage("localisation.previous-page")
+                    val titleBackWalletMenu = localizationManager.getMessage("localisation.inventory.item.back-wallet-menu")
 
                     if (functions.isComponentEqual(displayNameComponent, titleNextPage)) {
                         playerPages[player] = playerPages.getOrDefault(player, 0) + 1
@@ -98,6 +100,9 @@ class TransferEvents(
                         TransferDataManager.instance.setTargetPlayer(player, textTargetPlayerName)
                         val amountInventory = amountPlayerInventory.createInventory(player)
                         player.openInventory(amountInventory)
+                    } else if (functions.isComponentEqual(displayNameComponent, titleBackWalletMenu)){
+                        val inventoryManager = InventoryManager()
+                        inventoryManager.openInventory(player, "menu")
                     }
                 }
             } else {
@@ -223,7 +228,7 @@ class TransferEvents(
         return systemGUI.createItem(
             material = Material.ARROW,
             name = localizationManager.getMessage("localisation.next-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.next-page.transfer-menu")),
+            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.next-page")),
             customModelData = null,
             italic = false,
             bold = true,
@@ -237,7 +242,7 @@ class TransferEvents(
         return systemGUI.createItem(
             material = Material.ARROW,
             name = localizationManager.getMessage("localisation.previous-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.previous-page.transfer-menu")),
+            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.previous-page")),
             customModelData = null,
             italic = false,
             bold = true,

@@ -49,9 +49,9 @@ class WalletMenuInventoryEvent : Listener {
                     if (functions.isComponentEqual(displayNameComponent,titleActionsWallet)){
                         inventoryManager.openInventory(player, "actions")
                     }
-//                    if (functions.isComponentEqual(displayNameComponent, titleReportButton)){
-//                        inventoryManager.openInventory(player, "reports")
-//                    }
+                    if (functions.isComponentEqual(displayNameComponent, titleReportButton)){
+                        inventoryManager.openInventory(player, "reports")
+                    }
                     if (functions.isComponentEqual(displayNameComponent, titleTransferButton)){
                         inventoryManager.openInitialTransferInventory(player)
                     }

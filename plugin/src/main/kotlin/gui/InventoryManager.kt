@@ -1,5 +1,6 @@
 package gui
 
+import data.ActionDataManager
 import data.TransferDataManager
 import gui.wallletmenu.WalletMenuInventory
 import gui.wallletmenu.actionwallet.WalletActionsInventory
@@ -18,7 +19,7 @@ class InventoryManager {
         "remove" to WalletRemoveInventory(), //todo: remove
         "menu" to WalletMenuInventory(),
         "close" to WalletCloseInventory(),
-        "actions" to WalletActionsInventory(),
+        "actions" to WalletActionsInventory(ActionDataManager.instance),
         "reports" to WalletReportInventory(),
         "selectPlayerForTransfer" to SelectPlayerInventory(TransferDataManager.instance),
         "history" to WalletHistoryInventory()

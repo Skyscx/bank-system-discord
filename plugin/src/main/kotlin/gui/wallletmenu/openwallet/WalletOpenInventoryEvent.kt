@@ -122,7 +122,6 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
 
                                     }
                                     functions.takeItem(player, typeBlock, priceAccountConfig)
-                                    discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.open-successfully"))
                                     //functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
                                 } else {
                                     discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.open-unsuccessfully"))
@@ -130,12 +129,13 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                 }
                             }
                             if (verificationInt == 1){
-                                functions.sendMessagePlayer(player, "Банковский счет был успешно создан!") //todo: сделать сообщение из конфига
+                                functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
+                                discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.open-successfully", "player" to player.name))
                             } else {
-                                functions.sendMessagePlayer(player, "Заявление передано банкиру") //todo: сделать сообщение из конфига
+                                functions.sendMessagePlayer(player, "Заявление передано банкиру")
                             }
                         }else{
-                            functions.sendMessagePlayer(player, "У вас уже максимальное количество счетов!") //todo: сделать сообщение из конфига
+                            functions.sendMessagePlayer(player, "У вас уже максимальное количество счетов!")
                         }
                     }
                     if (functions.isComponentEqual(displayNameComponent, titleReject)) {

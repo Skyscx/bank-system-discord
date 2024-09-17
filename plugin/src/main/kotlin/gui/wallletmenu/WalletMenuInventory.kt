@@ -210,8 +210,8 @@ class WalletMenuInventory : InventoryCreator {
         inventory.setItem(16, closeWallet)
 
 //        todo: Включить когда будет работать
-//        inventory.setItem(39, guid)
-//        inventory.setItem(40, report)
+        inventory.setItem(39, guid)
+        inventory.setItem(40, report)
 //        inventory.setItem(41, sendMessageBanker)
 
         inventory.setItem(12, actionsWallet)

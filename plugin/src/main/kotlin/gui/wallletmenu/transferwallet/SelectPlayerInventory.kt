@@ -1,6 +1,7 @@
 package gui.wallletmenu.transferwallet
 
 import App.Companion.localizationManager
+import App.Companion.userDB
 import data.TransferDataManager
 import functions.Functions
 import gui.InventoryCreator
@@ -16,6 +17,7 @@ import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.inventory.InventoryType
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
+import java.util.*
 
 class SelectPlayerInventory(private val transferDataManager: TransferDataManager) : InventoryCreator, Listener {
     private val systemGUI = SystemGUI()
@@ -31,22 +33,30 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
         val currentPage = playerPages.getOrDefault(player, 0)
         val pageSize = 51 // 53 slots for items, 1 slot for "next page" button
 
-        val onlinePlayers = Bukkit.getOnlinePlayers().toList().filter { it != player }
+        val allPlayers = userDB.getAllPlayers()
+        val onlinePlayers = Bukkit.getOnlinePlayers().map { it.uniqueId.toString() }.toSet()
+
+        // Сортировка игроков: онлайн-игроки в начале списка
+        val sortedPlayers = allPlayers.sortedByDescending { onlinePlayers.contains(it["UUID"]) }
 
         val startIndex = currentPage * pageSize
-        val endIndex = (startIndex + pageSize).coerceAtMost(onlinePlayers.size)
+        val endIndex = (startIndex + pageSize).coerceAtMost(sortedPlayers.size)
 
         for (i in startIndex..<endIndex) {
-            val playerHead = systemGUI.createPlayerHead(onlinePlayers[i], localizationManager.getMessage("localisation.select"))
+            val playerData = sortedPlayers[i]
+            val playerUUID = playerData["UUID"] as String
+            val playerName = playerData["PlayerName"] as String
+            val offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID))
+            val playerHead = systemGUI.createPlayerHead(offlinePlayer, localizationManager.getMessage("localisation.select"))
             inventory.setItem(i - startIndex + 1, playerHead) // Start from slot 1 to leave slot 0 for "Other Player" item
         }
 
         // Add "Other Player" item in slot 0
-        val otherPlayerItem = createOtherPlayerItem()
-        inventory.setItem(0, otherPlayerItem)
+        val backWalletMenu = createBackWalletMenu()
+        inventory.setItem(0, backWalletMenu)
 
         // Add "Next Page" button in slot 53 if there are more players
-        if (endIndex < onlinePlayers.size) {
+        if (endIndex < sortedPlayers.size) {
             val nextPageItem = createNextPageItem()
             inventory.setItem(53, nextPageItem)
         }
@@ -56,6 +66,7 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
             val previousPageItem = createPreviousPageItem()
             inventory.setItem(52, previousPageItem)
         }
+
 
         return inventory
     }
@@ -95,25 +106,20 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
         }
     }
 
-    private fun createOtherPlayerItem(): ItemStack {
+    private fun createBackWalletMenu(): ItemStack {
         return systemGUI.createItem(
-            material = Material.BARRIER,
-            name = localizationManager.getMessage("localisation.other-target"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.other-player.transfer-menu")),
-            customModelData = null,
-            italic = false,
-            bold = true,
-            underlined = false,
-            strikethrough = false,
-            obfuscated = false
-        )
+            Material.DARK_OAK_DOOR,
+            localizationManager.getMessage("localisation.inventory.item.back-wallet-menu"),
+            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.back-wallet-menu")),
+1
+            )
     }
 
     private fun createNextPageItem(): ItemStack {
         return systemGUI.createItem(
             material = Material.ARROW,
             name = localizationManager.getMessage("localisation.next-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.next-page.transfer-menu")),
+            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.next-page")),
             customModelData = null,
             italic = false,
             bold = true,
@@ -127,7 +133,7 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
         return systemGUI.createItem(
             material = Material.ARROW,
             name = localizationManager.getMessage("localisation.previous-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.previous-page.transfer-menu")),
+            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.previous-page")),
             customModelData = null,
             italic = false,
             bold = true,

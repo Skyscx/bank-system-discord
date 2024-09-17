@@ -1,5 +1,6 @@
 package gui.wallletmenu.reportwallet
 
+import App.Companion.localizationManager
 import gui.InventoryCreator
 import gui.SystemGUI
 import net.kyori.adventure.text.Component
@@ -13,7 +14,7 @@ class WalletReportInventory : InventoryCreator {
     override fun createInventory(player: Player): Inventory {
 
         val inventory = Bukkit.createInventory(null, 27,
-            Component.text("Решение проблемы"))
+            Component.text(localizationManager.getMessage("localisation.inventory.title.report-menu")))
         val info = systemGUI.createItem(
             Material.TORCH,
             "Выбор проблемы",
@@ -46,8 +47,11 @@ class WalletReportInventory : InventoryCreator {
             4
         )
 
-
-        inventory.addItem(info,data,work,ping,other)
+        inventory.setItem(10, info)
+        inventory.setItem(12, data)
+        inventory.setItem(13, work)
+        inventory.setItem(14, ping)
+        inventory.setItem(15, other)
         return inventory
     }
 }

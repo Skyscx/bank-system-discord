@@ -2,6 +2,7 @@ package discord.dsbot.buttonsactions.collection
 
 import App.Companion.discordBot
 import App.Companion.historyDB
+import App.Companion.localizationManager
 import App.Companion.userDB
 import App.Companion.walletDB
 import discord.dsbot.DiscordNotifier
@@ -63,6 +64,7 @@ class BankerVerificationsButtonsHandler(config: FileConfiguration) {
                     )
                     functions.sendMessageIsPlayerOnline(uuid!!, "Ваш запрос одобрили!")
                     functions.sendMessageIsPlayerHavePermission(uuid, bankerPermission, "Кошелек $walletId одобрил ${event.user.name}")
+                    discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.open-successfully", "player" to playerNameTarget))
                     embedFields.add(MessageEmbed.Field("Статус", "Запрос был одобрен!", false))
                     embedFields.add(MessageEmbed.Field("Одобрил", event.user.asMention, false))
                     embedFields.add(MessageEmbed.Field("Одобрен для", "$mentionTarget (MC: $playerNameTarget)", false))

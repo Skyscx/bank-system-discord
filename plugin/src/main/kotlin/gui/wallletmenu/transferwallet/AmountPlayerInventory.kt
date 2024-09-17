@@ -98,19 +98,5 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
             listOf(localizationManager.getMessage("localisation.inventory.lore.item.select-amount.transfer-menu", "amount" to amount.toString())),
             3
         )
-//        return ItemStack(Material.PLAYER_HEAD).apply {
-//            val meta = itemMeta as SkullMeta
-//            meta.displayName(Component.text(targetPlayerName).decoration(TextDecoration.BOLD, true))
-//            meta.lore(listOf(Component.text(localizationManager.getMessage("localisation.inventory.lore.item.select-amount.transfer-menu", "amount" to amount.toString())).decoration(TextDecoration.ITALIC, true)))
-//            itemMeta = meta
-//        }
     }
-
-//    private fun createConfirmAmountItem(): ItemStack {
-//        return ItemStack(Material.GREEN_WOOL).apply {
-//            val meta = itemMeta
-//            meta?.displayName(Component.text(localizationManager.getMessage("")).decoration(TextDecoration.BOLD, true))
-//            itemMeta = meta
-//        }
-//    }
 }

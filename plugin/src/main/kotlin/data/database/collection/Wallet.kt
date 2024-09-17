@@ -227,7 +227,19 @@ class Wallet (
         updateWalletBalance(senderWalletID, -amount)
         updateWalletBalance(targetWalletID, amount)
 
-        historyDB.insertBankHistory("TRANSFER",senderName, targetName, senderWalletID, targetWalletID, amount, currency, status, uuidSender, uuidTarget, comment)
+        historyDB.insertBankHistory(
+            typeOperation = "TRANSFER",
+            senderName = senderName,
+            targetName = targetName,
+            senderWalletID = senderWalletID,
+            targetWalletID = targetWalletID,
+            amount = amount,
+            currency = currency,
+            status = status,
+            uuidSender = uuidSender,
+            uuidTarget = uuidTarget,
+            comment = comment
+        )
         return true
     }
 

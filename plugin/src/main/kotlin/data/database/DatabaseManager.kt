@@ -152,6 +152,8 @@ class DatabaseManager private constructor(url: String, private val plugin: App) 
             CREATE TABLE IF NOT EXISTS bank_history (
                 ID INTEGER PRIMARY KEY AUTOINCREMENT,
                 TypeOperation TEXT NOT NULL,
+                OldBalance INTEGER NOT NULL,
+                NewBalance INTEGER NOT NULL,
                 SenderIdWallet INTEGER NOT NULL,
                 TargetIdWallet INTEGER NOT NULL,
                 Amount INTEGER NOT NULL,

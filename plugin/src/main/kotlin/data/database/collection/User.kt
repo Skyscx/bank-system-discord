@@ -175,7 +175,10 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
         return row?.get("ID") as? Int
     }
 
-
+    fun getAllPlayers(): List<Map<String, Any>> {
+        val sql = "SELECT UUID, PlayerName, DefaultWalletID FROM bank_users WHERE DefaultWalletID != -1"
+        return dbManager.executeQuery(sql)
+    }
 
     companion object {
         @Volatile

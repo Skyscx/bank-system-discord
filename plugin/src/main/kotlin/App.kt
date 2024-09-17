@@ -8,6 +8,7 @@ import bank.commands.tabcompleter.WalletsForceCommandCompleter
 import bank.commands.transfers.TransferCommand
 import bank.commands.wallets.ForceWalletCommands
 import bank.commands.wallets.WalletCommands
+import data.ActionDataManager
 import data.Config
 import data.TransferDataManager
 import data.database.DatabaseManager
@@ -21,6 +22,7 @@ import discord.FunctionsDiscord
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
 import gui.wallletmenu.WalletMenuInventoryEvent
+import gui.wallletmenu.actionwallet.WalletActionsInventory
 import gui.wallletmenu.actionwallet.WalletActionsInventoryEvent
 import gui.wallletmenu.actionwallet.WalletHistoryInventory
 import gui.wallletmenu.closewallet.WalletCloseInventoryEvent
@@ -135,16 +137,19 @@ class App : JavaPlugin(), Listener {
         Bukkit.getPluginManager().registerEvents(WalletOpenInventoryEvent(config, discordBot!!), this)
         Bukkit.getPluginManager().registerEvents(WalletMenuInventoryEvent(), this)
         Bukkit.getPluginManager().registerEvents(WalletCloseInventoryEvent(config, discordBot!!), this)
-        Bukkit.getPluginManager().registerEvents(WalletActionsInventoryEvent(), this)
         Bukkit.getPluginManager().registerEvents(WalletReportInventoryEvent(), this)
         Bukkit.getPluginManager().registerEvents(WalletHistoryInventory(), this)
 
         val transferDataManager = TransferDataManager.instance
+        val actionData = ActionDataManager.instance
+
         val amountPlayerInventory = AmountPlayerInventory(transferDataManager)
         val confirmTransferInventory = ConfirmTransferInventory(transferDataManager)
         val addComment = AddCommentInventory()
+        val walletActionsInventory = WalletActionsInventory(actionData)
 
         Bukkit.getPluginManager().registerEvents(TransferEvents(amountPlayerInventory, confirmTransferInventory, addComment), this)
+        Bukkit.getPluginManager().registerEvents(WalletActionsInventoryEvent(walletActionsInventory), this)
 
         //todo: 07/08/2024 21/10 переделать команды, сделать локализацию
         //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)

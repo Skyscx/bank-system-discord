@@ -17,6 +17,8 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
 
     fun insertBankHistory(
         typeOperation: String,
+        oldBalance: Int = 0,
+        newBalance: Int = 0,
         senderName: String,
         targetName: String,
         senderWalletID: Int,
@@ -32,10 +34,10 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
                 val currentDate = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
                 val sql = """
                     INSERT INTO bank_history(
-                        TypeOperation, SenderIdWallet, TargetIdWallet, Amount, Currency, SenderName,
+                        TypeOperation, OldBalance, NewBalance, SenderIdWallet, TargetIdWallet, Amount, Currency, SenderName,
                         SenderUUID, SenderDiscordID, TargetName, TargetUUID, TargetDiscordID,
                         Date, Status, Comment
-                    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """.trimIndent()
                 val discordSender = userDB.getDiscordIDbyUUID(uuidSender) ?: return@Runnable
 
@@ -47,6 +49,8 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
                 try {
                     dbManager.executeUpdate(sql,
                         typeOperation,
+                        oldBalance,
+                        newBalance,
                         senderWalletID,
                         targetWalletID,
                         amount,
@@ -70,7 +74,7 @@ class History(private var dbManager: DatabaseManager, private var plugin: App) {
     fun getUserHistory(userUUID: String, pageSize: Int, offset: Int): List<Map<String, Any>> {
         val query = """
         SELECT ID, SenderIdWallet, TargetIdWallet, Amount, Currency, SenderName, SenderUUID, SenderDiscordID,
-               TargetName, TargetUUID, TargetDiscordID, Date, Status, Comment, TypeOperation
+               TargetName, TargetUUID, TargetDiscordID, Date, Status, Comment, TypeOperation, OldBalance, NewBalance
         FROM bank_history
         WHERE SenderUUID = ? OR TargetUUID = ?
         ORDER BY Date DESC

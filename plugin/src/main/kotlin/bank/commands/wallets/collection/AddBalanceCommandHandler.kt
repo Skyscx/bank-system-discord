@@ -73,6 +73,8 @@ class AddBalanceCommandHandler() {
             amount = amount,
             currency = typeBlock.name,
             status = 1,
+            oldBalance = balance,
+            newBalance = balance + amount,
 
             uuidTarget = "null",
             comment =  "null",
