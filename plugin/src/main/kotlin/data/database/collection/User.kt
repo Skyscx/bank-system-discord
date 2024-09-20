@@ -119,7 +119,13 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
         return row?.get("PlayerName") as? String
     }
 
-
+    /**
+     * Установка PlayerName по UUID пользователя в таблице пользователей.
+     */
+    fun setPlayerNameByUUID(uuid: String, playerName: String): Boolean {
+        val sql = "UPDATE bank_users SET PlayerName = ? WHERE UUID = ?"
+        return dbManager.executeUpdate(sql, playerName, uuid)
+    }
 
     /**
      * Получение UUID по DiscordID пользователя из таблицы пользователей
@@ -178,6 +184,27 @@ class User(private var dbManager: DatabaseManager, private var functionsDiscord:
     fun getAllPlayers(): List<Map<String, Any>> {
         val sql = "SELECT UUID, PlayerName, DefaultWalletID FROM bank_users WHERE DefaultWalletID != -1"
         return dbManager.executeQuery(sql)
+    }
+
+    /**
+     * Проверка на существование пользователя в таблице пользователей по UUID (Возвращение boolean)
+     */
+    fun isPlayerExists(uuid: UUID): CompletableFuture<Boolean> {
+        val future = CompletableFuture<Boolean>()
+
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, Runnable {
+            val sql = "SELECT * FROM bank_users WHERE UUID = ?"
+
+            try {
+                val result = dbManager.executeQuery(sql, uuid.toString())
+                future.complete(result.isNotEmpty())
+            } catch (e: SQLException) {
+                e.printStackTrace()
+                future.complete(false)
+            }
+        })
+
+        return future
     }
 
     companion object {

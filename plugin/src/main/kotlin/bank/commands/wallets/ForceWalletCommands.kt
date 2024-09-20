@@ -2,6 +2,7 @@ package bank.commands.wallets
 
 import App.Companion.localized
 import bank.commands.wallets.collectionforce.RemoveForceCommandHandler
+import bank.commands.wallets.collectionforce.RenamePlayerNameUser
 import bank.commands.wallets.collectionforce.WalletBalanceAddForceHandler
 import bank.commands.wallets.collectionforce.WalletBalanceRemoveForceHandler
 import functions.Functions
@@ -15,11 +16,7 @@ class ForceWalletCommands(private val config: FileConfiguration) : CommandExecut
     private val functions = Functions()
 
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
-        val isPlayer = functions.senderIsPlayer(sender)
-        if (!isPlayer.second) {
-            sender.sendMessage(isPlayer.first)
-            return true
-        }
+        val argsArray = args.toList().toTypedArray()
         if (!functions.hasPermission(sender, "skybank.banker")) { //TODO: Проверить права TESTING
             sender.sendMessage("localisation.messages.out.no-permissions".localized())
             return true
@@ -29,7 +26,6 @@ class ForceWalletCommands(private val config: FileConfiguration) : CommandExecut
             sender.sendMessage("localisation.messages.out.developing".localized())
             return true
         }
-        val argsArray = args.toList().toTypedArray()
         when (args[0].lowercase()) {
             "remove" -> {
                 val removeForceCommandHandler = RemoveForceCommandHandler(config)
@@ -44,6 +40,10 @@ class ForceWalletCommands(private val config: FileConfiguration) : CommandExecut
                     "remove" -> {
                         val walletBalanceRemoveForceHandler = WalletBalanceRemoveForceHandler(config)
                         walletBalanceRemoveForceHandler.handleBalanceRemoveForceCommand(sender, argsArray)
+                    }
+                    "rename" -> {
+                        val renamePlayerNameUser = RenamePlayerNameUser(config)
+                        renamePlayerNameUser.handleRenamePlayerNameUser(sender, argsArray)
                     }
                     else -> {
                         functions.unknownCommand(sender) //todo: переделать на сообщение о том что add или remove

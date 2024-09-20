@@ -13,13 +13,13 @@ class WalletCommands(private val config: FileConfiguration) : CommandExecutor{
     private val functions = Functions()
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val isPlayer = functions.senderIsPlayer(sender)
+        val player = sender as Player
         if (!isPlayer.second) {
             sender.sendMessage(isPlayer.first)
             return true
         }
         if (args.isEmpty()){
             val inventoryManager = InventoryManager()
-            val player = sender as Player
             inventoryManager.openInventory(player, "menu")
             return true
         }
@@ -36,12 +36,12 @@ class WalletCommands(private val config: FileConfiguration) : CommandExecutor{
             "balance" -> {
                 if (args.size == 1) {
                     val balanceCommandHandler = BalanceCommandHandler()
-                    balanceCommandHandler.handleBalanceCommand(sender)
+                    balanceCommandHandler.handleBalanceCommand(player)
                 } else {
                     when (args[1].lowercase()) {
                         "add" -> {
                             val balanceAddCommandHandler = AddBalanceCommandHandler()
-                            balanceAddCommandHandler.handleAddBalanceCommand(sender, argsArray)
+                            balanceAddCommandHandler.handleAddBalanceCommand(player, argsArray)
                         }
                         "remove" -> {
                             val balanceRemoveCommandHandler = RemoveBalanceCommandHandler()
@@ -55,7 +55,7 @@ class WalletCommands(private val config: FileConfiguration) : CommandExecutor{
             }
             "history" -> {
                 val historyCommandHandler = HistoryCommandHandler()
-                historyCommandHandler.handleHistoryCommand(sender, argsArray)
+                historyCommandHandler.handleHistoryCommand(player, argsArray)
             }
             //TODO: Репорт сделать как в TransferEvent -> AnvilGUI
             "report" -> {

@@ -3,32 +3,39 @@ package bank.commands.wallets.collection
 import App.Companion.historyDB
 import App.Companion.instance
 import App.Companion.localized
+import App.Companion.userDB
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
-import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 import java.sql.SQLException
 import java.text.SimpleDateFormat
 import java.util.concurrent.CompletableFuture
 
 class HistoryCommandHandler {
-    fun handleHistoryCommand(sender: CommandSender, args: Array<String>) {
-        val player = sender as Player
+    fun handleHistoryCommand(player: Player, args: Array<String>) {
         val page = if (args.size > 1) args[1].toIntOrNull() ?: 1 else 1
-        showHistory(player, page)
-        return
+        val playerUUID = player.uniqueId
+
+        userDB.isPlayerExists(playerUUID).thenAccept { exists ->
+            if (exists) {
+                showHistory(player, page, playerUUID.toString())
+            } else {
+                player.sendMessage("localisation.error.not-search-target".localized())
+            }
+        }.exceptionally { e ->
+            e.printStackTrace()
+            null
+        }
     }
 
-    private fun showHistory(player: Player, page: Int = 1): CompletableFuture<Boolean> {
+    private fun showHistory(player: Player, page: Int = 1, userUUID: String): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
         val pageSize = 7
         val offset = (page - 1) * pageSize
-        val userUUID = player.uniqueId.toString()
-
         Bukkit.getScheduler().runTaskAsynchronously(instance, Runnable {
             try {
                 val result = historyDB.getUserHistory(userUUID, pageSize, offset)
@@ -59,6 +66,7 @@ class HistoryCommandHandler {
                         "OPEN_WALLET" -> "🔓"
                         "ATTEMPT_OPEN_WALLET" -> "🔒"
                         "RENAMING" -> "📝"
+                        "RENAMING_PLAYER" -> "📝"
                         "CLOSE_WALLET" -> "🔒"
                         "ADD_BALANCE" -> "➡"
                         "GET_BALANCE" -> "⬅"
@@ -66,15 +74,18 @@ class HistoryCommandHandler {
                     }
 
                     val description = when (typeOperation) {
-                        "TRANSFER" -> if (senderUUID == userUUID) {"localisation.messages.out.wallet.history.transfer.send".localized(
+                        "TRANSFER" -> if (senderUUID == userUUID) {
+                            "localisation.messages.out.wallet.history.transfer.send".localized(
                                 "amount" to amount.toString(),
                                 "currency" to currency,
-                                "targetName" to targetName)
+                                "targetName" to targetName
+                            )
                         } else {
                             "localisation.messages.out.wallet.history.transfer.take".localized(
                                 "amount" to amount.toString(),
                                 "currency" to currency,
-                                "senderName" to senderName)
+                                "senderName" to senderName
+                            )
                         }
                         "OPEN_WALLET" -> "localisation.messages.out.wallet.history.open-wallet".localized("senderName" to senderName)
                         "ATTEMPT_OPEN_WALLET" -> "localisation.messages.out.wallet.history.attempt-open-wallet".localized("senderName" to senderName)
