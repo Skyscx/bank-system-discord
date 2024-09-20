@@ -1,6 +1,6 @@
 package gui.wallletmenu.transferwallet
 
-import App.Companion.localizationManager
+import App.Companion.localized
 import data.TransferDataManager
 import gui.InventoryCreator
 import gui.SystemGUI
@@ -11,17 +11,18 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 
+//todo : продолжить 20.09.2024
 class ConfirmTransferInventory(private val transferDataManager: TransferDataManager) : InventoryCreator {
     private val systemGUI = SystemGUI()
 
     override fun createInventory(player: Player): Inventory {
         val transferData = transferDataManager.getTransferData(player) ?: return Bukkit.createInventory(null, 54, Component.text(
-            localizationManager.getMessage("localisation.error")))
+            "localisation.error".localized()))
         val targetPlayerName = transferData.targetPlayerName
         val amount = transferData.amount
         val comment = transferData.comment ?: ""
 
-        val inventory = Bukkit.createInventory(null, 54, Component.text(localizationManager.getMessage("localisation.inventory.title.confirm-transfer")))
+        val inventory = Bukkit.createInventory(null, 54, Component.text("localisation.inventory.title.confirm-transfer".localized()))
 
         // Добавьте предмет с названием выбранной головы в центр
         val centerItem = createCenterItem(targetPlayerName, amount, comment)
@@ -31,13 +32,13 @@ class ConfirmTransferInventory(private val transferDataManager: TransferDataMana
 //        val confirmItem = createConfirmItem()
         val confirmItem = systemGUI.createItem(
             Material.GREEN_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.accept"),
+            "localisation.inventory.item.accept".localized(),
             customModelData = 2
         )
 //        val cancelItem = createCancelItem()
         val cancelItem = systemGUI.createItem(
             Material.RED_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.reject"),
+            "localisation.inventory.item.reject".localized(),
             customModelData = 2
         )
 
@@ -51,7 +52,7 @@ class ConfirmTransferInventory(private val transferDataManager: TransferDataMana
         return systemGUI.createItem(
             Material.PAPER,
             targetPlayerName,
-            listOf(localizationManager.getMessage("localisation.inventory.lore.item.confirm-head.transfer-menu", "amount" to amount.toString(), "comment" to comment)),
+            listOf("localisation.inventory.lore.item.confirm-head.transfer-menu".localized( "amount" to amount.toString(), "comment" to comment)),
             3
         )
 

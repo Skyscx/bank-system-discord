@@ -10,7 +10,7 @@ class ActionDataManager private constructor() {
 
     private val actionDataMap = mutableMapOf<Player, ActionData>()
 
-    fun setTargetPlayer(player: Player, amount: Int) {
+    fun setPlayer(player: Player, amount: Int) {
         val transferData = actionDataMap.getOrPut(player) { ActionData() }
         transferData.amount = amount
     }

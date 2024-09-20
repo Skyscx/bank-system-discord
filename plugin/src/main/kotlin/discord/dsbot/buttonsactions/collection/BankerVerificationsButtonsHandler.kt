@@ -2,7 +2,7 @@ package discord.dsbot.buttonsactions.collection
 
 import App.Companion.discordBot
 import App.Companion.historyDB
-import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
 import discord.dsbot.DiscordNotifier
@@ -24,11 +24,10 @@ class BankerVerificationsButtonsHandler(config: FileConfiguration) {
         val uuid = walletDB.getUUIDbyWalletID(walletId)
         val bankerPermission = "skybank.banker"
         val status = when (verificationDatabase) {
-            1 -> "Запрос был одобрен."
-            -1 -> "Запрос был отклонен."
-            else -> "Статус запроса неизвестен."
+            1 -> "localisation.verification.status.accept".localized()
+            -1 -> "localisation.verification.status.reject".localized()
+            else -> "localisation.verification.status.other".localized()
         }
-
         event.deferEdit().queue()
 
         event.message.editMessageComponents().queue(
@@ -62,24 +61,24 @@ class BankerVerificationsButtonsHandler(config: FileConfiguration) {
                         targetWalletID = 0,
                         targetName = "null"
                     )
-                    functions.sendMessageIsPlayerOnline(uuid!!, "Ваш запрос одобрили!")
-                    functions.sendMessageIsPlayerHavePermission(uuid, bankerPermission, "Кошелек $walletId одобрил ${event.user.name}")
-                    discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.open-successfully", "player" to playerNameTarget))
-                    embedFields.add(MessageEmbed.Field("Статус", "Запрос был одобрен!", false))
-                    embedFields.add(MessageEmbed.Field("Одобрил", event.user.asMention, false))
-                    embedFields.add(MessageEmbed.Field("Одобрен для", "$mentionTarget (MC: $playerNameTarget)", false))
-                    embedFields.add(MessageEmbed.Field("Кошелек", "$walletId", false))
+                    functions.sendMessageIsPlayerOnline(uuid!!, "localisation.messages.out.wallet.verification.successful".localized())
+                    functions.sendMessageIsPlayerHavePermission(uuid, bankerPermission, "localisation.messages.out.banker.notifier.verification.accept".localized( "walletId" to walletId.toString(), "name" to event.user.name)) //todo: Сделать видимым для всех банкиров и админов
+                    discordNotifier.sendMessageChannelLog("localisation.discord.logger.open-successfully".localized("player" to playerNameTarget))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.status".localized(), status, false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.inspector.accept".localized(), event.user.asMention, false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.target.accept".localized(), "$mentionTarget (MC: $playerNameTarget)", false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.wallet".localized(), "$walletId", false))
                     0x00FF00
                 } else {
                     val discordIDInspector = walletDB.getInspectorWallet(walletId) ?: return
                     val mentionInspector = discordBot?.getMentionUser(discordIDInspector)
                     val verificationDate = walletDB.getVerificationWalletDate(walletId)
-                    embedFields.add(MessageEmbed.Field("Статус", "Данный запрос уже был рассмотрен в игре!", false))
-                    embedFields.add(MessageEmbed.Field("Рассмотрел", mentionInspector, false))
-                    embedFields.add(MessageEmbed.Field("Рассмотрен для", "$mentionTarget (MC: $playerNameTarget)", false))
-                    embedFields.add(MessageEmbed.Field("Кошелек", "$walletId", false))
-                    embedFields.add(MessageEmbed.Field("Дата рассмотрения", "`$verificationDate`", false))
-                    embedFields.add(MessageEmbed.Field("Статус запроса", status, false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.notify".localized(), "localisation.discord.embed.verification.field.notif.reviewed".localized(), false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.reviewed.field.inspector".localized(), mentionInspector, false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.reviewed.field.target".localized(), "$mentionTarget (MC: $playerNameTarget)", false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.wallet".localized(), "$walletId", false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.reviewed.field.date".localized(), "`$verificationDate`", false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.status".localized(), status, false))
                     0x808080
                 }
             }
@@ -102,22 +101,22 @@ class BankerVerificationsButtonsHandler(config: FileConfiguration) {
                         targetWalletID = 0,
                         targetName = "null"
                     )
-                    functions.sendMessageIsPlayerOnline(walletDB.getUUIDbyWalletID(walletId).toString(), "Ваш запрос отклонили!")
-                    embedFields.add(MessageEmbed.Field("Статус", "Запрос был отклонен!", false))
-                    embedFields.add(MessageEmbed.Field("Отклонил", event.user.asMention, false))
-                    embedFields.add(MessageEmbed.Field("Отклонен для", "$mentionTarget (MC: $playerNameTarget)", false))
-                    embedFields.add(MessageEmbed.Field("Кошелек", "$walletId", false))
+                    functions.sendMessageIsPlayerOnline(walletDB.getUUIDbyWalletID(walletId).toString(), status)
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.status".localized(), status, false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.inspector.reject".localized(), event.user.asMention, false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.target.reject".localized(), "$mentionTarget (MC: $playerNameTarget)", false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.wallet".localized(), "$walletId", false))
                     0xFF0000
                 } else {
                     val discordIDInspector = walletDB.getInspectorWallet(walletId) ?: return
                     val mentionInspector = discordBot?.getMentionUser(discordIDInspector)
                     val verificationDate = walletDB.getVerificationWalletDate(walletId)
-                    embedFields.add(MessageEmbed.Field("Статус", "Данный запрос уже был рассмотрен в игре!", false))
-                    embedFields.add(MessageEmbed.Field("Рассмотрел", mentionInspector, false))
-                    embedFields.add(MessageEmbed.Field("Рассмотрен для", "$mentionTarget (MC: $playerNameTarget)", false))
-                    embedFields.add(MessageEmbed.Field("Кошелек", "$walletId", false))
-                    embedFields.add(MessageEmbed.Field("Дата рассмотрения", "`$verificationDate`", false))
-                    embedFields.add(MessageEmbed.Field("Статус запроса", status, false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.notify".localized(),"localisation.discord.embed.verification.field.notif.reviewed".localized(), false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.reviewed.field.inspector".localized(), mentionInspector, false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.reviewed.field.target".localized(), "$mentionTarget (MC: $playerNameTarget)", false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.wallet".localized(), "$walletId", false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.reviewed.field.date".localized(), "`$verificationDate`", false))
+                    embedFields.add(MessageEmbed.Field("localisation.discord.embed.verification.field.status".localized(), status, false))
                     0x808080
                 }
             }
@@ -125,7 +124,7 @@ class BankerVerificationsButtonsHandler(config: FileConfiguration) {
         }
 
         val newEmbed = discordNotifier.createEmbedMessage(
-            title = "Рассмотрение заявки!",
+            title = "localisation.discord.embed.report.title.verification".localized(),
             embedType = EmbedType.RICH,
             color = color,
             fields = embedFields

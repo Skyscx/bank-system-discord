@@ -1,6 +1,7 @@
 package functions
 
 import App.Companion.localizationManager
+import App.Companion.localized
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -57,7 +58,7 @@ class Functions {
         player.sendMessage(clickableMessage)
     }
     fun unknownCommand(sender: CommandSender){
-        sender.sendMessage("localisation.messages.out.unknown-command")
+        sender.sendMessage("localisation.messages.out.unknown-command".localized())
     }
     fun hasDiamondOre(player: Player): Boolean { //TODO:Переделать на метод ниже takeItem
         val inventory = player.inventory

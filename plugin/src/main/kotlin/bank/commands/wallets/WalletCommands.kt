@@ -1,7 +1,6 @@
 package bank.commands.wallets
 
 import bank.commands.wallets.collection.*
-import discord.dsbot.DiscordBot
 import functions.Functions
 import gui.InventoryManager
 import org.bukkit.command.Command
@@ -10,7 +9,7 @@ import org.bukkit.command.CommandSender
 import org.bukkit.configuration.file.FileConfiguration
 import org.bukkit.entity.Player
 
-class WalletCommands(private val config: FileConfiguration, private val discordBot: DiscordBot) : CommandExecutor{
+class WalletCommands(private val config: FileConfiguration) : CommandExecutor{
     private val functions = Functions()
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         val isPlayer = functions.senderIsPlayer(sender)
@@ -31,13 +30,13 @@ class WalletCommands(private val config: FileConfiguration, private val discordB
                 openCommandHandler.handleOpenCommand(sender, argsArray)
             }
             "remove" -> {
-                val removeCommandHandler = RemoveCommandHandler(config, discordBot)
+                val removeCommandHandler = RemoveCommandHandler(config)
                 removeCommandHandler.handleRemoveCommand(sender, argsArray)
             }
             "balance" -> {
                 if (args.size == 1) {
                     val balanceCommandHandler = BalanceCommandHandler()
-                    balanceCommandHandler.handleBalanceCommand(sender, argsArray)
+                    balanceCommandHandler.handleBalanceCommand(sender)
                 } else {
                     when (args[1].lowercase()) {
                         "add" -> {

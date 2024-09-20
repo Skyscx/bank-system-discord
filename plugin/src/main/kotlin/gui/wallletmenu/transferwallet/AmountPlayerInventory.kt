@@ -1,6 +1,6 @@
 package gui.wallletmenu.transferwallet
 
-import App.Companion.localizationManager
+import App.Companion.localized
 import data.TransferDataManager
 import gui.InventoryCreator
 import gui.SystemGUI
@@ -16,46 +16,46 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
 
     override fun createInventory(player: Player): Inventory {
         val transferData = transferDataManager.getTransferData(player) ?: return Bukkit.createInventory(null, 54, Component.text(
-            localizationManager.getMessage("localisation.error")))
+            "localisation.error".localized()))
         val targetPlayerName = transferData.targetPlayerName
 
-        val inventory = Bukkit.createInventory(null, 54, Component.text(localizationManager.getMessage("localisation.inventory.title.select-amount-transfer")))
+        val inventory = Bukkit.createInventory(null, 54, Component.text("localisation.inventory.title.select-amount-transfer".localized()))
 
         // Добавьте предметы для выбора суммы
         val add1 = systemGUI.createItem(
             Material.LIME_WOOL,
             "§a+1",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.item.add-amount.transfer-menu")),
+            listOf("localisation.inventory.lore.item.add-amount.transfer-menu".localized()),
             1
         )
         val add16 = systemGUI.createItem(
             Material.LIME_WOOL,
             "§a+16",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.item.add-amount.transfer-menu")),
+            listOf("localisation.inventory.lore.item.add-amount.transfer-menu".localized()),
             1
         )
         val add64 = systemGUI.createItem(
             Material.LIME_WOOL,
             "§a+64",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.item.add-amount.transfer-menu")),
+            listOf("localisation.inventory.lore.item.add-amount.transfer-menu".localized()),
             1
         )
         val get1 = systemGUI.createItem(
             Material.RED_WOOL,
             "§4-1",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.item.get-amount.transfer-menu")),
+            listOf("localisation.inventory.lore.item.get-amount.transfer-menu".localized()),
             1
         )
         val get16 = systemGUI.createItem(
             Material.RED_WOOL,
             "§4-16",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.item.get-amount.transfer-menu")),
+            listOf("localisation.inventory.lore.item.get-amount.transfer-menu".localized()),
             1
         )
         val get64 = systemGUI.createItem(
             Material.RED_WOOL,
             "§4-64",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.item.get-amount.transfer-menu")),
+            listOf("localisation.inventory.lore.item.get-amount.transfer-menu".localized()),
             1
         )
 
@@ -74,7 +74,7 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
         //val confirmAmountItem = createConfirmAmountItem()
         val confirmAmountItem = systemGUI.createItem(
             Material.GREEN_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.confirm-amount"),
+            "localisation.inventory.item.confirm-amount".localized(),
             customModelData = 4
         )
         inventory.setItem(31, confirmAmountItem)
@@ -95,7 +95,7 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
         return systemGUI.createItem(
             Material.PAPER,
             targetPlayerName,
-            listOf(localizationManager.getMessage("localisation.inventory.lore.item.select-amount.transfer-menu", "amount" to amount.toString())),
+            listOf("localisation.inventory.lore.item.select-amount.transfer-menu".localized( "amount" to amount.toString())),
             3
         )
     }

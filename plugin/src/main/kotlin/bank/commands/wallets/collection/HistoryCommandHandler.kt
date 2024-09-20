@@ -2,6 +2,7 @@ package bank.commands.wallets.collection
 
 import App.Companion.historyDB
 import App.Companion.instance
+import App.Companion.localized
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.event.HoverEvent
@@ -22,7 +23,6 @@ class HistoryCommandHandler {
         return
     }
 
-    // todo: После первого релиза с нормальными сообщениями, перенести сообщения в конфиг.
     private fun showHistory(player: Player, page: Int = 1): CompletableFuture<Boolean> {
         val future = CompletableFuture<Boolean>()
         val pageSize = 7
@@ -34,12 +34,12 @@ class HistoryCommandHandler {
                 val result = historyDB.getUserHistory(userUUID, pageSize, offset)
 
                 if (result.isEmpty()) {
-                    player.sendMessage("У вас нет операций.")
+                    player.sendMessage("localisation.messages.out.wallet.history.empty".localized())
                     future.complete(false)
                     return@Runnable
                 }
 
-                player.sendMessage("История операций (Страница $page):")
+                player.sendMessage("localisation.messages.out.wallet.history.page".localized("page" to page.toString()))
 
                 for (row in result) {
                     val senderUUID = row["SenderUUID"] as String
@@ -66,18 +66,23 @@ class HistoryCommandHandler {
                     }
 
                     val description = when (typeOperation) {
-                        "TRANSFER" -> if (senderUUID == userUUID) {
-                            "Отправлено $amount $currency пользователю $targetName"
+                        "TRANSFER" -> if (senderUUID == userUUID) {"localisation.messages.out.wallet.history.transfer.send".localized(
+                                "amount" to amount.toString(),
+                                "currency" to currency,
+                                "targetName" to targetName)
                         } else {
-                            "Получено $amount $currency от пользователя $senderName"
+                            "localisation.messages.out.wallet.history.transfer.take".localized(
+                                "amount" to amount.toString(),
+                                "currency" to currency,
+                                "senderName" to senderName)
                         }
-                        "OPEN_WALLET" -> "Открыт кошелек пользователем $senderName"
-                        "ATTEMPT_OPEN_WALLET" -> "Попытка открыть кошелек пользователем $senderName"
-                        "RENAMING" -> "Переименование кошелька пользователем $senderName"
-                        "CLOSE_WALLET" -> "Закрыт кошелек пользователем $senderName"
-                        "ADD_BALANCE" -> "Пополнение баланса на $amount"
-                        "GET_BALANCE" -> "Снятие баланса на  $amount"
-                        else -> "Неизвестная операция"
+                        "OPEN_WALLET" -> "localisation.messages.out.wallet.history.open-wallet".localized("senderName" to senderName)
+                        "ATTEMPT_OPEN_WALLET" -> "localisation.messages.out.wallet.history.attempt-open-wallet".localized("senderName" to senderName)
+                        "RENAMING" -> "localisation.messages.out.wallet.history.renaming".localized("senderName" to senderName)
+                        "CLOSE_WALLET" -> "localisation.messages.out.wallet.history.close-wallet".localized("senderName" to senderName)
+                        "ADD_BALANCE" -> "localisation.messages.out.wallet.history.add-balance".localized("amount" to amount.toString())
+                        "GET_BALANCE" -> "localisation.messages.out.wallet.history.get-balance".localized("amount" to amount.toString())
+                        else -> "localisation.messages.out.wallet.history.other".localized()
                     }
 
                     player.sendMessage("$icon $formattedDate - $description")
@@ -85,27 +90,25 @@ class HistoryCommandHandler {
 
                 val message = Component.text()
                 if (page > 1) {
-                    val prevPage = Component.text("[Предыдущая страница]")
+                    val prevPage = Component.text("localisation.previous-page".localized())
                         .color(TextColor.color(0x00FF00)) // Зеленый цвет
                         .decoration(TextDecoration.UNDERLINED, true)
                         .clickEvent(ClickEvent.runCommand("/wallet history ${page - 1}"))
-                        .hoverEvent(HoverEvent.showText(Component.text("Кликните для перехода на предыдущую страницу")))
+                        .hoverEvent(HoverEvent.showText(Component.text("localisation.messages.out.hover.click-previous-page".localized())))
                     message.append(prevPage)
                 }
                 if (result.size == pageSize) {
                     if (page > 1) {
                         message.append(Component.text(" | "))
                     }
-                    val nextPage = Component.text("[Следующая страница]")
+                    val nextPage = Component.text("localisation.next-page".localized())
                         .color(TextColor.color(0x00FF00)) // Зеленый цвет
                         .decoration(TextDecoration.UNDERLINED, true)
                         .clickEvent(ClickEvent.runCommand("/wallet history ${page + 1}"))
-                        .hoverEvent(HoverEvent.showText(Component.text("Кликните для перехода на следующую страницу")))
+                        .hoverEvent(HoverEvent.showText(Component.text("localisation.messages.out.hover.click-next-page".localized())))
                     message.append(nextPage)
                 }
-
                 player.sendMessage(message)
-
                 future.complete(true)
             } catch (e: SQLException) {
                 e.printStackTrace()

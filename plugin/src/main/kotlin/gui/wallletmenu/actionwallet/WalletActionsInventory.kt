@@ -1,6 +1,7 @@
 package gui.wallletmenu.actionwallet
 
 import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
 import data.ActionDataManager
@@ -17,21 +18,21 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
     private val systemGUI = SystemGUI()
     override fun createInventory(player: Player): Inventory {
         //todo: сделать получение цены создания кошелька.
-        val title = Component.text(localizationManager.getMessage("localisation.inventory.title.menu-actions-wallet"))
+        val title = Component.text("localisation.inventory.title.menu-actions-wallet".localized())
         val inventory = Bukkit.createInventory(null, 27, title)
         val uuid = player.uniqueId.toString()
         val walletD = userDB.getDefaultWalletByUUID(uuid) ?: 0
         val currency = walletDB.getWalletCurrency(walletD) ?: "[Missing currency]"
         val balance = walletDB.getWalletBalance(walletD) ?: "[Missing balance]"
         val dateReg = walletDB.getVerificationWalletDate(walletD) ?: "[Missing dateReg]"
-        actionData.setTargetPlayer(player, 0)
+        actionData.setPlayer(player, 0)
         val actionData = actionData.getActionData(player) ?: return Bukkit.createInventory(null, 54, Component.text(
-            localizationManager.getMessage("localisation.error")))
+            "localisation.error".localized()))
             // Кнопка пополнения 1
         val addBalance1 = systemGUI.createItem(
             Material.LIME_WOOL,
             "§a+1",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.add-balance.actions-menu",
+            listOf("localisation.inventory.lore.add-balance.actions-menu".localized(
                 "amount" to "1", "currencyName" to currency)),
             1
         )
@@ -47,7 +48,7 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         val addBalance64 = systemGUI.createItem(
             Material.LIME_WOOL,
             "§a+64",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.add-balance.actions-menu",
+            listOf("localisation.inventory.lore.add-balance.actions-menu".localized(
                 "amount" to "64", "currencyName" to currency)),
             3
         )
@@ -55,7 +56,7 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         val addBalanceAll = systemGUI.createItem(
             Material.LIME_WOOL,
             "§a+ALL",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.add-balance.actions-menu",
+            listOf("localisation.inventory.lore.add-balance.actions-menu".localized(
                 "amount" to "[DEV]", "currencyName" to "[DEV]")),
             4
         )
@@ -63,7 +64,7 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         val getBalance1 = systemGUI.createItem(
             Material.ORANGE_WOOL,
             "§4-1",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.get-balance.actions-menu",
+            listOf("localisation.inventory.lore.get-balance.actions-menu".localized(
                 "amount" to "1", "currencyName" to currency)),
             1
         )
@@ -71,7 +72,7 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         val getBalance16 = systemGUI.createItem(
             Material.ORANGE_WOOL,
             "§4-16",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.get-balance.actions-menu",
+            listOf("localisation.inventory.lore.get-balance.actions-menu".localized(
                 "amount" to "16", "currencyName" to currency)),
             2
         )
@@ -79,7 +80,7 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         val getBalance64 = systemGUI.createItem(
             Material.ORANGE_WOOL,
             "§4-64",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.get-balance.actions-menu",
+            listOf("localisation.inventory.lore.get-balance.actions-menu".localized(
                 "amount" to "64", "currencyName" to currency)),
             3
         )
@@ -87,13 +88,13 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         val getBalanceAll = systemGUI.createItem(
             Material.ORANGE_WOOL,
             "§4-ALL",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.get-balance.actions-menu",
+            listOf("localisation.inventory.lore.get-balance.actions-menu".localized(
                 "amount" to "[DEV]", "currencyName" to "[DEV]")),
             4
         )
         // Кнопка кошелька
         val amount = actionData.amount
-        val wallet = createWalletItem("ОЖИДАНИЕ", actionData.amount)
+        val wallet = createWalletItem("ОЖИДАНИЕ", actionData.amount) //todo: ЛОКАЛИЗАЦИЮ
 
         // Кнопка "Произвести транзакцию" todo: СДЕЛАТЬ
         val confirmItem = systemGUI.createItem(
@@ -104,8 +105,8 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         // Вернуться в меню
         val backMenu = systemGUI.createItem(
             Material.DARK_OAK_DOOR,
-            localizationManager.getMessage("localisation.inventory.item.back-wallet-menu"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.back-wallet-menu")),
+            "localisation.inventory.item.back-wallet-menu".localized(),
+            listOf("localisation.inventory.lore.wallet.back-wallet-menu".localized()),
             1
         )
 
@@ -151,7 +152,7 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         val transferData = actionData.getActionData(player) ?: return
         val amount = transferData.amount
         val type = when{
-            amount > 0 -> "Пополнение"
+            amount > 0 -> "Пополнение" //todo: ЛОКАЛИЗАЦИЮ
             amount < 0 -> "Снятие"
             else -> "Ожидание"
         }

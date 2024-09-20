@@ -1,7 +1,7 @@
 package bank.commands.wallets.collection
 
 import App.Companion.historyDB
-import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
 import functions.Functions
@@ -15,14 +15,14 @@ class RemoveBalanceCommandHandler {
     val functions = Functions()
 
     fun handleRemoveBalanceCommand(sender: CommandSender, args: Array<String>) {
-        if (!functions.checkArguments(sender, 3, args, localizationManager.getMessage("localisation.messages.usage.account.balance.remove"))) return
+        if (!functions.checkArguments(sender, 3, args, "localisation.messages.usage.account.balance.remove".localized())) return
         val amount = args[2].toIntOrNull()
         if (amount == null) {
-            sender.sendMessage("Введите число арг2")
+            sender.sendMessage("localisation.error.not-integer".localized())
             return
         }
         if (amount <= 0) {
-            sender.sendMessage("Сумма должна быть положительным числом.")
+            sender.sendMessage("localisation.messages.out.wallet.balance.not-plus".localized())
             return
         }
 
@@ -31,19 +31,19 @@ class RemoveBalanceCommandHandler {
         val walletDefault = userDB.getDefaultWalletByUUID(uuid) ?: return
         val walletVerification = walletDB.getVerificationWallet(walletDefault)
         if (walletVerification != 1){
-            sender.sendMessage("Ваш кошелек не активирован.")
+            sender.sendMessage("localisation.messages.out.wallet.unavailable.sender".localized())
             return
         }
         val walletCurrency = walletDB.getWalletCurrency(walletDefault) ?: return
         val currency = functions.convertStringToMaterial(walletCurrency)
         val typeBlock: Material
         if (currency.second) {
-            typeBlock = currency.first!! // Преобразованный материал
+            typeBlock = currency.first!!
         } else return
 
         val balance = walletDB.getWalletBalance(walletDefault) ?: 0
         if (balance < amount) {
-            sender.sendMessage("У вас недостаточно средств на балансе.")
+            sender.sendMessage("localisation.messages.out.wallet.not-balance".localized())
             return
         }
 
@@ -67,9 +67,11 @@ class RemoveBalanceCommandHandler {
                 targetWalletID = 0,
                 targetName = "null"
             )
-            sender.sendMessage("Вы сняли $amount $currency")
+            sender.sendMessage("localisation.messages.out.wallet.balance.get".localized(
+                "amount" to amount.toString(),
+                "currency" to currency.first.toString()))
         } else {
-            sender.sendMessage("Операция прервана")
+            sender.sendMessage("localisation.messages.out.aborted".localized())
         }
     }
 

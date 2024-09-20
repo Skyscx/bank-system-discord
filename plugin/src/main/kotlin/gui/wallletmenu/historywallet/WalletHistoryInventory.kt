@@ -2,7 +2,7 @@ package gui.wallletmenu.actionwallet
 
 import App
 import App.Companion.historyDB
-import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.walletDB
 import functions.Functions
 import gui.InventoryCreator
@@ -28,7 +28,7 @@ class WalletHistoryInventory : InventoryCreator, Listener {
     private val playerPages = mutableMapOf<Player, Int>()
 
     override fun createInventory(player: Player): Inventory {
-        val title = Component.text("История транзакций")
+        val title = Component.text("История транзакций") //todo локализацию
         val inventory = Bukkit.createInventory(null, 54, title)
 
         val currentPage = playerPages.getOrDefault(player, 0)
@@ -62,7 +62,7 @@ class WalletHistoryInventory : InventoryCreator, Listener {
                         val balance = walletDB.getWalletBalance(walletIdSender.toInt()) ?: 0
 
                         //val iconUUID = if (senderUUID == userUUID) targetUUID else senderUUID
-
+                        //todo: ПОДУМАТЬ НАД ЛОКАЛИЗАЦИЕЙ
                         val description = when (typeOperation) {
                             "TRANSFER" -> listOf(
                                 "Отправлено - $amount $currency",
@@ -116,8 +116,8 @@ class WalletHistoryInventory : InventoryCreator, Listener {
 
                         val backMenu = systemGUI.createItem(
                             Material.DARK_OAK_DOOR,
-                            localizationManager.getMessage("localisation.inventory.item.back-wallet-menu"),
-                            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.back-wallet-menu")),
+                            "localisation.inventory.item.back-wallet-menu".localized(),
+                            listOf("localisation.inventory.lore.wallet.back-wallet-menu".localized()),
                             1
                         )
                         inventory.setItem(0, backMenu)
@@ -151,17 +151,16 @@ class WalletHistoryInventory : InventoryCreator, Listener {
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.CHEST) {
             val title = e.view.title()
-            val expectedTitle = "История транзакций"
+            val expectedTitle = "История транзакций" //todo: локализацию
             if (functions.isComponentEqual(title, expectedTitle)) {
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
                 if (itemMeta.hasDisplayName()) {
                     e.isCancelled = true
-                    player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
-                    val titleNextPage = localizationManager.getMessage("localisation.next-page")
-                    val titlePreviousPage = localizationManager.getMessage("localisation.previous-page")
-                    val titleBackMenu = localizationManager.getMessage("localisation.inventory.item.back-wallet-menu")
+                    val titleNextPage = "localisation.next-page".localized()
+                    val titlePreviousPage = "localisation.previous-page".localized()
+                    val titleBackMenu = "localisation.inventory.item.back-wallet-menu".localized()
                     if (functions.isComponentEqual(displayNameComponent, titleNextPage)) {
                         playerPages[player] = playerPages.getOrDefault(player, 0) + 1
                         player.openInventory(createInventory(player))
@@ -179,8 +178,8 @@ class WalletHistoryInventory : InventoryCreator, Listener {
     private fun createNextPageItem(): ItemStack {
         return systemGUI.createItem(
             material = Material.ARROW,
-            name = localizationManager.getMessage("localisation.next-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.next-page")),
+            name = "localisation.next-page".localized(),
+            lore = listOf("localisation.inventory.lore.next-page".localized()),
             customModelData = null,
             italic = false,
             bold = true,
@@ -193,8 +192,8 @@ class WalletHistoryInventory : InventoryCreator, Listener {
     private fun createPreviousPageItem(): ItemStack {
         return systemGUI.createItem(
             material = Material.ARROW,
-            name = localizationManager.getMessage("localisation.previous-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.previous-page")),
+            name = "localisation.previous-page".localized(),
+            lore = listOf("localisation.inventory.lore.previous-page".localized()),
             customModelData = null,
             italic = false,
             bold = true,

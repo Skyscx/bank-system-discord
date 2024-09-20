@@ -1,6 +1,6 @@
 package gui.wallletmenu.transferwallet
 
-import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.userDB
 import data.TransferDataManager
 import functions.Functions
@@ -27,7 +27,7 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
     private val playerPages = mutableMapOf<Player, Int>()
 
     override fun createInventory(player: Player): Inventory {
-        val title = Component.text(localizationManager.getMessage("localisation.inventory.title.select-player-transfer"))
+        val title = Component.text("localisation.inventory.title.select-player-transfer".localized())
         val inventory = Bukkit.createInventory(null, 54, title)
 
         val currentPage = playerPages.getOrDefault(player, 0)
@@ -47,7 +47,7 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
             val playerUUID = playerData["UUID"] as String
             val playerName = playerData["PlayerName"] as String
             val offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID))
-            val playerHead = systemGUI.createPlayerHead(offlinePlayer, localizationManager.getMessage("localisation.select"))
+            val playerHead = systemGUI.createPlayerHead(offlinePlayer, "localisation.select".localized())
             inventory.setItem(i - startIndex + 1, playerHead) // Start from slot 1 to leave slot 0 for "Other Player" item
         }
 
@@ -76,7 +76,7 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.CHEST) {
             val title = e.view.title()
-            val expectedTitle = localizationManager.getMessage("localisation.inventory.title.select-player-transfer")
+            val expectedTitle = "localisation.inventory.title.select-player-transfer".localized()
             if (functions.isComponentEqual(title, expectedTitle)) {
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
@@ -84,8 +84,8 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
                     e.isCancelled = true
                     player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
-                    val titleNextPage = localizationManager.getMessage("localisation.next-page")
-                    val titlePreviousPage = localizationManager.getMessage("localisation.previous-page")
+                    val titleNextPage = "localisation.next-page".localized()
+                    val titlePreviousPage = "localisation.previous-page".localized()
 
                     if (functions.isComponentEqual(displayNameComponent, titleNextPage)) {
                         playerPages[player] = playerPages.getOrDefault(player, 0) + 1
@@ -109,8 +109,8 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
     private fun createBackWalletMenu(): ItemStack {
         return systemGUI.createItem(
             Material.DARK_OAK_DOOR,
-            localizationManager.getMessage("localisation.inventory.item.back-wallet-menu"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.back-wallet-menu")),
+            "localisation.inventory.item.back-wallet-menu".localized(),
+            listOf("localisation.inventory.lore.wallet.back-wallet-menu".localized()),
 1
             )
     }
@@ -118,8 +118,8 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
     private fun createNextPageItem(): ItemStack {
         return systemGUI.createItem(
             material = Material.ARROW,
-            name = localizationManager.getMessage("localisation.next-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.next-page")),
+            name = "localisation.next-page".localized(),
+            lore = listOf("localisation.inventory.lore.next-page".localized()),
             customModelData = null,
             italic = false,
             bold = true,
@@ -132,8 +132,8 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
     private fun createPreviousPageItem(): ItemStack {
         return systemGUI.createItem(
             material = Material.ARROW,
-            name = localizationManager.getMessage("localisation.previous-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.previous-page")),
+            name = "localisation.previous-page".localized(),
+            lore = listOf("localisation.inventory.lore.previous-page".localized()),
             customModelData = null,
             italic = false,
             bold = true,

@@ -1,7 +1,7 @@
 package gui.wallletmenu
 
 import App.Companion.configPlugin
-import App.Companion.localizationManager
+import App.Companion.localized
 import functions.Functions
 import gui.InventoryManager
 import org.bukkit.entity.Player
@@ -20,7 +20,7 @@ class WalletMenuInventoryEvent : Listener {
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.CHEST) {
             val title = e.view.title()
-            val expectedTitle = localizationManager.getMessage("localisation.inventory.title.menu-wallet")
+            val expectedTitle = "localisation.inventory.title.menu-wallet".localized()
             if (functions.isComponentEqual(title, expectedTitle)) {
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
@@ -28,13 +28,13 @@ class WalletMenuInventoryEvent : Listener {
                     e.isCancelled
                     player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
-                    val titleOpenWallet = localizationManager.getMessage("localisation.inventory.item.open-wallet")
-                    val titleCloseWallet = localizationManager.getMessage("localisation.inventory.item.close-wallet")
-                    val titleGuidButton = localizationManager.getMessage("localisation.inventory.item.guid-book")
-                    val titleActionsWallet = localizationManager.getMessage("localisation.inventory.item.actions")
-                    val titleReportButton = localizationManager.getMessage("localisation.inventory.item.report")
-                    val titleTransferButton = localizationManager.getMessage("localisation.inventory.item.transfer")
-                    val titleHistoryButton = "История транзакций"
+                    val titleOpenWallet = "localisation.inventory.item.open-wallet".localized()
+                    val titleCloseWallet = "localisation.inventory.item.close-wallet".localized()
+                    val titleGuidButton = "localisation.inventory.item.guid-book".localized()
+                    val titleActionsWallet = "localisation.inventory.item.actions".localized()
+                    val titleReportButton = "localisation.inventory.item.report".localized()
+                    val titleTransferButton = "localisation.inventory.item.transfer".localized()
+                    val titleHistoryButton = "История транзакций" //todo: локализацию
                     if (functions.isComponentEqual(displayNameComponent, titleOpenWallet)) {
                         inventoryManager.openInventory(player, "open")
                     }
@@ -43,7 +43,7 @@ class WalletMenuInventoryEvent : Listener {
                     }
                     if (functions.isComponentEqual(displayNameComponent, titleGuidButton)){
                         val guidLink = configPlugin.getString("guid-link") ?: "Missing URL"
-                        functions.sendMessagePlayer(player, localizationManager.getMessage("localisation.messages.out.guid-link"))
+                        functions.sendMessagePlayer(player, "localisation.messages.out.guid-link".localized())
                         functions.sendClickableLink(player, guidLink, guidLink)
                     }
                     if (functions.isComponentEqual(displayNameComponent,titleActionsWallet)){

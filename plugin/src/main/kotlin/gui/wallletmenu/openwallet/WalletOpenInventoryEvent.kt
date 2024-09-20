@@ -1,7 +1,7 @@
 package gui.wallletmenu.openwallet
 
 import App.Companion.configPlugin
-import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
 import discord.dsbot.DiscordBot
@@ -32,7 +32,7 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.HOPPER) {
             val title = e.view.title()
-            val expectedTitle = localizationManager.getMessage("localisation.inventory.title.wallet-open-confirmation")
+            val expectedTitle = "localisation.inventory.title.wallet-open-confirmation".localized()
             if (functions.isComponentEqual(title, expectedTitle)) { //todo: сделать сообщение из конфига
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
@@ -40,8 +40,8 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                     e.isCancelled
                     player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
-                    val titleAccept = localizationManager.getMessage("localisation.inventory.item.accept")
-                    val titleReject = localizationManager.getMessage("localisation.inventory.item.reject")
+                    val titleAccept = "localisation.inventory.item.accept".localized()
+                    val titleReject = "localisation.inventory.item.reject".localized()
                     if (functions.isComponentEqual(displayNameComponent, titleAccept)) {
                         val walletCurrency = currencyAccountConfig ?: return
                         val currency = functions.convertStringToMaterial(walletCurrency)
@@ -51,7 +51,7 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                         } else return
                         val blocksInInventory = functions.countBlocksInInventory(player, typeBlock)
                         if (blocksInInventory < priceAccountConfig){
-                            player.sendMessage("Недостаточно средств")
+                            player.sendMessage("Недостаточно средств") //todo локализацию
                             return
                         }
                         val uuidPlayer = player.uniqueId.toString()
@@ -74,7 +74,7 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                         channelId = channelIdBankerNotifier,
                                         color = 1,
                                         buttons = listOf(
-                                            Button.of(ButtonStyle.SUCCESS, "acceptAccount:$lastID", "Принять"),
+                                            Button.of(ButtonStyle.SUCCESS, "acceptAccount:$lastID", "Принять"), //todo: локализацю
                                             Button.of(ButtonStyle.DANGER, "rejectAccount:$lastID", "Отклонить")
                                         ),
                                         title = "Заявка на открытие кошелька!",
@@ -124,13 +124,13 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                     functions.takeItem(player, typeBlock, priceAccountConfig)
                                     //functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
                                 } else {
-                                    discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.open-unsuccessfully"))
+                                    discordNotifier.sendMessageChannelLog("localisation.discord.logger.open-unsuccessfully".localized())
                                     functions.sendMessagePlayer(player, "Не удалось создать банковский счет.") //todo: сделать сообщение из конфига
                                 }
                             }
                             if (verificationInt == 1){
                                 functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
-                                discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.open-successfully", "player" to player.name))
+                                discordNotifier.sendMessageChannelLog("localisation.discord.logger.open-successfully".localized( "player" to player.name))
                             } else {
                                 functions.sendMessagePlayer(player, "Заявление передано банкиру")
                             }

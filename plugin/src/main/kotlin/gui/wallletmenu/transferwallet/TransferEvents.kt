@@ -1,7 +1,7 @@
 package gui.wallletmenu.transferwallet
 
 import App.Companion.instance
-import App.Companion.localizationManager
+import App.Companion.localized
 import data.TransferDataManager
 import functions.Functions
 import gui.InventoryManager
@@ -35,7 +35,7 @@ class TransferEvents(
     private val awaitingComment = mutableSetOf<Player>()
 
     fun createInventory(player: Player): Inventory {
-        val title = Component.text(localizationManager.getMessage("localisation.inventory.title.select-player-transfer"))
+        val title = Component.text("localisation.inventory.title.select-player-transfer".localized())
         val inventory = Bukkit.createInventory(null, 54, title)
 
         val currentPage = playerPages.getOrDefault(player, 0)
@@ -47,7 +47,7 @@ class TransferEvents(
         val endIndex = (startIndex + pageSize).coerceAtMost(onlinePlayers.size)
 
         for (i in startIndex..<endIndex) {
-            val playerHead = systemGUI.createPlayerHead(onlinePlayers[i], localizationManager.getMessage("localisation.select"))
+            val playerHead = systemGUI.createPlayerHead(onlinePlayers[i], "localisation.select".localized())
             inventory.setItem(i - startIndex + 1, playerHead) // Start from slot 1 to leave slot 0 for "Other Player" item
         }
 
@@ -75,7 +75,7 @@ class TransferEvents(
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.CHEST) {
             val title = e.view.title()
-            val expectedTitle = localizationManager.getMessage("localisation.inventory.title.select-player-transfer")
+            val expectedTitle = "localisation.inventory.title.select-player-transfer".localized()
             if (functions.isComponentEqual(title, expectedTitle)) {
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
@@ -83,9 +83,9 @@ class TransferEvents(
                     e.isCancelled = true
                     player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
-                    val titleNextPage = localizationManager.getMessage("localisation.next-page")
-                    val titlePreviousPage = localizationManager.getMessage("localisation.previous-page")
-                    val titleBackWalletMenu = localizationManager.getMessage("localisation.inventory.item.back-wallet-menu")
+                    val titleNextPage = "localisation.next-page".localized()
+                    val titlePreviousPage = "localisation.previous-page".localized()
+                    val titleBackWalletMenu = "localisation.inventory.item.back-wallet-menu".localized()
 
                     if (functions.isComponentEqual(displayNameComponent, titleNextPage)) {
                         playerPages[player] = playerPages.getOrDefault(player, 0) + 1
@@ -106,7 +106,7 @@ class TransferEvents(
                     }
                 }
             } else {
-                 val expectedTitleAmount = localizationManager.getMessage("localisation.inventory.title.select-amount-transfer")
+                 val expectedTitleAmount = "localisation.inventory.title.select-amount-transfer".localized()
                 if (functions.isComponentEqual(title, expectedTitleAmount)) {
                     val currentItem = e.currentItem ?: return
                     val itemMeta = currentItem.itemMeta ?: return
@@ -131,44 +131,44 @@ class TransferEvents(
                                 TransferDataManager.instance.setAmount(player, newAmount)
                             }
                             amountPlayerInventory.updateItem(player, player.openInventory.topInventory)
-                        } else if (displayNameText == localizationManager.getMessage("localisation.inventory.item.confirm-amount")) {
+                        } else if (displayNameText == "localisation.inventory.item.confirm-amount".localized()) {
                             val addCommentInventory = addCommentInventory.createInventory(player)
                             player.openInventory(addCommentInventory)
                         }
                     }
                 } else {
-                    val expectedTitleAddComment = localizationManager.getMessage("localisation.inventory.title.add-comment")
+                    val expectedTitleAddComment = "localisation.inventory.title.add-comment".localized()
                     if (functions.isComponentEqual(title, expectedTitleAddComment)) {
                         val currentItem = e.currentItem ?: return
                         val itemMeta = currentItem.itemMeta ?: return
                         if (itemMeta.hasDisplayName()) {
                             e.isCancelled = true
                             val displayNameComponent = itemMeta.displayName() ?: return
-                            if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.add-comment"))) {
+                            if (functions.isComponentEqual(displayNameComponent, "localisation.inventory.item.add-comment".localized())) {
                                 player.closeInventory()
 //                                player.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer.input-comment"))
                                 awaitingComment.add(player)
                                 openAnvilGUI(player)
 
-                            } else if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.confirm-without-comment"))) {
+                            } else if (functions.isComponentEqual(displayNameComponent, "localisation.inventory.item.confirm-without-comment".localized())) {
                                 val confirmInventory = confirmTransferInventory.createInventory(player)
                                 player.openInventory(confirmInventory)
                             }
                         }
                     } else {
-                        val expectedTitleConfirm = localizationManager.getMessage("localisation.inventory.title.confirm-transfer")
+                        val expectedTitleConfirm = "localisation.inventory.title.confirm-transfer".localized()
                         if (functions.isComponentEqual(title, expectedTitleConfirm)) {
                             val currentItem = e.currentItem ?: return
                             val itemMeta = currentItem.itemMeta ?: return
                             if (itemMeta.hasDisplayName()) {
                                 e.isCancelled = true
                                 val displayNameComponent = itemMeta.displayName() ?: return
-                                if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.accept"))) {
+                                if (functions.isComponentEqual(displayNameComponent, "localisation.inventory.item.accept".localized())) {
                                     val transferData = TransferDataManager.instance.getTransferData(player) ?: return
                                     Bukkit.dispatchCommand(player, "transfer ${transferData.targetPlayerName} ${transferData.amount} ${transferData.comment ?: ""}")
                                     TransferDataManager.instance.removeTransferData(player)
                                     player.closeInventory()
-                                } else if (functions.isComponentEqual(displayNameComponent, localizationManager.getMessage("localisation.inventory.item.reject"))) {
+                                } else if (functions.isComponentEqual(displayNameComponent, "localisation.inventory.item.reject".localized())) {
                                     TransferDataManager.instance.removeTransferData(player)
                                     player.closeInventory()
                                 }
@@ -183,7 +183,7 @@ class TransferEvents(
     private fun openAnvilGUI(player: Player) {
         val item = systemGUI.createItem(
             Material.PAPER,
-            name = localizationManager.getMessage("localisation.comment"),
+            name = "localisation.comment".localized(),
             customModelData = 2
 
         )
@@ -203,7 +203,7 @@ class TransferEvents(
             }
             .text(" ")
             .itemLeft(item)
-            .title(localizationManager.getMessage("localisation.inventory.title.add-comment"))
+            .title("localisation.inventory.title.add-comment".localized())
             .plugin(instance)
             .open(player)
 
@@ -213,8 +213,8 @@ class TransferEvents(
     private fun createOtherPlayerItem(): ItemStack {
         return systemGUI.createItem(
             material = Material.BARRIER,
-            name = localizationManager.getMessage("localisation.other-target"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.other-player.transfer-menu")),
+            name = "localisation.other-target".localized(),
+            lore = listOf("localisation.inventory.lore.other-player.transfer-menu".localized()),
             customModelData = null,
             italic = false,
             bold = true,
@@ -227,8 +227,8 @@ class TransferEvents(
     private fun createNextPageItem(): ItemStack {
         return systemGUI.createItem(
             material = Material.ARROW,
-            name = localizationManager.getMessage("localisation.next-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.next-page")),
+            name = "localisation.next-page".localized(),
+            lore = listOf("localisation.inventory.lore.next-page".localized()),
             customModelData = null,
             italic = false,
             bold = true,
@@ -241,8 +241,8 @@ class TransferEvents(
     private fun createPreviousPageItem(): ItemStack {
         return systemGUI.createItem(
             material = Material.ARROW,
-            name = localizationManager.getMessage("localisation.previous-page"),
-            lore = listOf(localizationManager.getMessage("localisation.inventory.lore.previous-page")),
+            name = "localisation.previous-page".localized(),
+            lore = listOf("localisation.inventory.lore.previous-page".localized()),
             customModelData = null,
             italic = false,
             bold = true,

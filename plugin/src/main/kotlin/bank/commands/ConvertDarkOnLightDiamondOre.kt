@@ -1,6 +1,6 @@
 package bank.commands
 
-import App.Companion.localizationManager
+import App.Companion.localized
 import functions.Functions
 import org.bukkit.Material
 import org.bukkit.command.Command
@@ -23,7 +23,7 @@ class ConvertDarkOnLightDiamondOre : CommandExecutor {
 
         if (args.isEmpty()) {
             //TODO: Сделать открытие меню инвентаря со всеми доступными функциями.
-            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.developing"))
+            sender.sendMessage("localisation.messages.out.developing".localized())
             return true
         }
 
@@ -39,7 +39,7 @@ class ConvertDarkOnLightDiamondOre : CommandExecutor {
                     // Логика для обработки числового аргумента
                     convertSpecificAmountDarkToLight(player, amount)
                 } else {
-                    sender.sendMessage(localizationManager.getMessage("localisation.messages.out.invalid-argument"))
+                    sender.sendMessage("localisation.messages.out.invalid-argument".localized())
                 }
             }
         }
@@ -58,7 +58,7 @@ class ConvertDarkOnLightDiamondOre : CommandExecutor {
             }
         }
 
-        player.sendMessage(localizationManager.getMessage("localisation.messages.out.converted-all"))
+        player.sendMessage("localisation.messages.out.converted-all".localized())
     }
 
     private fun convertSpecificAmountDarkToLight(player: Player, amount: Int) {
@@ -88,6 +88,6 @@ class ConvertDarkOnLightDiamondOre : CommandExecutor {
             }
         }
 
-        player.sendMessage(localizationManager.getMessage("localisation.messages.out.converted-specific", "amount" to convertedAmount.toString()))
+        player.sendMessage("localisation.messages.out.converted-specific".localized( "amount" to convertedAmount.toString()))
     }
 }

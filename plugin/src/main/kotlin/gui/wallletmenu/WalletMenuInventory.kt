@@ -1,12 +1,12 @@
 package gui.wallletmenu
 
-import App.Companion.localizationManager
+import App.Companion.configPlugin
+import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
 import gui.InventoryCreator
 import gui.SystemGUI
 import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.format.TextColor
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -14,7 +14,8 @@ import org.bukkit.inventory.Inventory
 
 class WalletMenuInventory : InventoryCreator {
     private val systemGUI = SystemGUI()
-    private val title = Component.text(localizationManager.getMessage("localisation.inventory.title.menu-wallet"), TextColor.color(6, 178, 0))
+    private val title = Component.text("localisation.inventory.title.menu-wallet".localized())
+    private val priceDefaultWallet = configPlugin.getInt("price-account").toString()
     override fun createInventory(player: Player): Inventory {
 
         val uuid = player.uniqueId.toString()
@@ -34,15 +35,15 @@ class WalletMenuInventory : InventoryCreator {
         // Кнопка для профиля
         val profile = systemGUI.createItem(
             Material.PLAYER_HEAD,
-            localizationManager.getMessage("localisation.inventory.item.profile"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.profile.menu")),
+            "localisation.inventory.item.profile".localized(),
+            listOf("localisation.inventory.lore.profile.menu.empty".localized()),
             1
         )
         // Кнопка для создания кошелька
         val openWallet = systemGUI.createItem(
             Material.GREEN_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.open-wallet"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.open-wallet.menu", "amount" to "[todo AMOUNT]")),
+            "localisation.inventory.item.open-wallet".localized(),
+            listOf("localisation.inventory.lore.open-wallet.menu".localized( "amount" to priceDefaultWallet)),
             1
         )
 //        TODO: Перенести в отдельное меню -> INFO
@@ -76,8 +77,8 @@ class WalletMenuInventory : InventoryCreator {
         // Кнопка информации
         val info = systemGUI.createItem(
             Material.TORCH,
-            localizationManager.getMessage("localisation.inventory.item.info"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.wait-banker.menu")),
+            "localisation.inventory.item.info".localized(),
+            listOf("localisation.inventory.lore.wait-banker.menu".localized()),
             1
         )
 
@@ -94,45 +95,45 @@ class WalletMenuInventory : InventoryCreator {
         // Кнопка для профиля
         val profile = systemGUI.createItem(
             Material.PLAYER_HEAD,
-            localizationManager.getMessage("localisation.inventory.item.profile"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.profile.menu", "amount" to "[todo AMOUNT]")),
+            "localisation.inventory.item.profile".localized(),
+            listOf("localisation.inventory.lore.profile.menu".localized( "amount" to "[todo AMOUNT]")),
             1
         )
         val closeWallet = systemGUI.createItem(
             Material.RED_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.close-wallet"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.close-wallet.menu")),
+            "localisation.inventory.item.close-wallet".localized(),
+            listOf("localisation.inventory.lore.close-wallet.menu".localized()),
             1
         )
         // Кнопка для гайда
         val guid = systemGUI.createItem(
             Material.BOOKSHELF,
-            localizationManager.getMessage("localisation.inventory.item.guid-book"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.guid-book.menu")),
+            "localisation.inventory.item.guid-book".localized(),
+            listOf("localisation.inventory.lore.guid-book.menu".localized()),
             1
         )
         // Кнопка для Репорта
         val report = systemGUI.createItem(
             Material.FIRE_CHARGE,
-            localizationManager.getMessage("localisation.inventory.item.report"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.report.menu")),
+            "localisation.inventory.item.report".localized(),
+            listOf("localisation.inventory.lore.report.menu".localized()),
             1
         )
         //Кнопка связи с банкиром
         val sendMessageBanker = systemGUI.createItem(
             Material.WRITABLE_BOOK,
-            localizationManager.getMessage("localisation.inventory.item.send-banker-message"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.send-banker-message.menu")),
+            "localisation.inventory.item.send-banker-message".localized(),
+            listOf("localisation.inventory.lore.send-banker-message.menu".localized()),
             1
         )
         //Кнопка для действий с кошельком
         val actionsWallet = systemGUI.createItem(
             Material.PURPLE_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.actions"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.actions.menu")),
+            "localisation.inventory.item.actions".localized(),
+            listOf("localisation.inventory.lore.actions.menu".localized()),
             2
         )
-        // Кнопка для просмотра истории транзакций
+        // Кнопка для просмотра истории транзакций todo: Локализацию
         val history = systemGUI.createItem(
             Material.PAPER,
             "История транзакций",
@@ -156,8 +157,8 @@ class WalletMenuInventory : InventoryCreator {
         //Кнопка перевода
         val transfer = systemGUI.createItem(
             Material.CYAN_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.transfer"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.transfer.menu")),
+            "localisation.inventory.item.transfer".localized(),
+            listOf("localisation.inventory.lore.transfer.menu".localized()),
             1
         )
 
@@ -165,44 +166,44 @@ class WalletMenuInventory : InventoryCreator {
         //Список штрафов DEV
         val fineList = systemGUI.createItem(
             Material.PINK_GLAZED_TERRACOTTA,
-            localizationManager.getMessage("localisation.inventory.item.fine-list"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.fine-list.menu")),
+            "localisation.inventory.item.fine-list".localized(),
+            listOf("localisation.inventory.lore.fine-list.menu".localized()),
             1
         )
         //Оплатить штраф DEV
         val payFine = systemGUI.createItem(
             Material.GREEN_GLAZED_TERRACOTTA,
-            localizationManager.getMessage("localisation.inventory.item.pay-fine"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.appeal-fine.menu")),
+            "localisation.inventory.item.pay-fine".localized(),
+            listOf("localisation.inventory.lore.appeal-fine.menu".localized()),
             1
         )
         //Обажаловать штраф DEV
         val appealFine = systemGUI.createItem(
             Material.RED_GLAZED_TERRACOTTA,
-            localizationManager.getMessage("localisation.inventory.item.appeal-fine"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.appeal-fine.menu")),
+            "localisation.inventory.item.appeal-fine".localized(),
+            listOf("localisation.inventory.lore.appeal-fine.menu".localized()),
             1
         )
 
         //Список  счетов DEV
         val billList = systemGUI.createItem(
             Material.ORANGE_GLAZED_TERRACOTTA,
-            localizationManager.getMessage("localisation.inventory.item.bill-list"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.bill-list.menu")),
+            "localisation.inventory.item.bill-list".localized(),
+            listOf("localisation.inventory.lore.bill-list.menu".localized()),
             1
         )
         //Оплатить счет DEV
         val payBill = systemGUI.createItem(
             Material.MAGENTA_GLAZED_TERRACOTTA,
-            localizationManager.getMessage("localisation.inventory.item.pay-bill"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.pay-bill.menu")),
+            "localisation.inventory.item.pay-bill".localized(),
+            listOf("localisation.inventory.lore.pay-bill.menu".localized()),
             1
         )
         //Выставить счет DEV
         val putBill = systemGUI.createItem(
             Material.YELLOW_GLAZED_TERRACOTTA,
-            localizationManager.getMessage("localisation.inventory.item.put-bill"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.put-bill.menu")),
+            "localisation.inventory.item.put-bill".localized(),
+            listOf("localisation.inventory.lore.put-bill.menu".localized()),
             1
         )
 
@@ -235,15 +236,15 @@ class WalletMenuInventory : InventoryCreator {
         // Кнопка профиля
         val profile = systemGUI.createItem(
             Material.PLAYER_HEAD,
-            localizationManager.getMessage("localisation.inventory.item.profile"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.profile.menu")),
+            "localisation.inventory.item.profile".localized(),
+            listOf("localisation.inventory.lore.profile.menu".localized()),
             1
         )
         // Информация ожидания
         val waitBanker = systemGUI.createItem(
             Material.YELLOW_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.wait-banker"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.wait-banker.menu")),
+            "localisation.inventory.item.wait-banker".localized(),
+            listOf("localisation.inventory.lore.wait-banker.menu".localized()),
             1
         )
         //Заполнитель по бокам
@@ -255,8 +256,8 @@ class WalletMenuInventory : InventoryCreator {
         // Кнопка информации
         val info = systemGUI.createItem(
             Material.TORCH,
-            localizationManager.getMessage("localisation.inventory.item.info"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.wait-banker.menu")),
+            "localisation.inventory.item.info".localized(),
+            listOf("localisation.inventory.lore.info.menu".localized()),
             1
         )
 

@@ -1,7 +1,7 @@
 package bank.commands.wallets.collection
 
-//import functions.CooldownManager
 import App.Companion.configPlugin
+import App.Companion.localized
 import App.Companion.reportsDB
 import App.Companion.userDB
 import discord.dsbot.DiscordNotifier
@@ -16,16 +16,12 @@ import org.bukkit.entity.Player
 
 class ReportCommandHandler(config: FileConfiguration) {
     private val discordNotifier = DiscordNotifier(config)
-    //private val cooldownManager = CooldownManager()
     //todo: Подумать над кулдауном!!!
     fun handleReportCommand(sender: CommandSender, args: Array<String>) {
         if (args.size < 3) {
-            sender.sendMessage("Используйте: /wallet report [TYPE] [MESSAGE]")
+            sender.sendMessage("localisation.messages.usage.account.report".localized())
             return
         }
-
-//        val timeLeft: java.time.Duration = cooldownManager.getRemainingCooldown(sender.uniqueId)
-//        if (timeLeft.isZero || timeLeft.isNegative) {return}
 
         val senderName = sender.name
         val player = sender as Player
@@ -36,12 +32,12 @@ class ReportCommandHandler(config: FileConfiguration) {
         val message = args.drop(2).joinToString(" ")
 
         val reason = when (type.uppercase()) {
-            "DATA" -> "Ошибка данных"
-            "WORK" -> "Не работает"
-            "PING" -> "Медленная загрузка"
-            "OTHER" -> "Другое"
+            "DATA" -> "localisation.report.type.data".localized()
+            "WORK" -> "localisation.report.type.work".localized()
+            "PING" -> "localisation.report.type.ping".localized()
+            "OTHER" -> "localisation.report.type.other".localized()
             else -> {
-                sender.sendMessage("Неверный тип жалобы. Используйте DATA, WORK, PING или OTHER.")
+                sender.sendMessage("localisation.report.type.not".localized())
                 return
             }
         }
@@ -51,15 +47,15 @@ class ReportCommandHandler(config: FileConfiguration) {
 
         discordNotifier.sendEmbedMessageAndButtons(
             channelId = channelIdTarget,
-            title = "Жалоба от игрока",
-            description = "Игрок $senderName жалуется",
+            title = "localisation.discord.embed.report.title.report".localized(),
+            description = "localisation.discord.embed.report.description.report".localized("senderName" to senderName),
             color = 1,
             embedType = EmbedType.RICH,
             buttons = buttons,
             fields = listOf(
-                MessageEmbed.Field("Причина жалобы", reason, false),
-                MessageEmbed.Field("Жалоба", message, false),
-                MessageEmbed.Field("Идентификатор", reportID.toString(), false)
+                MessageEmbed.Field("localisation.discord.embed.report.field.reason".localized(), reason, false),
+                MessageEmbed.Field("localisation.discord.embed.report.field.message".localized(), message, false),
+                MessageEmbed.Field("localisation.discord.embed.report.field.reportID".localized(), reportID.toString(), false)
             )
         )
         reportsDB.insertBankReport(
@@ -71,16 +67,14 @@ class ReportCommandHandler(config: FileConfiguration) {
             "MC",
             reportID
         )
-        sender.sendMessage("Жалоба отправлена!")
-        // Устанавливаем кулдаун на 1 час
-        //cooldownManager.setCooldown(sender.uniqueId, java.time.Duration.ofSeconds(CooldownManager.DEFAULT_COOLDOWN))
+        sender.sendMessage("localisation.messages.out.wallet.report.send".localized())
     }
 
     private fun createButtons(reportID: Int): List<Button> {
         return listOf(
-            Button.of(ButtonStyle.SUCCESS, "reportWalletApprove:$reportID", "Одобрить"),
-            Button.of(ButtonStyle.DANGER, "reportWalletReject:$reportID", "Отклонить"),
-            Button.of(ButtonStyle.PRIMARY, "reportWalletContact:$reportID", "Связаться"),
+            Button.of(ButtonStyle.SUCCESS, "reportWalletApprove:$reportID", "localisation.discord.embed.report.buttons.approve".localized()),
+            Button.of(ButtonStyle.DANGER, "reportWalletReject:$reportID", "localisation.discord.embed.report.buttons.reject".localized()),
+            Button.of(ButtonStyle.PRIMARY, "reportWalletContact:$reportID", "localisation.discord.embed.report.buttons.contact".localized()),
         )
     }
 }

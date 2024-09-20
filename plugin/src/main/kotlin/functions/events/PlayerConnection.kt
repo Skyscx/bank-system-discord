@@ -1,6 +1,6 @@
 package functions.events
 
-import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
 import discord.dsbot.DiscordBot
@@ -34,10 +34,10 @@ class PlayerConnection(config: FileConfiguration, discordBot: DiscordBot) : List
                 val item = ItemStack(Material.DIAMOND_ORE) // TODO:Брать из конфигурации
 
                 if (functions.giveItem(player, item, deposit!!)) {
-                    val message = localizationManager.getMessage("localisation.messages.out.wallet.back-deposit",
+                    val message = "localisation.messages.out.wallet.back-deposit".localized(
                         "amount" to deposit.toString(), "currency" to item.type.name)
                     player.sendMessage(message)
-                    discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.back-deposit",
+                    discordNotifier.sendMessageChannelLog("localisation.discord.logger.back-deposit".localized(
                         "playerName" to player.name, "amount" to deposit.toString(), "currency" to currency.toString()))
                     walletDB.deleteUserWallet(id)
                 }

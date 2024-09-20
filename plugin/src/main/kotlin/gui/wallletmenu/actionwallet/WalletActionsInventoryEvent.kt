@@ -1,6 +1,6 @@
 package gui.wallletmenu.actionwallet
 
-import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
 import data.ActionDataManager
@@ -29,7 +29,7 @@ class WalletActionsInventoryEvent(
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.CHEST) {
             val title = e.view.title()
-            val expectedTitle = localizationManager.getMessage("localisation.inventory.title.menu-actions-wallet")
+            val expectedTitle = "localisation.inventory.title.menu-actions-wallet".localized()
             if (functions.isComponentEqual(title, expectedTitle)) {
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
@@ -54,8 +54,8 @@ class WalletActionsInventoryEvent(
             "§4-16" to -16,
             "§4-64" to -64,
             "§4-ALL" to 0,
-            localizationManager.getMessage("localisation.inventory.item.back-wallet-menu") to "menu",
-            "Выполнить" to "confirm"
+            "localisation.inventory.item.back-wallet-menu".localized() to "menu",
+            "Выполнить" to "confirm" //todo: локализацию
         )
 
         val action = titleMap[displayName]
@@ -69,15 +69,16 @@ class WalletActionsInventoryEvent(
             val actionData = ActionDataManager.instance.getActionData(player) ?: return
             val amount = actionData.amount
             if (amount > 0) {
-            player.performCommand("wallet balance add $amount")
-        } else if (amount < 0) {
-            val absoluteAmount = amount.absoluteValue
-            player.performCommand("wallet balance remove $absoluteAmount")
-        } else {
-            player.sendMessage("[DEV] Функция в разработке")
-        }
-            player.closeInventory()
+                player.performCommand("wallet balance add $amount")
+            } else if (amount < 0) {
+                val absoluteAmount = amount.absoluteValue
+                player.performCommand("wallet balance remove $absoluteAmount")
+            } else {
+                player.sendMessage("[DEV] Функция в разработке")
+            }
             ActionDataManager.instance.removeActionData(player)
+            ActionDataManager.instance.setPlayer(player, 0)
+            walletActionsInventory.updateItem(player, player.openInventory.topInventory)
             return
         }
 

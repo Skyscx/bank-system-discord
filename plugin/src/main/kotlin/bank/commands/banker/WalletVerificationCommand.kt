@@ -1,6 +1,6 @@
 package bank.commands.banker
 
-import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.walletDB
 import discord.FunctionsDiscord
 import org.bukkit.command.Command
@@ -12,7 +12,7 @@ class WalletVerificationCommand : CommandExecutor {
     private val functionDiscord = FunctionsDiscord()
     override fun onCommand(sender: CommandSender, command: Command, label: String, args: Array<out String>): Boolean {
         if (sender !is Player) {
-            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.player-command"))
+            sender.sendMessage("localisation.messages.out.player-command".localized())
             return true
         }
         if (args.isEmpty()) return false
@@ -21,7 +21,7 @@ class WalletVerificationCommand : CommandExecutor {
                 val list = walletDB.getUnverifiedWallets()
                 for (id in list){
                     val playerData = walletDB.getPlayerDataByID(id.toInt())
-                    sender.sendMessage(playerData ?: localizationManager.getMessage("localisation.messages.out.banker.list-verify-empty"))
+                    sender.sendMessage(playerData ?: "localisation.messages.out.banker.list-verify-empty".localized())
                 }
             }
             else -> {
@@ -29,7 +29,7 @@ class WalletVerificationCommand : CommandExecutor {
                 val id = args[0].toIntOrNull() ?: return false
                 val bool = args[1].toBooleanStrictOrNull() ?: return false
                 if (!walletDB.doesIdExistWallet(id)){
-                    sender.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet-null", "wallet-owner" to id.toString()))
+                    sender.sendMessage("localisation.messages.out.wallet-null".localized("wallet-owner" to id.toString()))
                     return true
                 }
                 val verification = walletDB.getVerificationWallet(id)
@@ -39,17 +39,17 @@ class WalletVerificationCommand : CommandExecutor {
                     0 ->{
                         if (bool){
                             walletDB.setVerificationWallet(id,1)
-                            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.banker.wallet.open", "player" to player))
+                            sender.sendMessage("localisation.messages.out.banker.wallet.open".localized("player" to player))
                         } else {
                             walletDB.setVerificationWallet(id,-1)
-                            sender.sendMessage(localizationManager.getMessage("localisation.messages.out.banker.wallet.reject", "player" to player))
+                            sender.sendMessage("localisation.messages.out.banker.wallet.reject".localized("player" to player))
                         }
                         walletDB.setInspectorWallet(id, inspector)
                         walletDB.setVerificationWalletDate(id)
                     }
-                    1 -> sender.sendMessage(localizationManager.getMessage("localisation.messages.out.banker.wallet.already.open"))
-                    -1 -> sender.sendMessage(localizationManager.getMessage("localisation.messages.out.banker.wallet.already.reject"))
-                    else -> sender.sendMessage(localizationManager.getMessage("localisation.messages.out.error-search-data-in-database"))
+                    1 -> sender.sendMessage("localisation.messages.out.banker.wallet.already.open".localized())
+                    -1 -> sender.sendMessage("localisation.messages.out.banker.wallet.already.reject".localized())
+                    else -> sender.sendMessage("localisation.messages.out.error-search-data-in-database".localized())
                 }
             }
         }

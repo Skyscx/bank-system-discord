@@ -1,6 +1,6 @@
 package gui.wallletmenu.closewallet
 
-import App.Companion.localizationManager
+import App.Companion.localized
 import gui.InventoryCreator
 import gui.SystemGUI
 import net.kyori.adventure.text.Component
@@ -16,18 +16,18 @@ class WalletCloseInventory : InventoryCreator {
         //todo: сделать получение цены создания кошелька.
 
         val inventory = Bukkit.createInventory(null, InventoryType.HOPPER,
-            Component.text(localizationManager.getMessage("localisation.inventory.title.wallet-close-confirmation")))
+            Component.text("localisation.inventory.title.wallet-close-confirmation".localized()))
         val accept = systemGUI.createItem(
             Material.GREEN_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.accept"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.accept.close-wallet")),
+            "localisation.inventory.item.accept".localized(),
+            listOf("localisation.inventory.lore.accept.close-wallet".localized()),
             2
         )
 
         val close = systemGUI.createItem(
             Material.RED_WOOL,
-            localizationManager.getMessage("localisation.inventory.item.reject"),
-            listOf(localizationManager.getMessage("localisation.inventory.lore.reject.close-wallet")),
+            "localisation.inventory.item.reject".localized(),
+            listOf("localisation.inventory.lore.reject.close-wallet".localized()),
             2)
         inventory.setItem(1, accept)
         inventory.setItem(3, close)

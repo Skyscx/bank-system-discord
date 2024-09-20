@@ -34,7 +34,7 @@ class WalletReportInventoryEvent : Listener {
                     e.isCancelled = true
                     player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
-
+                    //todo: локализацию
                     val typeMap = mapOf(
                         "Ошибка данных" to "DATA",
                         "Не работает" to "WORK",

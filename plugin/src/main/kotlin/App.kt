@@ -53,6 +53,10 @@ class App : JavaPlugin(), Listener {
         lateinit var userDB: User
         lateinit var historyDB: History
         lateinit var reportsDB: Reports
+
+        fun String.localized(vararg replacements: Pair<String, String>): String {
+            return localizationManager.getMessage(this, *replacements)
+        }
     }
 
     override fun onEnable() {
@@ -111,32 +115,19 @@ class App : JavaPlugin(), Listener {
         copyConfigFile("locales/messages_$language.yml")
 
         //Commands
-        getCommand("wallet")?.setExecutor(WalletCommands(config, discordBot!!))
-        getCommand("wallet-force")?.setExecutor(ForceWalletCommands(config, discordBot!!))
+        getCommand("wallet")?.setExecutor(WalletCommands(config))
+        getCommand("wallet-force")?.setExecutor(ForceWalletCommands(config))
         getCommand("convert-diamonds")?.setExecutor(ConvertDarkOnLightDiamondOre())
-        //getCommand("pay")?.setExecutor(PayCommand(database))
-        //getCommand("account-set-name")?.setExecutor(AccountSetNameCommand(database))
         getCommand("wallet-verify")?.setExecutor(WalletVerificationCommand())
-        getCommand("transfer")?.setExecutor(TransferCommand(config, discordBot!!))
+        getCommand("transfer")?.setExecutor(TransferCommand(config))
         getCommand("banker-tumbler")?.setExecutor(BankerTumblerCommand())
-        //getCommand("account-set-default-wallet")?.setExecutor(AccountSetDefaultWalletCommand(database))
-        //getCommand("account-renaming")?.setExecutor(Events())
-        //getCommand("bank-reload-plugin")?.setExecutor(PluginReloadCommand(this))
 
-        //accounts-list
-        //transfer-account-id
-        //transfer-account-name
-        //transfer-account-default
-        //account-set-default
-        //account-history
-        //bank-history
-        //account-close
 
         Bukkit.getPluginManager().registerEvents(PlayerConnection(config, discordBot!!), this)
 
         Bukkit.getPluginManager().registerEvents(WalletOpenInventoryEvent(config, discordBot!!), this)
         Bukkit.getPluginManager().registerEvents(WalletMenuInventoryEvent(), this)
-        Bukkit.getPluginManager().registerEvents(WalletCloseInventoryEvent(config, discordBot!!), this)
+        Bukkit.getPluginManager().registerEvents(WalletCloseInventoryEvent(config), this)
         Bukkit.getPluginManager().registerEvents(WalletReportInventoryEvent(), this)
         Bukkit.getPluginManager().registerEvents(WalletHistoryInventory(), this)
 
@@ -151,8 +142,6 @@ class App : JavaPlugin(), Listener {
         Bukkit.getPluginManager().registerEvents(TransferEvents(amountPlayerInventory, confirmTransferInventory, addComment), this)
         Bukkit.getPluginManager().registerEvents(WalletActionsInventoryEvent(walletActionsInventory), this)
 
-        //todo: 07/08/2024 21/10 переделать команды, сделать локализацию
-        //server.pluginManager.registerEvents(AccountRenamingInventoryEvent(), this)
 
         // Tab Completer
         getCommand("wallet")?.tabCompleter = WalletsCommandCompleter()
