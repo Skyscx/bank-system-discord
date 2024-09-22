@@ -24,7 +24,9 @@ class RenamePlayerNameUser(config: FileConfiguration) {
                     val newPlayerName = args[2]
                     userDB.setPlayerNameByUUID(targetUUID.toString(), newPlayerName)
                     if (functions.senderIsPlayer(sender).second){
-                        sender.sendMessage("Вы сменили игроку [$targetUUID] визуальное имя для банка на $newPlayerName")
+                        sender.sendMessage("localisation.messages.out.banker.wallet.rename-player".localized(
+                            "targetUUID" to targetUUID.toString(), "newPlayerName" to newPlayerName
+                        ))
                     }
                     val walletID = walletDB.getDefaultWalletIDByUUID(targetUUID.toString()) ?: return@thenAccept
                     val balance = walletDB.getWalletBalance(walletID) ?: return@thenAccept
@@ -40,11 +42,13 @@ class RenamePlayerNameUser(config: FileConfiguration) {
                         oldBalance = balance,
                         newBalance = balance,
                         uuidTarget = targetUUID.toString(),
-                        comment = "Смена визуального игрового имени для банковской системы",
+                        comment = "localisation.messages.out.history.comment.rename-player".localized(),
                         targetWalletID = walletID,
                         targetName = newPlayerName
                     )
-                    discordNotifier.sendMessageChannelLog("${sender.name} изменил визуальное имя игроку на $newPlayerName \n UUID: $targetUUID.")
+                    discordNotifier.sendMessageChannelLog("localisation.discord.logger.rename-successfully.forced".localized(
+                        "sender" to sender.name, "newPlayerName" to newPlayerName, "targetUUID" to targetUUID.toString()
+                    ))
                     return@thenAccept
                 }
                 sender.sendMessage("localisation.error.not-search-target".localized())
@@ -53,7 +57,7 @@ class RenamePlayerNameUser(config: FileConfiguration) {
                 null
             }
         } catch (e: IllegalArgumentException) {
-            sender.sendMessage("Некорректный формат UUID: $targetUUID")
+            sender.sendMessage("localisation.error.invalid.uuid".localized("uuid" to targetUUID))
             return
         }
     }

@@ -19,8 +19,6 @@ class WalletActionsInventoryEvent(
 ):Listener {
     private val functions = Functions()
     private val inventoryManager = InventoryManager()
-//    private val walletActionsInventory = WalletActionsInventory()
-
     //private val discordNotifier = DiscordNotifier(discordBot.getJDA(), config)
     //private val countAccountConfig = config.getInt("count-free-accounts") TODO: Вернуть в будущем когда будет система разных кошельков.
 
@@ -55,7 +53,7 @@ class WalletActionsInventoryEvent(
             "§4-64" to -64,
             "§4-ALL" to 0,
             "localisation.inventory.item.back-wallet-menu".localized() to "menu",
-            "Выполнить" to "confirm" //todo: локализацию
+            "localisation.inventory.item.todo".localized() to "confirm"
         )
 
         val action = titleMap[displayName]
@@ -74,7 +72,7 @@ class WalletActionsInventoryEvent(
                 val absoluteAmount = amount.absoluteValue
                 player.performCommand("wallet balance remove $absoluteAmount")
             } else {
-                player.sendMessage("[DEV] Функция в разработке")
+                player.sendMessage("localisation.messages.out.developing".localized())
             }
             ActionDataManager.instance.removeActionData(player)
             ActionDataManager.instance.setPlayer(player, 0)
@@ -91,10 +89,7 @@ class WalletActionsInventoryEvent(
         val currency = functions.convertStringToMaterial(walletCurrency)
         val typeBlock = currency.first ?: return //todo: Потом реализовать
 
-        if (!currency.second) {
-            player.sendMessage("Ошибка инициализации валюты")
-            return
-        }
+        if (!currency.second) return
         val actionData = ActionDataManager.instance.getActionData(player) ?: return
         val newAmount = actionData.amount + amount
         ActionDataManager.instance.setAmount(player, newAmount)

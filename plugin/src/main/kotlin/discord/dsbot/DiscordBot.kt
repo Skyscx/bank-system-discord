@@ -1,5 +1,5 @@
 package discord.dsbot
-//import discord.dsbot.commands.PayCommandDiscord
+import App.Companion.localized
 import discord.dsbot.buttonsactions.ButtonInteractionHandler
 import discord.dsbot.commands.BalanceCommandDiscord
 import discord.dsbot.commands.TransferCommandDiscord
@@ -26,11 +26,6 @@ class DiscordBot private constructor(private val config: FileConfiguration) {
     }
 
     lateinit var jda: JDA
-    //todo: сделать сообщение из конфига!!!!
-    //todo: сделать сообщение из конфига!!!!
-    //todo: сделать сообщение из конфига!!!!
-    //todo: сделать сообщение из конфига!!!!
-    //todo: сделать сообщение из конфига!!!!
 
     fun start(token: String?) {
         jda = JDABuilder.createDefault(token).build()
@@ -42,18 +37,14 @@ class DiscordBot private constructor(private val config: FileConfiguration) {
     private fun updateCommands() {
         val commands: List<SlashCommandData> = listOf(
             //Commands.slash("link-bank", "Регистрация в банковской системе"),
-//            Commands.slash("pay", "My custom command")
-//                .addOption(OptionType.USER, "user", "Целевой игрок", true)
-//                .addOption(OptionType.INTEGER, "amount", "Сумма перевода", true),
-            Commands.slash("balance", "Узнать баланс кошелька"),
-            Commands.slash("transfer", "Переводы  между игроками")
-                .addOption(OptionType.USER, "user", "Получатель", true)
-                .addOption(OptionType.INTEGER, "amount", "Сумма перевода", true)
-                .addOption(OptionType.STRING, "comment", "Комментарий", false)
+            Commands.slash("balance", "localisation.discord.command.balance.description".localized()),
+            Commands.slash("transfer", "localisation.discord.command.transfer.description".localized())
+                .addOption(OptionType.USER, "user", "localisation.discord.command.transfer.options.user".localized(), true)
+                .addOption(OptionType.INTEGER, "amount", "localisation.discord.command.transfer.options.amount".localized(), true)
+                .addOption(OptionType.STRING, "comment", "localisation.discord.command.transfer.options.comment".localized(), false)
         )
 
         jda.updateCommands().addCommands(commands).queue({
-            println("Global commands updated successfully.")
         }, {
             it.printStackTrace()
             println("Failed to update global commands: ${it.message}")
@@ -65,16 +56,9 @@ class DiscordBot private constructor(private val config: FileConfiguration) {
         jda.addEventListener(BalanceCommandDiscord(config))
         jda.addEventListener(TransferCommandDiscord(config))
         jda.addEventListener(ButtonInteractionHandler(config));
-
-//        jda.addEventListener(BankerVerificationsButtonsHandler(config))
-//        jda.addEventListener(ReportWalletButtonsHandler(config))
-        // .addEventListeners(CommandAccountBinder(database, config)) TODO:Функционал отключен
     }
     fun getMentionUser(discordID: String): String {
         val mention = UserSnowflake.fromId(discordID).asMention
         return mention
     }
-//    fun getJDA(): JDA {
-//        return jda
-//    }
 }

@@ -3,7 +3,6 @@ package gui.wallletmenu.actionwallet
 import App
 import App.Companion.historyDB
 import App.Companion.localized
-import App.Companion.walletDB
 import functions.Functions
 import gui.InventoryCreator
 import gui.SystemGUI
@@ -28,11 +27,11 @@ class WalletHistoryInventory : InventoryCreator, Listener {
     private val playerPages = mutableMapOf<Player, Int>()
 
     override fun createInventory(player: Player): Inventory {
-        val title = Component.text("История транзакций") //todo локализацию
+        val title = Component.text("localisation.inventory.title.history".localized())
         val inventory = Bukkit.createInventory(null, 54, title)
 
         val currentPage = playerPages.getOrDefault(player, 0)
-        val pageSize = 51 // 53 slots for items, 1 slot for "next page" button
+        val pageSize = 51
 
         val userUUID = player.uniqueId.toString()
         val offset = currentPage * pageSize
@@ -40,7 +39,6 @@ class WalletHistoryInventory : InventoryCreator, Listener {
         Bukkit.getScheduler().runTaskAsynchronously(App.instance, Runnable {
             try {
                 val result = historyDB.getUserHistory(userUUID, pageSize, offset)
-
                 Bukkit.getScheduler().runTask(App.instance, Runnable {
                     for ((index, row) in result.withIndex()) {
                         val senderUUID = row["SenderUUID"] as String
@@ -59,43 +57,52 @@ class WalletHistoryInventory : InventoryCreator, Listener {
                         val date = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").parse(dateStr)
                         val dateFormat = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
                         val formattedDate = dateFormat.format(date)
-                        val balance = walletDB.getWalletBalance(walletIdSender.toInt()) ?: 0
-
-                        //val iconUUID = if (senderUUID == userUUID) targetUUID else senderUUID
-                        //todo: ПОДУМАТЬ НАД ЛОКАЛИЗАЦИЕЙ
                         val description = when (typeOperation) {
-                            "TRANSFER" -> listOf(
-                                "Отправлено - $amount $currency",
-                                "Игроку - $targetName",
-                                "Комментарий: $comment"
-                            )
+                            "TRANSFER" -> {
+                                val isSender = senderUUID == userUUID
+                                if (isSender) {
+                                    listOf(
+                                        "localisation.inventory.lore.history.transfer.sending".localized(
+                                            "amount" to amount.toString(), "currency" to currency),
+                                        "localisation.inventory.lore.history.player_v1".localized("name" to targetName),
+                                        "localisation.inventory.lore.history.transfer.comment".localized("comment" to comment)
+                                    )
+                                } else {
+                                    listOf(
+                                        "localisation.inventory.lore.history.transfer.taked".localized(
+                                            "amount" to amount.toString(), "currency" to currency),
+                                        "localisation.inventory.lore.history.player_v2".localized("name" to targetName),
+                                        "localisation.inventory.lore.history.transfer.comment".localized("comment" to comment)
+                                    )
+                                }
+                            }
                             "OPEN_WALLET" -> listOf(
-                                "Открыт кошелек",
-                                "Игроком - $senderName"
+                                "localisation.inventory.lore.history.open_wallet".localized(),
+                                "localisation.inventory.lore.history.player_v3".localized("name" to senderName)
                             )
                             "ATTEMPT_OPEN_WALLET" -> listOf(
-                                "Попытка открыть кошелек",
-                                "Игроком - $senderName"
+                                "localisation.inventory.lore.history.open_wallet_attempt".localized(),
+                                "localisation.inventory.lore.history.player_v3".localized("name" to senderName)
                             )
                             "RENAMING" -> listOf(
-                                "Переименование кошелька",
-                                "Игроком - $senderName"
+                                "localisation.inventory.lore.history.renaming".localized(),
+                                "localisation.inventory.lore.history.player_v3".localized("name" to senderName)
                             )
                             "CLOSE_WALLET" -> listOf(
-                                "Закрыт кошелек",
-                                "Игроком - $senderName"
+                                "localisation.inventory.lore.history.close_wallet".localized(),
+                                "localisation.inventory.lore.history.player_v3".localized("name" to senderName)
                             )
                             "ADD_BALANCE" -> listOf(
-                                "Пополнение баланса",
-                                "Баланс - $oldBalance (+${newBalance-oldBalance})"
-                            )
+                                "localisation.inventory.lore.history.balance.add".localized(),
+                                "localisation.inventory.lore.history.balance.value.add".localized(
+                                    "balance" to oldBalance.toString(), "newBalance" to (newBalance - oldBalance).toString()),)
                             "GET_BALANCE" -> listOf(
-                                "Снятие баланса",
-                                "Баланс - $oldBalance (-${oldBalance-newBalance})"
+                                "localisation.inventory.lore.history.balance.get".localized(),
+                                "localisation.inventory.lore.history.balance.value.add".localized(
+                                    "balance" to oldBalance.toString(), "newBalance" to (oldBalance - newBalance).toString())
                             )
                             else -> listOf()
                         }
-
                         val material = when (typeOperation) {
                             "TRANSFER" -> Material.PAPER
                             "OPEN_WALLET" -> Material.GREEN_STAINED_GLASS_PANE
@@ -106,14 +113,12 @@ class WalletHistoryInventory : InventoryCreator, Listener {
                             "GET_BALANCE" -> Material.ORANGE_WOOL
                             else -> Material.BARRIER
                         }
-
                         val icon = systemGUI.createItem(
                             material,
                             formattedDate,
                             description,
                             1
                         )
-
                         val backMenu = systemGUI.createItem(
                             Material.DARK_OAK_DOOR,
                             "localisation.inventory.item.back-wallet-menu".localized(),
@@ -121,28 +126,22 @@ class WalletHistoryInventory : InventoryCreator, Listener {
                             1
                         )
                         inventory.setItem(0, backMenu)
-                        inventory.setItem(index + 1, icon) // Start from slot 1 to leave slot 0 for "Other Player" item
+                        inventory.setItem(index + 1, icon)
                     }
-
-                    // Add "Next Page" button in slot 53 if there are more items
                     if (result.size == pageSize) {
                         val nextPageItem = createNextPageItem()
                         inventory.setItem(53, nextPageItem)
                     }
-
-                    // Add "Previous Page" button in slot 52 if the current page is not the first page
                     if (currentPage > 0) {
                         val previousPageItem = createPreviousPageItem()
                         inventory.setItem(52, previousPageItem)
                     }
-
                     player.openInventory(inventory)
                 })
             } catch (e: SQLException) {
                 e.printStackTrace()
             }
         })
-
         return inventory
     }
 
@@ -151,7 +150,7 @@ class WalletHistoryInventory : InventoryCreator, Listener {
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.CHEST) {
             val title = e.view.title()
-            val expectedTitle = "История транзакций" //todo: локализацию
+            val expectedTitle = "localisation.inventory.title.history".localized()
             if (functions.isComponentEqual(title, expectedTitle)) {
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return

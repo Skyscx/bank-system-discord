@@ -24,18 +24,14 @@ class ConfirmTransferInventory(private val transferDataManager: TransferDataMana
 
         val inventory = Bukkit.createInventory(null, 54, Component.text("localisation.inventory.title.confirm-transfer".localized()))
 
-        // Добавьте предмет с названием выбранной головы в центр
         val centerItem = createCenterItem(targetPlayerName, amount, comment)
         inventory.setItem(22, centerItem)
 
-        // Добавьте кнопки для подтверждения и отмены
-//        val confirmItem = createConfirmItem()
         val confirmItem = systemGUI.createItem(
             Material.GREEN_WOOL,
             "localisation.inventory.item.accept".localized(),
             customModelData = 2
         )
-//        val cancelItem = createCancelItem()
         val cancelItem = systemGUI.createItem(
             Material.RED_WOOL,
             "localisation.inventory.item.reject".localized(),
@@ -52,33 +48,13 @@ class ConfirmTransferInventory(private val transferDataManager: TransferDataMana
         return systemGUI.createItem(
             Material.PAPER,
             targetPlayerName,
-            listOf("localisation.inventory.lore.item.confirm-head.transfer-menu".localized( "amount" to amount.toString(), "comment" to comment)),
+            listOf(
+                "localisation.inventory.lore.item.confirm-head.transfer-menu".localized(
+                    "amount" to amount.toString(),
+                    "comment" to comment
+                )
+            ),
             3
         )
-
-//        return ItemStack(Material.PLAYER_HEAD).apply {
-//            val meta = itemMeta as SkullMeta
-//            meta.displayName(Component.text(targetPlayerName).decoration(TextDecoration.BOLD, true))
-//            meta.lore(listOf(
-//                Component.text(localizationManager.getMessage("localisation.inventory.lore.item.confirm-head.transfer-menu", "amount" to amount.toString(), "comment" to comment)).decoration(TextDecoration.ITALIC, true),
-//            ))
-//            itemMeta = meta
-//        }
     }
-
-//    private fun createConfirmItem(): ItemStack {
-//        return ItemStack(Material.GREEN_WOOL).apply {
-//            val meta = itemMeta
-//            meta?.displayName(Component.text(localizationManager.getMessage("localisation.inventory.item.accept")).decoration(TextDecoration.BOLD, true))
-//            itemMeta = meta
-//        }
-//    }
-//
-//    private fun createCancelItem(): ItemStack {
-//        return ItemStack(Material.RED_WOOL).apply {
-//            val meta = itemMeta
-//            meta?.displayName(Component.text(localizationManager.getMessage("localisation.inventory.item.reject")).decoration(TextDecoration.BOLD, true))
-//            itemMeta = meta
-//        }
-//    }
 }

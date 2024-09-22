@@ -33,7 +33,7 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
         if (e.view.type == InventoryType.HOPPER) {
             val title = e.view.title()
             val expectedTitle = "localisation.inventory.title.wallet-open-confirmation".localized()
-            if (functions.isComponentEqual(title, expectedTitle)) { //todo: сделать сообщение из конфига
+            if (functions.isComponentEqual(title, expectedTitle)) {
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
                 if (itemMeta.hasDisplayName()) {
@@ -47,11 +47,11 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                         val currency = functions.convertStringToMaterial(walletCurrency)
                         val typeBlock : Material
                         if (currency.second) {
-                            typeBlock = currency.first!! //Преобразованный материал
+                            typeBlock = currency.first!!
                         } else return
                         val blocksInInventory = functions.countBlocksInInventory(player, typeBlock)
                         if (blocksInInventory < priceAccountConfig){
-                            player.sendMessage("Недостаточно средств") //todo локализацию
+                            player.sendMessage("localisation.error.not-player-blocks".localized())
                             return
                         }
                         val uuidPlayer = player.uniqueId.toString()
@@ -74,38 +74,21 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                         channelId = channelIdBankerNotifier,
                                         color = 1,
                                         buttons = listOf(
-                                            Button.of(ButtonStyle.SUCCESS, "acceptAccount:$lastID", "Принять"), //todo: локализацю
-                                            Button.of(ButtonStyle.DANGER, "rejectAccount:$lastID", "Отклонить")
+                                            Button.of(ButtonStyle.SUCCESS, "acceptAccount:$lastID", "localisation.discord.embed.report.buttons.approve".localized()),
+                                            Button.of(ButtonStyle.DANGER, "rejectAccount:$lastID", "localisation.discord.embed.report.buttons.reject".localized())
                                         ),
-                                        title = "Заявка на открытие кошелька!",
-                                        description = "Вам необходимо подтвердить или отклонить запрос.",
+                                        title = "localisation.discord.embed.title.verification.dispatch".localized(),
+                                        description = "localisation.discord.embed.verification.description.choice".localized(),
                                         fields = listOf(
-                                            MessageEmbed.Field("Пользователь", player.name, false),
-                                            MessageEmbed.Field("Дискорд", mention, false),
-                                            MessageEmbed.Field("Номер кошелька", lastID, false)
+                                            MessageEmbed.Field("localisation.discord.embed.verification.field.user".localized(), player.name, false),
+                                            MessageEmbed.Field("localisation.discord.embed.verification.field.discord".localized(), mention, false),
+                                            MessageEmbed.Field("localisation.discord.embed.verification.field.walletID".localized(), lastID, false)
                                             )
 
 
                                     )
-
-//                                    discordNotifier.sendMessageChannel(
-//                                        channelIdBankerNotifier.toString(),
-//                                        "/././././././././././././././././\n" + //todo: сделать сообщение из конфига
-//                                                "Пришел новый запрос на открытие кошелька!\n" +
-//                                                "Пользователь - `${player.name}`\n" +
-//                                                "Дискорд - $mention\n" +
-//                                                "Номер кошелька - `$lastID`\n" +
-//                                                "/././././././././././././././././"
-//                                    )
-//
-//                                    discordNotifier.sendMessageWithButtons(
-//                                        channelIdBankerNotifier.toString(),
-//                                        "Вам необходимо подтвердить или отклонить запрос.", //todo: сделать сообщение из конфига
-//                                        lastID
-//                                    )
                                 }else {
-                                    // Обработка случая, когда discordID == null
-                                    functions.sendMessagePlayer(player, "Не удалось найти идентификатор Discord.") //todo: сделать сообщение из конфига
+                                    functions.sendMessagePlayer(player, "localisation.error.receiver-not-found".localized())
                                 }
                             }
                             val type = "DEFAULT"
@@ -116,31 +99,27 @@ class WalletOpenInventoryEvent(config: FileConfiguration, private val discordBot
                                     val typeBlock : Material
                                     if (currency.second) {
                                         typeBlock = currency.first!! //Преобразованный материал
-                                    } else {
-                                        player.sendMessage("Ошибка иницилизации валюты")
-                                        return@thenAccept
-
-                                    }
+                                    } else return@thenAccept
                                     functions.takeItem(player, typeBlock, priceAccountConfig)
                                     //functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
                                 } else {
                                     discordNotifier.sendMessageChannelLog("localisation.discord.logger.open-unsuccessfully".localized())
-                                    functions.sendMessagePlayer(player, "Не удалось создать банковский счет.") //todo: сделать сообщение из конфига
+                                    functions.sendMessagePlayer(player, "localisation.messages.out.wallet.open.unsuccessful".localized())
                                 }
                             }
                             if (verificationInt == 1){
-                                functions.sendMessagePlayer(player, "Банковский счет был успешно создан!")
+                                functions.sendMessagePlayer(player, "localisation.messages.out.wallet.open.successful".localized())
                                 discordNotifier.sendMessageChannelLog("localisation.discord.logger.open-successfully".localized( "player" to player.name))
                             } else {
-                                functions.sendMessagePlayer(player, "Заявление передано банкиру")
+                                functions.sendMessagePlayer(player, "localisation.messages.out.wallet.wait-banker.wait".localized())
                             }
                         }else{
-                            functions.sendMessagePlayer(player, "У вас уже максимальное количество счетов!")
+                            functions.sendMessagePlayer(player, "localisation.messages.out.wallet.open.is-max".localized())
                         }
                     }
                     if (functions.isComponentEqual(displayNameComponent, titleReject)) {
-                        functions.sendMessagePlayer(player, "Отклонено.")
-                    } //todo: сделать сообщение из конфига
+                        functions.sendMessagePlayer(player, "localisation.messages.out.wallet.open.cancel".localized())
+                    }
                     return
                 }
             }

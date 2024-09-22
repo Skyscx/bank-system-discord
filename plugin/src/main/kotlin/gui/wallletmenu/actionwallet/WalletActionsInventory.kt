@@ -94,12 +94,12 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         )
         // Кнопка кошелька
         val amount = actionData.amount
-        val wallet = createWalletItem("ОЖИДАНИЕ", actionData.amount) //todo: ЛОКАЛИЗАЦИЮ
+        val wallet = createWalletItem("localisation.inventory.item.balance.wait".localized(), actionData.amount)
 
-        // Кнопка "Произвести транзакцию" todo: СДЕЛАТЬ
+        // Кнопка "Произвести транзакцию"
         val confirmItem = systemGUI.createItem(
             Material.GREEN_WOOL,
-            "Выполнить",
+            "localisation.inventory.item.todo".localized(),
             customModelData = 4
         )
         // Вернуться в меню
@@ -127,36 +127,14 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         return inventory
     }
 
-//    fun updateWalletItem(player: Player, inventory: Inventory) {
-//        val uuid = player.uniqueId.toString()
-//        val walletD = userDB.getDefaultWalletByUUID(uuid) ?: 0
-//        val currency = walletDB.getWalletCurrency(walletD) ?: "[Missing currency]"
-//        val balance = walletDB.getWalletBalance(walletD) ?: "[Missing balance]"
-//        val dateReg = walletDB.getVerificationWalletDate(walletD) ?: "[Missing dateReg]"
-//
-//        // Кнопка кошелька
-//        val walletPrivate = systemGUI.createItem(
-//            Material.PAPER,
-//            localizationManager.getMessage("localisation.inventory.item.wallet"),
-//            listOf(localizationManager.getMessage("localisation.inventory.lore.wallet.actions-menu",
-//                "owner" to player.name,
-//                "balance" to balance.toString(),
-//                "date" to dateReg)),
-//            1
-//        )
-//
-//        inventory.setItem(13, walletPrivate)
-//    }
-
     fun updateItem(player: Player, inventory: Inventory) {
         val transferData = actionData.getActionData(player) ?: return
         val amount = transferData.amount
         val type = when{
-            amount > 0 -> "Пополнение" //todo: ЛОКАЛИЗАЦИЮ
-            amount < 0 -> "Снятие"
-            else -> "Ожидание"
+            amount > 0 -> "localisation.inventory.item.balance.add".localized()
+            amount < 0 -> "localisation.inventory.item.balance.get".localized()
+            else -> "localisation.inventory.item.balance.wait".localized()
         }
-        // Обновите предмет с названием выбранной головы в центре
         val centerItem = createWalletItem(type, transferData.amount)
         inventory.setItem(13, centerItem)
     }

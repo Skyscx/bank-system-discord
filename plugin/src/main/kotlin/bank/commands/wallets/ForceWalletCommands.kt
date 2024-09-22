@@ -31,6 +31,10 @@ class ForceWalletCommands(private val config: FileConfiguration) : CommandExecut
                 val removeForceCommandHandler = RemoveForceCommandHandler(config)
                 removeForceCommandHandler.handleRemoveForceCommand(sender, argsArray)
             }
+            "rename" -> {
+                val renamePlayerNameUser = RenamePlayerNameUser(config)
+                renamePlayerNameUser.handleRenamePlayerNameUser(sender, argsArray)
+            }
             "balance" -> {
                 when (args[1].lowercase()) {
                     "add" -> {
@@ -40,10 +44,6 @@ class ForceWalletCommands(private val config: FileConfiguration) : CommandExecut
                     "remove" -> {
                         val walletBalanceRemoveForceHandler = WalletBalanceRemoveForceHandler(config)
                         walletBalanceRemoveForceHandler.handleBalanceRemoveForceCommand(sender, argsArray)
-                    }
-                    "rename" -> {
-                        val renamePlayerNameUser = RenamePlayerNameUser(config)
-                        renamePlayerNameUser.handleRenamePlayerNameUser(sender, argsArray)
                     }
                     else -> {
                         functions.unknownCommand(sender) //todo: переделать на сообщение о том что add или remove

@@ -3,8 +3,7 @@ package discord
 import github.scarsz.discordsrv.DiscordSRV
 import java.util.*
 
-class FunctionsDiscord() {
-    //private val jda = discordBot.getJDA()
+class FunctionsDiscord {
     fun getPlayerDiscordID(uuid: UUID): String? {
         val discordId = DiscordSRV.getPlugin().accountLinkManager.getDiscordId(uuid)
         return discordId

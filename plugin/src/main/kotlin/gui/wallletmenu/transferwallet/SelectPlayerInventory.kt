@@ -31,7 +31,7 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
         val inventory = Bukkit.createInventory(null, 54, title)
 
         val currentPage = playerPages.getOrDefault(player, 0)
-        val pageSize = 51 // 53 slots for items, 1 slot for "next page" button
+        val pageSize = 51
 
         val allPlayers = userDB.getAllPlayers()
         val onlinePlayers = Bukkit.getOnlinePlayers().map { it.uniqueId.toString() }.toSet()
@@ -47,26 +47,26 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
             val playerUUID = playerData["UUID"] as String
             val playerName = playerData["PlayerName"] as String
             val offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(playerUUID))
+
+            // Пропускаем голову игрока, который открыл инвентарь
+            if (playerUUID == player.uniqueId.toString()) continue
+
             val playerHead = systemGUI.createPlayerHead(offlinePlayer, "localisation.select".localized())
-            inventory.setItem(i - startIndex + 1, playerHead) // Start from slot 1 to leave slot 0 for "Other Player" item
+            inventory.setItem(i - startIndex + 1, playerHead)
         }
 
-        // Add "Other Player" item in slot 0
         val backWalletMenu = createBackWalletMenu()
         inventory.setItem(0, backWalletMenu)
 
-        // Add "Next Page" button in slot 53 if there are more players
         if (endIndex < sortedPlayers.size) {
             val nextPageItem = createNextPageItem()
             inventory.setItem(53, nextPageItem)
         }
 
-        // Add "Previous Page" button in slot 52 if the current page is not the first page
         if (currentPage > 0) {
             val previousPageItem = createPreviousPageItem()
             inventory.setItem(52, previousPageItem)
         }
-
 
         return inventory
     }
@@ -111,8 +111,8 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
             Material.DARK_OAK_DOOR,
             "localisation.inventory.item.back-wallet-menu".localized(),
             listOf("localisation.inventory.lore.wallet.back-wallet-menu".localized()),
-1
-            )
+            1
+        )
     }
 
     private fun createNextPageItem(): ItemStack {

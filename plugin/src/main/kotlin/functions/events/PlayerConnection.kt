@@ -3,7 +3,6 @@ package functions.events
 import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
-import discord.dsbot.DiscordBot
 import discord.dsbot.DiscordNotifier
 import functions.Functions
 import org.bukkit.Material
@@ -14,12 +13,9 @@ import org.bukkit.event.player.PlayerJoinEvent
 import org.bukkit.inventory.ItemStack
 
 
-class PlayerConnection(config: FileConfiguration, discordBot: DiscordBot) : Listener{
+class PlayerConnection(config: FileConfiguration) : Listener{
     private val functions = Functions()
     private val discordNotifier = DiscordNotifier(config)
-    private val channelIdLogger = config.getString("channel-id-logger") ?: "null"
-
-
 
     @EventHandler
     fun onPlayerConnect(event: PlayerJoinEvent){
@@ -41,12 +37,8 @@ class PlayerConnection(config: FileConfiguration, discordBot: DiscordBot) : List
                         "playerName" to player.name, "amount" to deposit.toString(), "currency" to currency.toString()))
                     walletDB.deleteUserWallet(id)
                 }
-
-
             }
         }
 
     }
-
-
 }

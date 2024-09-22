@@ -57,7 +57,6 @@ class WalletCommands(private val config: FileConfiguration) : CommandExecutor{
                 val historyCommandHandler = HistoryCommandHandler()
                 historyCommandHandler.handleHistoryCommand(player, argsArray)
             }
-            //TODO: Репорт сделать как в TransferEvent -> AnvilGUI
             "report" -> {
                 val reportCommandHandler = ReportCommandHandler(config)
                 reportCommandHandler.handleReportCommand(sender, argsArray)

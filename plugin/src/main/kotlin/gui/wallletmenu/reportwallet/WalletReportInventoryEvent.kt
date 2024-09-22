@@ -1,6 +1,7 @@
 package gui.wallletmenu.reportwallet
 
 import App.Companion.instance
+import App.Companion.localized
 import functions.Functions
 import gui.InventoryManager
 import gui.SystemGUI
@@ -26,7 +27,7 @@ class WalletReportInventoryEvent : Listener {
         val player = e.whoClicked as Player
         if (e.view.type == InventoryType.CHEST) {
             val title = e.view.title()
-            val expectedTitle = "Решение проблемы"
+            val expectedTitle = "localisation.inventory.title.report-menu".localized()
             if (functions.isComponentEqual(title, expectedTitle)) {
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
@@ -34,12 +35,11 @@ class WalletReportInventoryEvent : Listener {
                     e.isCancelled = true
                     player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
-                    //todo: локализацию
                     val typeMap = mapOf(
-                        "Ошибка данных" to "DATA",
-                        "Не работает" to "WORK",
-                        "Медленная загрузка" to "PING",
-                        "Другое" to "OTHER"
+                        "localisation.report.type.data".localized() to "DATA",
+                        "localisation.report.type.work".localized() to "WORK",
+                        "localisation.report.type.ping".localized() to "PING",
+                        "localisation.report.type.other".localized() to "OTHER"
                     )
 
                     val displayNameText = PlainTextComponentSerializer.plainText().serialize(displayNameComponent)
@@ -51,20 +51,6 @@ class WalletReportInventoryEvent : Listener {
             }
         }
     }
-
-//    @EventHandler
-//    fun onPlayerChat(e: AsyncChatEvent) {
-//        val player = e.player
-//        if (playersWaitingForMessage.containsKey(player)) {
-//            e.isCancelled = true // Отменяем отправку сообщения в чат
-//            val type = playersWaitingForMessage.remove(player) ?: return
-//            val message = PlainTextComponentSerializer.plainText().serialize(e.message())
-//            val command = "wallet report $type $message"
-//            Bukkit.getScheduler().runTask(instance, Runnable {
-//                player.performCommand(command)
-//            })
-//        }
-//    }
 
     private fun openAnvilGUI(player: Player) {
         val item = systemGUI.createItem(
@@ -89,9 +75,9 @@ class WalletReportInventoryEvent : Listener {
                 }
                 return@onClick emptyList()
             }
-            .text(" ")
+            .text("localisation.inventory.anvil.report.item.text".localized())
             .itemLeft(item)
-            .title("report")
+            .title("localisation.inventory.anvil.report.title".localized())
             .plugin(instance)
             .open(player)
 

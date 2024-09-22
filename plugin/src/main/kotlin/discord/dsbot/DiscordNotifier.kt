@@ -6,17 +6,11 @@ import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.entities.MessageEmbed.*
 import net.dv8tion.jda.api.entities.User
 import net.dv8tion.jda.api.interactions.components.buttons.Button
-import net.dv8tion.jda.api.interactions.components.buttons.ButtonStyle
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder
 import org.bukkit.configuration.file.FileConfiguration
 import java.time.OffsetDateTime
 
 class DiscordNotifier(configuration: FileConfiguration) {
-    //todo: сделать сообщение из конфига!!!!
-    //todo: сделать сообщение из конфига!!!!
-    //todo: сделать сообщение из конфига!!!!
-    //todo: сделать сообщение из конфига!!!!
-    //todo: сделать сообщение из конфига!!!!
     private val jda: JDA = DiscordBot.getJDA() ?: throw IllegalStateException("JDA is not initialized")
     private val channelIdLogger = configuration.getString("channel-id-logger") ?: "null"
     fun sendMessageChannel(channelId: String, message: String) {
@@ -27,7 +21,7 @@ class DiscordNotifier(configuration: FileConfiguration) {
                 { it.printStackTrace() }
             )
         } else {
-            println("Канал с ID \$channelId не найден.")
+            println("Channel $channelId not found.")
         }
     }
     fun sendMessageChannelLog(message: String) {
@@ -38,7 +32,7 @@ class DiscordNotifier(configuration: FileConfiguration) {
                 { it.printStackTrace() }
             )
         } else {
-            println("Канал с ID \$channelId не найден.")
+            println("Channel with ID-LOGGER not found.")
         }
     }
 
@@ -51,21 +45,6 @@ class DiscordNotifier(configuration: FileConfiguration) {
             }
         } else {
             println("User with ID $userId not found.")
-        }
-    }
-
-    fun sendMessageWithButtons(channelId: String, message: String, walletId: String) {
-        val channel = jda.getTextChannelById(channelId)
-        if (channel != null) {
-            channel.sendMessage(message).addActionRow(
-                Button.of(ButtonStyle.SUCCESS, "acceptAccount:$walletId", "Принять"),
-                Button.of(ButtonStyle.DANGER, "rejectAccount:$walletId", "Отклонить")
-            ).queue(
-                {  },
-                { it.printStackTrace() }
-            )
-        } else {
-            println("Канал с ID $channelId не найден.")
         }
     }
     fun createEmbedMessage(

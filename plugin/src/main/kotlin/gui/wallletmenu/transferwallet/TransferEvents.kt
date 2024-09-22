@@ -23,7 +23,6 @@ class TransferEvents(
     private val amountPlayerInventory: AmountPlayerInventory,
     private val confirmTransferInventory: ConfirmTransferInventory,
     private val addCommentInventory: AddCommentInventory,
-//    private val iTextCommand: ITextCommand
 ) : Listener {
     private val systemGUI = SystemGUI()
     private val functions = Functions()
@@ -39,7 +38,7 @@ class TransferEvents(
         val inventory = Bukkit.createInventory(null, 54, title)
 
         val currentPage = playerPages.getOrDefault(player, 0)
-        val pageSize = 51 // 53 slots for items, 1 slot for "next page" button
+        val pageSize = 51
 
         val onlinePlayers = Bukkit.getOnlinePlayers().toList().filter { it != player }
 
@@ -48,20 +47,17 @@ class TransferEvents(
 
         for (i in startIndex..<endIndex) {
             val playerHead = systemGUI.createPlayerHead(onlinePlayers[i], "localisation.select".localized())
-            inventory.setItem(i - startIndex + 1, playerHead) // Start from slot 1 to leave slot 0 for "Other Player" item
+            inventory.setItem(i - startIndex + 1, playerHead)
         }
 
-        // Add "Other Player" item in slot 0
         val otherPlayerItem = createOtherPlayerItem()
         inventory.setItem(0, otherPlayerItem)
 
-        // Add "Next Page" button in slot 53 if there are more players
         if (endIndex < onlinePlayers.size) {
             val nextPageItem = createNextPageItem()
             inventory.setItem(53, nextPageItem)
         }
 
-        // Add "Previous Page" button in slot 52 if the current page is not the first page
         if (currentPage > 0) {
             val previousPageItem = createPreviousPageItem()
             inventory.setItem(52, previousPageItem)
@@ -146,7 +142,6 @@ class TransferEvents(
                             val displayNameComponent = itemMeta.displayName() ?: return
                             if (functions.isComponentEqual(displayNameComponent, "localisation.inventory.item.add-comment".localized())) {
                                 player.closeInventory()
-//                                player.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.transfer.input-comment"))
                                 awaitingComment.add(player)
                                 openAnvilGUI(player)
 

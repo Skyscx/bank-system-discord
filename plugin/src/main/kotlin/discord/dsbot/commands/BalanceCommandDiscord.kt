@@ -1,5 +1,6 @@
 package discord.dsbot.commands
 
+import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent
@@ -13,13 +14,13 @@ class BalanceCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
         val uuidSenderFuture = userDB.getUUIDbyDiscordID(user.id)
         uuidSenderFuture.thenAccept { uuidSender ->
             if (uuidSender == null) {
-                event.reply("Ваш игровой аккаунт не привязан к учетной записи банка.").queue()
+                event.reply("localisation.discord.out.user".localized()).queue()
                 return@thenAccept
             }
             val walletID = userDB.getDefaultWalletByUUID(uuidSender) ?: return@thenAccept
             val balance = walletDB.getWalletBalance(walletID)
 
-            event.reply("Ваш баланс: $balance").setEphemeral(true).queue()
+            event.reply("localisation.discord.out.balance".localized("balance" to balance.toString())).setEphemeral(true).queue()
         }
         return
     }

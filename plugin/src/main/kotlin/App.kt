@@ -17,7 +17,6 @@ import data.database.collection.Reports
 import data.database.collection.User
 import data.database.collection.Wallet
 import data.localisation.LocalisationManager
-import discord.DiscordSRVHook
 import discord.FunctionsDiscord
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
@@ -123,7 +122,7 @@ class App : JavaPlugin(), Listener {
         getCommand("banker-tumbler")?.setExecutor(BankerTumblerCommand())
 
 
-        Bukkit.getPluginManager().registerEvents(PlayerConnection(config, discordBot!!), this)
+        Bukkit.getPluginManager().registerEvents(PlayerConnection(config), this)
 
         Bukkit.getPluginManager().registerEvents(WalletOpenInventoryEvent(config, discordBot!!), this)
         Bukkit.getPluginManager().registerEvents(WalletMenuInventoryEvent(), this)
@@ -149,9 +148,6 @@ class App : JavaPlugin(), Listener {
     }
 
     override fun onDisable() {
-        if (server.pluginManager.getPlugin("DiscordSRV") != null) {
-            DiscordSRVHook.unregister()
-        }
         discordBot?.jda?.shutdownNow()
         dbManager.close()
         saveConfig()

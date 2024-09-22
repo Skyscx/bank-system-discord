@@ -136,24 +136,10 @@ class WalletMenuInventory : InventoryCreator {
         // Кнопка для просмотра истории транзакций todo: Локализацию
         val history = systemGUI.createItem(
             Material.PAPER,
-            "История транзакций",
-            listOf("{Заполнить | History}"),
+            "localisation.inventory.item.history".localized(),
+            listOf("localisation.inventory.lore.history.menu".localized()),
             5
         )
-//        //Кнопка пополнения
-//        val replenish = systemGUI.createItem(
-//            Material.PURPLE_WOOL,
-//            localizationManager.getMessage("localisation.inventory.item.replenish"),
-//            listOf(localizationManager.getMessage("localisation.inventory.lore.replenish.menu")),
-//            1
-//        )
-//        //Кнопка снятия
-//        val takeOff = systemGUI.createItem(
-//            Material.BLUE_WOOL,
-//            localizationManager.getMessage("localisation.inventory.item.take-off"),
-//            listOf(localizationManager.getMessage("localisation.inventory.lore.take-off.menu")),
-//            1
-//        )
         //Кнопка перевода
         val transfer = systemGUI.createItem(
             Material.CYAN_WOOL,

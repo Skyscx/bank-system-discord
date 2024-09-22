@@ -1,7 +1,7 @@
 package discord.dsbot.commands
 
 import App.Companion.configPlugin
-import App.Companion.localizationManager
+import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
 import discord.dsbot.DiscordNotifier
@@ -23,7 +23,7 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
         val comment = event.getOption("comment")?.asString ?: return
 
         if (amount <= 0) {
-            event.reply("Сумма перевода должна быть положительной.").setEphemeral(true).queue()
+            event.reply("localisation.discord.out.amount-incorrect".localized()).setEphemeral(true).queue()
             return
         }
 
@@ -36,13 +36,13 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
 
         uuidSenderFuture.thenAccept sender@ { uuidSender ->
             if (uuidSender == null) {
-                event.reply("Ваш игровой аккаунт не привязан к учетной записи банка.").setEphemeral(true).queue()
+                event.reply("localisation.discord.out.user".localized()).setEphemeral(true).queue()
                 return@sender
             }
 
             uuidTargetFuture.thenAccept target@ { uuidTarget ->
                 if (uuidTarget == null) {
-                    event.reply("Игровой аккаунт получателя не привязан к учетной записи банка.").setEphemeral(true).queue()
+                    event.reply("localisation.discord.out.user".localized()).setEphemeral(true).queue()
                     return@target
                 }
 
@@ -65,23 +65,23 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
         val walletTarget = userDB.getDefaultWalletByUUID(uuidTarget) ?: return
 
         if (walletSender.toString() == "null") {
-            event.reply("У вас нет кошелька.").setEphemeral(true).queue()
+            event.reply("localisation.discord.out.invalid-wallet.sender".localized()).setEphemeral(true).queue()
             return
         }
         if (walletTarget.toString() == "null") {
-            event.reply("У получателя нет доступного кошелька.").setEphemeral(true).queue()
+            event.reply("localisation.discord.out.invalid-wallet.target".localized()).setEphemeral(true).queue()
             return
         }
         if (walletSender == walletTarget) {
-            event.reply(localizationManager.getMessage("localisation.messages.out.wallet-same-thing")).setEphemeral(true).queue()
+            event.reply("localisation.discord.out.wallet-same-thing".localized()).setEphemeral(true).queue()
             return
         }
         if (!walletDB.checkWalletStatus(walletSender)) {
-            event.reply(localizationManager.getMessage("localisation.messages.out.wallet.unavailable.sender")).setEphemeral(true).queue()
+            event.reply("localisation.discord.out.wallet.unavailable.sender".localized()).setEphemeral(true).queue()
             return
         }
         if (!walletDB.checkWalletStatus(walletTarget)) {
-            event.reply(localizationManager.getMessage("localisation.messages.out.wallet.unavailable.target")).setEphemeral(true).queue()
+            event.reply("localisation.discord.out.wallet.unavailable.target".localized()).setEphemeral(true).queue()
             return
         }
 
@@ -89,22 +89,21 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
         val targetBalance = walletDB.getWalletBalance(walletTarget) ?: return
 
         if (senderBalance < amount) {
-            event.reply(localizationManager.getMessage("localisation.messages.out.wallet.not-balance")).setEphemeral(true).queue()
+            event.reply("localisation.discord.out.wallet.not-balance".localized()).setEphemeral(true).queue()
             return
         }
 
         val limit = configPlugin.getInt("wallet-limit")
         if (targetBalance + amount > limit) {
             val free = (targetBalance + amount - limit).toString()
-            event.reply(localizationManager.getMessage("localisation.messages.out.wallet.overflow.target", "free" to free)).setEphemeral(true).queue()
+            event.reply("localisation.discord.out.wallet.overflow.target".localized("free" to free)).setEphemeral(true).queue()
             return
         }
 
         val currency1 = walletDB.getWalletCurrency(walletSender) ?: return
         val currency2 = walletDB.getWalletCurrency(walletTarget) ?: return
         if (currency1 != currency2) {
-            event.reply(localizationManager.getMessage("localisation.messages.out.wallet.currency.mismatch",
-                "currencyS" to currency1, "currencyT" to currency2)).setEphemeral(true).queue()
+            event.reply("localisation.discord.out.wallet.currency.mismatch".localized("currencyS" to currency1, "currencyT" to currency2)).setEphemeral(true).queue()
             return
         }
 
@@ -116,48 +115,43 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
         )
 
         if (successful) {
-            event.reply("Вы перевели $amount $currency1 игроку ${targetMember.asMention}. \n Сообщение: $comment").setEphemeral(true).queue()
+            event.reply("localisation.discord.out.wallet.transfer-successfully.sender".localized(
+                "amount" to amount.toString(), "currency" to currency1, "target" to targetMember.asMention, "comment" to comment )).setEphemeral(true).queue()
 
             discordNotifier.sendPrivateMessage(
                 discordIDSender,
-                localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully.sender",
+                "localisation.discord.out.wallet.transfer-successfully.sender".localized(
                     "amount" to amount.toString(),
                     "currency" to currency1,
                     "target" to targetName,
-                    "senderWalletID" to walletSender.toString(),
-                    "targetWalletID" to walletTarget.toString(),
                     "comment" to comment)
             )
 
             discordNotifier.sendPrivateMessage(
                 discordIDTarget,
-                localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully.target",
+                "localisation.discord.out.wallet.transfer-successfully.target".localized(
                     "amount" to amount.toString(),
                     "currency" to currency1,
                     "target" to targetName,
-                    "senderWalletID" to walletSender.toString(),
-                    "targetWalletID" to walletTarget.toString(),
                     "comment" to comment)
             )
 
             if (functions.isPlayerOnline(uuidSender)) {
                 val senderPlayer = functions.getPlayerByUUID(uuidSender) ?: return
-                senderPlayer.sendMessage("С вашего аккаунта выполнена операция. Подробнее в Discord.")
+                senderPlayer.sendMessage("localisation.messages.out.transfer.ds-command.todo".localized())
             }
             if (functions.isPlayerOnline(uuidTarget)) {
                 val targetPlayer = functions.getPlayerByUUID(uuidTarget) ?: return
                 targetPlayer.sendMessage(
-                    localizationManager.getMessage("localisation.messages.out.wallet.transfer-successfully.target",
+                    "localisation.discord.out.wallet.transfer-successfully.target".localized(
                         "sender" to senderName,
                         "amount" to amount.toString(),
                         "currency" to currency1,
-                        "senderWalletID" to walletSender.toString(),
-                        "targetWalletID" to walletTarget.toString(),
                         "comment" to comment)
                 )
             }
             // Сообщение лог в дискорд
-            discordNotifier.sendMessageChannelLog(localizationManager.getMessage("localisation.discord.logger.transfer-successfully",
+            discordNotifier.sendMessageChannelLog("localisation.discord.logger.transfer-successfully".localized(
                 "walletIDSender" to walletSender.toString(),
                 "sender" to senderName,
                 "walletIDTarget" to walletTarget.toString(),
@@ -166,7 +160,7 @@ class TransferCommandDiscord(config: FileConfiguration) : ListenerAdapter() {
                 "currency" to currency1,
                 "comment" to comment))
         } else {
-            event.reply("Ошибка операции").setEphemeral(true).queue()
+            event.reply("localisation.error.system-error".localized()).setEphemeral(true).queue()
         }
     }
 }

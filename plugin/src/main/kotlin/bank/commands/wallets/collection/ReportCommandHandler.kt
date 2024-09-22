@@ -73,7 +73,6 @@ class ReportCommandHandler(config: FileConfiguration) {
             }
         }.exceptionally { e ->
             e.printStackTrace()
-            player.sendMessage("Произошла ошибка при проверке существования игрока.")
             null
         }
     }

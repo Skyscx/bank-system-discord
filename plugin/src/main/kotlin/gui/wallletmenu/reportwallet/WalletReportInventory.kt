@@ -14,36 +14,36 @@ class WalletReportInventory : InventoryCreator {
     override fun createInventory(player: Player): Inventory {
 
         val inventory = Bukkit.createInventory(null, 27,
-            Component.text("localisation.inventory.title.report-menu".localized())) //todo; локализацю
+            Component.text("localisation.inventory.title.report-menu".localized()))
         val info = systemGUI.createItem(
             Material.TORCH,
-            "Выбор проблемы",
-            listOf("Выберите тип проблемы, которая у вас возникла"),
+            "localisation.inventory.item.choice-report".localized(),
+            listOf("localisation.inventory.lore.choice-report.report".localized()),
             1
         )
 
         val data = systemGUI.createItem(
             Material.STONE,
-            "Ошибка данных",
-            listOf("У вас не правильно прогружаются сообщения? и чото такое"),
+            "localisation.report.type.data".localized(),
+            listOf("localisation.inventory.lore.data.report".localized()),
             1
         )
         val work = systemGUI.createItem(
             Material.STONE,
-            "Не работает",
-            listOf("У вас не работает какая-либо услуга?"),
+            "localisation.report.type.work".localized(),
+            listOf("localisation.inventory.lore.work.report".localized()),
             2
         )
         val ping = systemGUI.createItem(
             Material.STONE,
-            "Медленная загрузка",
-            listOf("У вас слишком медленно выполняются операции?"),
+            "localisation.report.type.ping".localized(),
+            listOf("localisation.inventory.lore.ping.report".localized()),
             3
         )
         val other = systemGUI.createItem(
             Material.STONE,
-            "Другое",
-            listOf("У вас возникла другая проблема?"),
+            "localisation.report.type.other".localized(),
+            listOf("localisation.inventory.lore.other.report".localized()),
             4
         )
 

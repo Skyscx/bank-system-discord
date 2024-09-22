@@ -1,5 +1,6 @@
 package discord.dsbot.buttonsactions.collection
 
+import App.Companion.localized
 import App.Companion.reportsDB
 import discord.dsbot.DiscordNotifier
 import functions.Functions
@@ -37,29 +38,29 @@ class ReportWalletButtonsHandler(config: FileConfiguration) {
         val embedFields = mutableListOf<MessageEmbed.Field>()
         val color = when (parts[0]) {
             "reportWalletApprove" -> {
-                functions.sendMessageIsPlayerOnline(senderUUID, "Ваша жалоба рассмотрена. (Принята)")
-                discordNotifier.sendPrivateMessage(senderDID, "Ваша жалоба рассмотрена. (Принята)")
-                embedFields.add(MessageEmbed.Field("Статус", "Одобрено", false))
-                embedFields.add(MessageEmbed.Field("Дата рассмотрения", "$dateResponse", false))
-                embedFields.add(MessageEmbed.Field("Дата получения", "$dateDispatch", false))
-                embedFields.add(MessageEmbed.Field("Тип жалобы", "$typeReport", false))
-                embedFields.add(MessageEmbed.Field("Текст жалобы", "$textReport", false))
-                embedFields.add(MessageEmbed.Field("Жаловался", "$senderName", false))
-                embedFields.add(MessageEmbed.Field("Рассмотрел", event.user.asMention, false))
-                embedFields.add(MessageEmbed.Field("Идентификатор", "$reportID", false))
+                functions.sendMessageIsPlayerOnline(senderUUID, "localisation.messages.out.wallet.report-response.successful".localized())
+                discordNotifier.sendPrivateMessage(senderDID, "localisation.messages.out.wallet.report-response.successful".localized())
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.status".localized(), "localisation.report.status.accept".localized(), false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.date-response".localized(), dateResponse, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.date-dispath".localized(), dateDispatch, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-type".localized(), typeReport, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-text".localized(), textReport, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-sender".localized(), senderName, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.inspector".localized(), event.user.asMention, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.reportID".localized(), "$reportID", false))
                 0x00FF00
             }
             "reportWalletReject" -> {
-                functions.sendMessageIsPlayerOnline(senderUUID, "Ваша жалоба рассмотрена. (Отклонена)")
-                discordNotifier.sendPrivateMessage(senderDID, "Ваша жалоба рассмотрена. (Отклонена)")
-                embedFields.add(MessageEmbed.Field("Статус", "Отклонено", false))
-                embedFields.add(MessageEmbed.Field("Дата рассмотрения", "$dateResponse", false))
-                embedFields.add(MessageEmbed.Field("Дата получения", "$dateDispatch", false))
-                embedFields.add(MessageEmbed.Field("Тип жалобы", "$typeReport", false))
-                embedFields.add(MessageEmbed.Field("Текст жалобы", "$textReport", false))
-                embedFields.add(MessageEmbed.Field("Жаловался", "$senderName", false))
-                embedFields.add(MessageEmbed.Field("Рассмотрел", event.user.asMention, false))
-                embedFields.add(MessageEmbed.Field("Идентификатор", "$reportID", false))
+                functions.sendMessageIsPlayerOnline(senderUUID, "localisation.messages.out.wallet.report-response.unsuccessful".localized())
+                discordNotifier.sendPrivateMessage(senderDID, "localisation.messages.out.wallet.report-response.unsuccessful".localized())
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.status".localized(), "localisation.report.status.reject".localized(), false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.date-response".localized(), dateResponse, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.date-dispath".localized(), dateDispatch, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-type".localized(), typeReport, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-text".localized(), textReport, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-sender.localized()", senderName, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.inspector", event.user.asMention, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.reportID".localized(), "$reportID", false))
                 0x00FF00
             }
             "reportWalletContact" -> {
@@ -70,7 +71,7 @@ class ReportWalletButtonsHandler(config: FileConfiguration) {
         }
 
         val newEmbed = discordNotifier.createEmbedMessage(
-            title = "Рассмотрение жалобы!",
+            title = "localisation.discord.embed.title.report-response".localized(),
             embedType = EmbedType.RICH,
             fields = embedFields,
             color = color

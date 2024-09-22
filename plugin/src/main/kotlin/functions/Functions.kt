@@ -1,6 +1,5 @@
 package functions
 
-import App.Companion.localizationManager
 import App.Companion.localized
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
@@ -32,7 +31,8 @@ class Functions {
             getPlayerByUUID(uuid)?.sendMessage(message)
         }
     }
-    fun sendMessageIsPlayerHavePermission(uuid: String, permission: String, message: String){ //TODO: Переделать логику под список из тех кто может видеть сообщение
+    fun sendMessageIsPlayerHavePermission(uuid: String, permission: String, message: String){
+        // // TODO: Переделать логику под список из тех кто может видеть сообщение
         if (isPlayerOnline(uuid)){
             val player = getPlayerByUUID(uuid)
             if (player!!.hasPermission(permission) || player.isOp){
@@ -89,14 +89,15 @@ class Functions {
                 count += item.amount
                 if (count >= amount) {
                     inventory.removeItem(ItemStack(itemType, amount))
-                    player.sendMessage("Вы потратили $amount x ${itemType.name}.") //todo: сделать сообщение из конфига
+                    player.sendMessage("localisation.messages.out.wallet.spent".localized(
+                        "amount" to amount.toString(), "item" to itemType.name))
                     return
                 }
             }
         }
 
         if (count < amount) {
-            player.sendMessage("У вас недостаточно ${itemType.name}.") //todo: сделать сообщение из конфига
+            player.sendMessage("localisation.error.not-player-blocks".localized())
         }
     }
     fun convertStringToMaterial(itemType: String?): Pair<Material?, Boolean> {
@@ -127,7 +128,7 @@ class Functions {
         val inventory = player.inventory
         val freeSpace = inventory.firstEmpty()
         if (freeSpace == -1) {
-            player.sendMessage(localizationManager.getMessage("localisation.messages.out.wallet.back-deposit.full-inventory"))
+            player.sendMessage("localisation.messages.out.wallet.back-deposit.full-inventory".localized())
             return false
         }
         val newItem = item.clone()
@@ -136,8 +137,6 @@ class Functions {
         return true
     }
 
-
-    // Сравнение Component и String
     fun isComponentEqual(component: Component, expectedText: String): Boolean {
         val plainTextSerializer = PlainTextComponentSerializer.plainText()
         val text = plainTextSerializer.serialize(component)
@@ -151,6 +150,7 @@ class Functions {
         }
         return true
     }
+
     fun hasPermission(sender: CommandSender, permission: String): Boolean {
         return sender.hasPermission(permission) || sender.isOp
     }

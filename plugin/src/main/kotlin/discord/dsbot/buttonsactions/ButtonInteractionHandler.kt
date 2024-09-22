@@ -17,9 +17,7 @@ class ButtonInteractionHandler(config: FileConfiguration) : ListenerAdapter() {
 
             val componentId = event.componentId
             val parts = componentId.split(":")
-            val action = parts[0]
-
-            when (action) {
+            when (val action = parts[0]) {
                 "reportWalletApprove", "reportWalletReject", "reportWalletContact" -> reportWalletButtonsHandler.handle(event, parts)
                 "acceptAccount", "rejectAccount" -> bankerVerificationsButtonsHandler.handle(event, parts)
                 else -> println("Unknown action: $action")

@@ -34,7 +34,7 @@ class WalletMenuInventoryEvent : Listener {
                     val titleActionsWallet = "localisation.inventory.item.actions".localized()
                     val titleReportButton = "localisation.inventory.item.report".localized()
                     val titleTransferButton = "localisation.inventory.item.transfer".localized()
-                    val titleHistoryButton = "История транзакций" //todo: локализацию
+                    val titleHistoryButton = "localisation.inventory.item.history".localized()
                     if (functions.isComponentEqual(displayNameComponent, titleOpenWallet)) {
                         inventoryManager.openInventory(player, "open")
                     }

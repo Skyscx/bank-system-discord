@@ -21,7 +21,6 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
 
         val inventory = Bukkit.createInventory(null, 54, Component.text("localisation.inventory.title.select-amount-transfer".localized()))
 
-        // Добавьте предметы для выбора суммы
         val add1 = systemGUI.createItem(
             Material.LIME_WOOL,
             "§a+1",
@@ -66,12 +65,9 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
         inventory.setItem(15, get16)
         inventory.setItem(16, get64)
 
-        // Добавьте предмет с названием выбранной головы в центр
         val centerItem = createCenterItem(targetPlayerName, transferData.amount)
         inventory.setItem(22, centerItem)
 
-        // Добавьте кнопку для подтверждения суммы
-        //val confirmAmountItem = createConfirmAmountItem()
         val confirmAmountItem = systemGUI.createItem(
             Material.GREEN_WOOL,
             "localisation.inventory.item.confirm-amount".localized(),
@@ -86,7 +82,6 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
         val transferData = transferDataManager.getTransferData(player) ?: return
         val targetPlayerName = transferData.targetPlayerName
 
-        // Обновите предмет с названием выбранной головы в центре
         val centerItem = createCenterItem(targetPlayerName, transferData.amount)
         inventory.setItem(22, centerItem)
     }
