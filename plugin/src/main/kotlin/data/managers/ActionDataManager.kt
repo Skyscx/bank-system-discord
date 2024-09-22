@@ -1,4 +1,4 @@
-package data
+package data.managers
 
 import org.bukkit.entity.Player
 

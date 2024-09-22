@@ -2,7 +2,7 @@ package gui.wallletmenu.transferwallet
 
 import App.Companion.localized
 import App.Companion.userDB
-import data.TransferDataManager
+import data.managers.TransferDataManager
 import functions.Functions
 import gui.InventoryCreator
 import gui.SystemGUI

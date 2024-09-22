@@ -1,7 +1,9 @@
 package gui
 
-import data.ActionDataManager
-import data.TransferDataManager
+import data.managers.ActionDataManager
+import data.managers.ConvertDataManager
+import data.managers.TransferDataManager
+import gui.convertdiamonds.ConvertDiamondsBlocksInventory
 import gui.wallletmenu.WalletMenuInventory
 import gui.wallletmenu.actionwallet.WalletActionsInventory
 import gui.wallletmenu.actionwallet.WalletHistoryInventory
@@ -22,7 +24,8 @@ class InventoryManager {
         "actions" to WalletActionsInventory(ActionDataManager.instance),
         "reports" to WalletReportInventory(),
         "selectPlayerForTransfer" to SelectPlayerInventory(TransferDataManager.instance),
-        "history" to WalletHistoryInventory()
+        "history" to WalletHistoryInventory(),
+        "convert" to ConvertDiamondsBlocksInventory(ConvertDataManager.instance)
         /**more inventory**/
     )
 

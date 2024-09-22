@@ -119,6 +119,14 @@ class WalletMenuInventory : InventoryCreator {
             listOf("localisation.inventory.lore.report.menu".localized()),
             1
         )
+        // Кнопка конвертации
+        val convert = systemGUI.createItem(
+            Material.BAMBOO_BLOCK,
+            "localisation.inventory.item.convert".localized(),
+            listOf("localisation.inventory.lore.convert.menu".localized()),
+            1
+
+        )
         //Кнопка связи с банкиром
         val sendMessageBanker = systemGUI.createItem(
             Material.WRITABLE_BOOK,
@@ -199,6 +207,7 @@ class WalletMenuInventory : InventoryCreator {
 //        todo: Включить когда будет работать
         inventory.setItem(39, guid)
         inventory.setItem(40, report)
+        inventory.setItem(41, convert)
 //        inventory.setItem(41, sendMessageBanker)
 
         inventory.setItem(12, actionsWallet)

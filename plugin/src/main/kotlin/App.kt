@@ -8,18 +8,22 @@ import bank.commands.tabcompleter.WalletsForceCommandCompleter
 import bank.commands.transfers.TransferCommand
 import bank.commands.wallets.ForceWalletCommands
 import bank.commands.wallets.WalletCommands
-import data.ActionDataManager
 import data.Config
-import data.TransferDataManager
 import data.database.DatabaseManager
 import data.database.collection.History
 import data.database.collection.Reports
 import data.database.collection.User
 import data.database.collection.Wallet
 import data.localisation.LocalisationManager
+import data.managers.ActionDataManager
+import data.managers.ConvertDataManager
+import data.managers.TransferDataManager
 import discord.FunctionsDiscord
 import discord.dsbot.DiscordBot
 import functions.events.PlayerConnection
+import gui.convertdiamonds.ConvertDiamondsBlocksAmountInventory
+import gui.convertdiamonds.ConvertDiamondsBlocksInventory
+import gui.convertdiamonds.ConvertEvents
 import gui.wallletmenu.WalletMenuInventoryEvent
 import gui.wallletmenu.actionwallet.WalletActionsInventory
 import gui.wallletmenu.actionwallet.WalletActionsInventoryEvent
@@ -132,14 +136,19 @@ class App : JavaPlugin(), Listener {
 
         val transferDataManager = TransferDataManager.instance
         val actionData = ActionDataManager.instance
+        val convertData = ConvertDataManager.instance
 
         val amountPlayerInventory = AmountPlayerInventory(transferDataManager)
         val confirmTransferInventory = ConfirmTransferInventory(transferDataManager)
         val addComment = AddCommentInventory()
+
         val walletActionsInventory = WalletActionsInventory(actionData)
 
+        val convertDiamondsBlocksInventory = ConvertDiamondsBlocksInventory(convertData)
+        val convertDiamondsBlocksAmountInventory = ConvertDiamondsBlocksAmountInventory(convertData)
         Bukkit.getPluginManager().registerEvents(TransferEvents(amountPlayerInventory, confirmTransferInventory, addComment), this)
         Bukkit.getPluginManager().registerEvents(WalletActionsInventoryEvent(walletActionsInventory), this)
+        Bukkit.getPluginManager().registerEvents(ConvertEvents(convertDiamondsBlocksAmountInventory, convertDiamondsBlocksInventory), this)
 
 
         // Tab Completer

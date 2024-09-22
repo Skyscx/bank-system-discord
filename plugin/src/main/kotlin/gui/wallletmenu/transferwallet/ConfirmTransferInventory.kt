@@ -1,7 +1,7 @@
 package gui.wallletmenu.transferwallet
 
 import App.Companion.localized
-import data.TransferDataManager
+import data.managers.TransferDataManager
 import gui.InventoryCreator
 import gui.SystemGUI
 import net.kyori.adventure.text.Component

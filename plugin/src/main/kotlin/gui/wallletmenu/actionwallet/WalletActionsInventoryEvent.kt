@@ -3,7 +3,7 @@ package gui.wallletmenu.actionwallet
 import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
-import data.ActionDataManager
+import data.managers.ActionDataManager
 import functions.Functions
 import gui.InventoryManager
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer

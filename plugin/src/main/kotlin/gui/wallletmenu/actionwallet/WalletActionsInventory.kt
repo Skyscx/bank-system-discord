@@ -1,10 +1,9 @@
 package gui.wallletmenu.actionwallet
 
-import App.Companion.localizationManager
 import App.Companion.localized
 import App.Companion.userDB
 import App.Companion.walletDB
-import data.ActionDataManager
+import data.managers.ActionDataManager
 import gui.InventoryCreator
 import gui.SystemGUI
 import net.kyori.adventure.text.Component
@@ -40,7 +39,7 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
         val addBalance16 = systemGUI.createItem(
             Material.LIME_WOOL,
             "§a+16",
-            listOf(localizationManager.getMessage("localisation.inventory.lore.add-balance.actions-menu",
+            listOf("localisation.inventory.lore.add-balance.actions-menu".localized(
                 "amount" to "16", "currencyName" to currency)),
             2
         )
@@ -93,7 +92,6 @@ class WalletActionsInventory(private val actionData: ActionDataManager) : Invent
             4
         )
         // Кнопка кошелька
-        val amount = actionData.amount
         val wallet = createWalletItem("localisation.inventory.item.balance.wait".localized(), actionData.amount)
 
         // Кнопка "Произвести транзакцию"

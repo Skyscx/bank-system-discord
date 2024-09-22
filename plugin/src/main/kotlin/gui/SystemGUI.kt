@@ -1,11 +1,13 @@
 package gui
 
+import App.Companion.localized
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextDecoration
 import org.bukkit.Bukkit
 import org.bukkit.Material
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import org.bukkit.inventory.Inventory
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import java.util.*
@@ -104,6 +106,10 @@ class SystemGUI {
 
         item.setItemMeta(meta)
         return item
+    }
+    fun errorInventory() : Inventory{
+        return Bukkit.createInventory(null, 54, Component.text(
+            "localisation.error".localized()))
     }
 
 }

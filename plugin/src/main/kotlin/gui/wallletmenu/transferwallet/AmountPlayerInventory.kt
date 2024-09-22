@@ -1,7 +1,7 @@
 package gui.wallletmenu.transferwallet
 
 import App.Companion.localized
-import data.TransferDataManager
+import data.managers.TransferDataManager
 import gui.InventoryCreator
 import gui.SystemGUI
 import net.kyori.adventure.text.Component
@@ -70,7 +70,7 @@ class AmountPlayerInventory(private val transferDataManager: TransferDataManager
 
         val confirmAmountItem = systemGUI.createItem(
             Material.GREEN_WOOL,
-            "localisation.inventory.item.confirm-amount".localized(),
+            "localisation.inventory.item.accept".localized(),
             customModelData = 4
         )
         inventory.setItem(31, confirmAmountItem)
