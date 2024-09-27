@@ -83,8 +83,7 @@ class ConvertDiamondsBlocksAmountInventory(private val convertData: ConvertDataM
         val backMenu = systemGUI.createItem(
             Material.DARK_OAK_DOOR,
             "localisation.inventory.item.back-wallet-menu".localized(),
-            listOf("localisation.inventory.lore.wallet.back-wallet-menu".localized()),
-            1
+            customModelData = 1
         )
         inventory.setItem(0, backMenu)
 
@@ -106,7 +105,7 @@ class ConvertDiamondsBlocksAmountInventory(private val convertData: ConvertDataM
     private fun createCenterItem(type : String, amount : Int): ItemStack {
         return systemGUI.createItem(
             Material.PAPER,
-            "localisation.inventory.item.info.amount",
+            "localisation.inventory.item.info.amount".localized(),
             listOf(
                 "localisation.inventory.lore.info.convert.amount".localized(
                     "type" to type, "amount" to amount.toString()

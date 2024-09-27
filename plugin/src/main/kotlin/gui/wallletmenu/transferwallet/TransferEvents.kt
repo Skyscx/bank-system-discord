@@ -76,7 +76,6 @@ class TransferEvents(
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
                 if (itemMeta.hasDisplayName()) {
-                    e.isCancelled = true
                     player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
                     val titleNextPage = "localisation.next-page".localized()
@@ -100,14 +99,15 @@ class TransferEvents(
                         val inventoryManager = InventoryManager()
                         inventoryManager.openInventory(player, "menu")
                     }
+
                 }
+                e.isCancelled = true
             } else {
                  val expectedTitleAmount = "localisation.inventory.title.select-amount-transfer".localized()
                 if (functions.isComponentEqual(title, expectedTitleAmount)) {
                     val currentItem = e.currentItem ?: return
                     val itemMeta = currentItem.itemMeta ?: return
                     if (itemMeta.hasDisplayName()) {
-                        e.isCancelled = true
                         val displayNameComponent = itemMeta.displayName() ?: return
                         val displayNameText = PlainTextComponentSerializer.plainText().serialize(displayNameComponent)
 
@@ -127,18 +127,18 @@ class TransferEvents(
                                 TransferDataManager.instance.setAmount(player, newAmount)
                             }
                             amountPlayerInventory.updateItem(player, player.openInventory.topInventory)
-                        } else if (displayNameText == "localisation.inventory.item.confirm-amount".localized()) {
+                        } else if (displayNameText == "localisation.inventory.item.accept".localized()) {
                             val addCommentInventory = addCommentInventory.createInventory(player)
                             player.openInventory(addCommentInventory)
                         }
                     }
+                    e.isCancelled = true
                 } else {
                     val expectedTitleAddComment = "localisation.inventory.title.add-comment".localized()
                     if (functions.isComponentEqual(title, expectedTitleAddComment)) {
                         val currentItem = e.currentItem ?: return
                         val itemMeta = currentItem.itemMeta ?: return
                         if (itemMeta.hasDisplayName()) {
-                            e.isCancelled = true
                             val displayNameComponent = itemMeta.displayName() ?: return
                             if (functions.isComponentEqual(displayNameComponent, "localisation.inventory.item.add-comment".localized())) {
                                 player.closeInventory()
@@ -150,13 +150,13 @@ class TransferEvents(
                                 player.openInventory(confirmInventory)
                             }
                         }
+                        e.isCancelled = true
                     } else {
                         val expectedTitleConfirm = "localisation.inventory.title.confirm-transfer".localized()
                         if (functions.isComponentEqual(title, expectedTitleConfirm)) {
                             val currentItem = e.currentItem ?: return
                             val itemMeta = currentItem.itemMeta ?: return
                             if (itemMeta.hasDisplayName()) {
-                                e.isCancelled = true
                                 val displayNameComponent = itemMeta.displayName() ?: return
                                 if (functions.isComponentEqual(displayNameComponent, "localisation.inventory.item.accept".localized())) {
                                     val transferData = TransferDataManager.instance.getTransferData(player) ?: return
@@ -168,6 +168,7 @@ class TransferEvents(
                                     player.closeInventory()
                                 }
                             }
+                            e.isCancelled = true
                         }
                     }
                 }

@@ -71,8 +71,6 @@ class WalletActionsInventoryEvent(
             } else if (amount < 0) {
                 val absoluteAmount = amount.absoluteValue
                 player.performCommand("wallet balance remove $absoluteAmount")
-            } else {
-                player.sendMessage("localisation.messages.out.developing".localized())
             }
             ActionDataManager.instance.removeActionData(player)
             ActionDataManager.instance.setPlayer(player, 0)

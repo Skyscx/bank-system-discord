@@ -47,7 +47,7 @@ class ReportCommandHandler(config: FileConfiguration) {
 
                 discordNotifier.sendEmbedMessageAndButtons(
                     channelId = channelIdTarget,
-                    title = "localisation.discord.embed.report.title.report".localized(),
+                    title = "localisation.discord.embed.title.report".localized(),
                     description = "localisation.discord.embed.report.description.report".localized("senderName" to senderName),
                     color = 1,
                     embedType = EmbedType.RICH,

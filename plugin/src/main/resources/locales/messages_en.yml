@@ -72,6 +72,7 @@ localisation.messages.out.wallet.open.not-money: "§7Для открытия к�
 localisation.messages.out.converted-all: "Все предметы были конвертированы."
 localisation.messages.out.converted-specific: "Конвертировано $amount предметов."
 localisation.messages.out.converted-null: "Вы не указали число блоков для конвертации. Операция прервана."
+localisation.messages.out.guid-link: "§fВоспользуйтесь справочником по ссылке ниже."
 
 localisation.messages.out.banker.wallet.open: "§7Вы §2открыли §7счет игроку §b$player."
 localisation.messages.out.banker.wallet.reject: "§7Вы §4отклонили §7открытие счета игроку §b$player."
@@ -356,8 +357,8 @@ localisation.inventory.lore.info.convert.amount: "Конвертируем - $ty
 
 ## HISTORY DESCRIPTIONS
 localisation.inventory.lore.history.balance: "Баланс - $balance"
-localisation.inventory.lore.history.balance.value.add: "Баланс - $balance (+$newbalance)"
-localisation.inventory.lore.history.balance.value.get: "Баланс - $balance (-$newbalance)"
+localisation.inventory.lore.history.balance.value.add: "Баланс - $balance (+$newBalance)"
+localisation.inventory.lore.history.balance.value.get: "Баланс - $balance (-$newBalance)"
 localisation.inventory.lore.history.player_v1: "Игроку - $name"
 localisation.inventory.lore.history.player_v2: "От игрока - $name"
 localisation.inventory.lore.history.player_v3: "Игроком - $name"

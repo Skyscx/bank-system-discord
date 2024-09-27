@@ -1,6 +1,7 @@
 package data.localisation
 
 import App
+import App.Companion.configPlugin
 import org.bukkit.configuration.file.YamlConfiguration
 import java.io.File
 
@@ -8,8 +9,11 @@ class LocalisationManager(private val app: App) {
     private val locales = mutableMapOf<String, YamlConfiguration>()
     private lateinit var currentLocale: String
 
+    private val diamondOre = configPlugin.getString("name-diamond-ore") ?: "unavailable"
+    private  val deepslateDiamondOre = configPlugin.getString("name-deepslate-diamond-ore") ?: "unavailable"
     private val replacementsMap = mapOf(
-        "DIAMOND_ORE" to "Алмазная руда", //todo: Добавить в локализацию
+        "DEEPSLATE_DIAMOND_ORE" to deepslateDiamondOre,
+        "DIAMOND_ORE" to diamondOre,
     )
 
     init {

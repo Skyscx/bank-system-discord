@@ -24,19 +24,18 @@ class ConvertDiamondsBlocksInventory(private val convertData: ConvertDataManager
 
         val deepslateDiamond = systemGUI.createItem(
             Material.DEEPSLATE_DIAMOND_ORE,
-            "localisation.diamond_ore".localized(),
+            "localisation.deepslate_diamond_ore".localized(),
         )
 
         val defaultDiamond = systemGUI.createItem(
             Material.DIAMOND_ORE,
-            "localisation.deepslate_diamond_ore".localized(),
+            "localisation.diamond_ore".localized(),
         )
         //
         val backMenu = systemGUI.createItem(
             Material.DARK_OAK_DOOR,
             "localisation.inventory.item.back-wallet-menu".localized(),
-            listOf("localisation.inventory.lore.wallet.back-wallet-menu".localized()),
-            1
+            customModelData = 1
         )
         inventory.setItem(0, backMenu)
         inventory.setItem(11, deepslateDiamond)
@@ -48,7 +47,7 @@ class ConvertDiamondsBlocksInventory(private val convertData: ConvertDataManager
     private fun createCenterItem(type : String): ItemStack {
         return systemGUI.createItem(
             Material.PAPER,
-            "localisation.inventory.item.info.convert",
+            "localisation.inventory.item.info.convert".localized(),
             listOf(
                 "localisation.inventory.lore.info.convert.type".localized(
                     "type" to type

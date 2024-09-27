@@ -24,26 +24,44 @@ class WalletMenuInventoryEvent : Listener {
                 val currentItem = e.currentItem ?: return
                 val itemMeta = currentItem.itemMeta ?: return
                 if (itemMeta.hasDisplayName()) {
-                    e.isCancelled = true
+                    e.isCancelled
                     player.closeInventory()
                     val displayNameComponent = itemMeta.displayName() ?: return
-
-                    val actionMap: Map<String, () -> Unit> = mapOf(
-                        "localisation.inventory.item.open-wallet".localized() to { inventoryManager.openInventory(player, "open") },
-                        "localisation.inventory.item.close-wallet".localized() to { inventoryManager.openInventory(player, "close") },
-                        "localisation.inventory.item.guid-book".localized() to {
-                            val guidLink = configPlugin.getString("guid-link") ?: "Missing URL"
-                            functions.sendMessagePlayer(player, "localisation.messages.out.guid-link".localized())
-                            functions.sendClickableLink(player, guidLink, guidLink)
-                        },
-                        "localisation.inventory.item.actions".localized() to { inventoryManager.openInventory(player, "actions") },
-                        "localisation.inventory.item.report".localized() to { inventoryManager.openInventory(player, "reports") },
-                        "localisation.inventory.item.transfer".localized() to { inventoryManager.openInitialTransferInventory(player) },
-                        "localisation.inventory.item.history".localized() to { inventoryManager.openInitialHistoryInventory(player) },
-                        "localisation.inventory.item.convert".localized() to { inventoryManager.openInventory(player, "convert") }
-                    )
-
-                    actionMap[displayNameComponent.toString()]?.invoke()
+                    val titleOpenWallet = "localisation.inventory.item.open-wallet".localized()
+                    val titleCloseWallet = "localisation.inventory.item.close-wallet".localized()
+                    val titleGuidButton = "localisation.inventory.item.guid-book".localized()
+                    val titleActionsWallet = "localisation.inventory.item.actions".localized()
+                    val titleReportButton = "localisation.inventory.item.report".localized()
+                    val titleTransferButton = "localisation.inventory.item.transfer".localized()
+                    val titleHistoryButton = "localisation.inventory.item.history".localized()
+                    val titleConvertButton = "localisation.inventory.item.convert".localized()
+                    if (functions.isComponentEqual(displayNameComponent, titleOpenWallet)) {
+                        inventoryManager.openInventory(player, "open")
+                    }
+                    if (functions.isComponentEqual(displayNameComponent, titleCloseWallet)) {
+                        inventoryManager.openInventory(player, "close")
+                    }
+                    if (functions.isComponentEqual(displayNameComponent, titleGuidButton)){
+                        val guidLink = configPlugin.getString("guid-link") ?: "Missing URL"
+                        functions.sendMessagePlayer(player, "localisation.messages.out.guid-link".localized())
+                        functions.sendClickableLink(player, guidLink, guidLink)
+                    }
+                    if (functions.isComponentEqual(displayNameComponent,titleActionsWallet)){
+                        inventoryManager.openInventory(player, "actions")
+                    }
+                    if (functions.isComponentEqual(displayNameComponent, titleReportButton)){
+                        inventoryManager.openInventory(player, "reports")
+                    }
+                    if (functions.isComponentEqual(displayNameComponent, titleTransferButton)){
+                        inventoryManager.openInitialTransferInventory(player)
+                    }
+                    if (functions.isComponentEqual(displayNameComponent, titleHistoryButton)){
+                        inventoryManager.openInitialHistoryInventory(player)
+                    }
+                    if (functions.isComponentEqual(displayNameComponent, titleConvertButton)){
+                        inventoryManager.openInventory(player, "convert")
+                    }
+                    return
                 }
             }
         }

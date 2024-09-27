@@ -18,7 +18,6 @@ class ConvertEvents(
 ) : Listener{
     private val functions = Functions()
     private val inventoryManager = InventoryManager()
-
     @EventHandler
     fun onClick(e: InventoryClickEvent) {
         val player = e.whoClicked as Player
@@ -35,6 +34,7 @@ class ConvertEvents(
                     val displayNameText = plainTextSerializer.serialize(displayName!!)
                     handleClickType(player, displayNameText)
                 }
+                e.isCancelled = true
             }
             if (functions.isComponentEqual(title, expectedTitleAmount)){
                 val currentItem = e.currentItem ?: return
@@ -43,10 +43,10 @@ class ConvertEvents(
                     val displayName = itemMeta.displayName()
                     val plainTextSerializer = PlainTextComponentSerializer.plainText()
                     val displayNameText = plainTextSerializer.serialize(displayName!!)
-                    handleClickAmount(player, displayNameText)
+                    handleClickAmount(player, displayNameText, currentItem.type)
                 }
+                e.isCancelled = true
             }
-            e.isCancelled
         }
     }
 
@@ -77,17 +77,17 @@ class ConvertEvents(
         return
     }
 
-    private fun handleClickAmount(player: Player, displayName: String) {
+    private fun handleClickAmount(player: Player, displayName: String, typeClick: Material) {
         val titleMap = mapOf(
             "§a+1" to 1,
             "§a+16" to 16,
             "§a+64" to 64,
-            "§a+ALL" to functions.countBlocksInInventory(player, Material.valueOf(displayName.uppercase())),
+            "§a+ALL" to functions.countBlocksInInventory(player, typeClick),
             "§4-1" to -1,
             "§4-16" to -16,
             "§4-64" to -64,
             "§4-ALL" to 0,
-            "localisation.inventory.item.accept".localized() to "accept",
+            "localisation.inventory.item.info.amount".localized() to "accept",
             "localisation.inventory.item.back-wallet-menu".localized() to "menu"
         )
         val action = titleMap[displayName]
@@ -101,7 +101,7 @@ class ConvertEvents(
             val convertData = ConvertDataManager.instance.getConvertData(player) ?: return
             val amountData = convertData.amount
             if (amountData <= 0) {
-                player.sendMessage("localisation.messages.out.converted-null")
+                player.sendMessage("localisation.messages.out.converted-null".localized())
                 return
             }
             val typeData = convertData.type ?: return
@@ -115,8 +115,9 @@ class ConvertEvents(
         val convertData = ConvertDataManager.instance.getConvertData(player) ?: return
         val amountData = convertData.amount
         val typeData = convertData.type ?: return
-        if (amountData + amount > functions.countBlocksInInventory(player, Material.valueOf(typeData.uppercase()))) return
-        ConvertDataManager.instance.setAmount(player, amount)
+        val newAmount = amountData + amount
+        if (newAmount > functions.countBlocksInInventory(player, Material.valueOf(typeData.uppercase())) || newAmount < 0) return
+        ConvertDataManager.instance.setAmount(player, newAmount)
         convertDiamondsBlocksAmountInventory.updateItem(player, player.openInventory.topInventory)
         return
     }

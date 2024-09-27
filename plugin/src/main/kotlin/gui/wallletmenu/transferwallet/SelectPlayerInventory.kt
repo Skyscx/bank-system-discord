@@ -110,8 +110,7 @@ class SelectPlayerInventory(private val transferDataManager: TransferDataManager
         return systemGUI.createItem(
             Material.DARK_OAK_DOOR,
             "localisation.inventory.item.back-wallet-menu".localized(),
-            listOf("localisation.inventory.lore.wallet.back-wallet-menu".localized()),
-            1
+            customModelData = 1
         )
     }
 

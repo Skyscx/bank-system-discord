@@ -2,14 +2,13 @@ package data.database.collection
 
 import App
 import data.database.DatabaseManager
-import discord.FunctionsDiscord
 import org.bukkit.Bukkit
 import java.sql.SQLException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.random.Random
 
-class Reports(private var dbManager: DatabaseManager, private var functionsDiscord: FunctionsDiscord, private var plugin: App) {
+class Reports(private var dbManager: DatabaseManager, private var plugin: App) {
 
     /**
      * ID - идентификатор +
@@ -33,7 +32,11 @@ class Reports(private var dbManager: DatabaseManager, private var functionsDisco
         type: String,
         reason: String,
         from: String,
-        reportID: Int
+        reportID: Int,
+        inspector: String = "unavailable",
+        responseType: String = "unavailable",
+        responseText: String = "unavailable",
+        dateResponse: String = "unavailable",
         ) {
         plugin.let {
             Bukkit.getScheduler().runTaskAsynchronously(it, Runnable {
@@ -48,13 +51,17 @@ class Reports(private var dbManager: DatabaseManager, private var functionsDisco
                         Reason, 
                         FromAddress, 
                         ReportID,
-                        Status          
-                    ) VALUES(?,?,?,?,?,?,?,?,?)
+                        Inspector,
+                        ResponseType,
+                        ResponseText,
+                        DateResponse,
+                        Status
+                    ) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
                 """.trimIndent()
 
                 try {
                     dbManager.executeUpdate(sql,
-                        senderName, senderUUID, senderDID, dateDispatch, type, reason, from, reportID, 1
+                        senderName, senderUUID, senderDID, dateDispatch, type, reason, from, reportID, inspector, responseType, responseText, dateResponse, 1
                     )
                 } catch (e: SQLException) {
                     e.printStackTrace()
@@ -338,9 +345,9 @@ class Reports(private var dbManager: DatabaseManager, private var functionsDisco
         @Volatile
         private var instance: Reports? = null
 
-        fun getInstance(dbManager: DatabaseManager,functionsDiscord: FunctionsDiscord, plugin: App): Reports =
+        fun getInstance(dbManager: DatabaseManager, plugin: App): Reports =
             instance ?: synchronized(this) {
-                instance ?: Reports(dbManager,functionsDiscord, plugin).also { instance = it }
+                instance ?: Reports(dbManager, plugin).also { instance = it }
             }
     }
 }

@@ -74,6 +74,11 @@ class App : JavaPlugin(), Listener {
         configPlugin = Config.getInstance(this)
         configPlugin.loadConfig()
 
+        // Localisation
+        localizationManager = LocalisationManager(this)
+        val language = configPlugin.getString("locale")
+        copyConfigFile("locales/messages_$language.yml")
+
         // Database
         val databaseFile = File(pluginFolder, "database.db")
         val url = "jdbc:sqlite:${databaseFile.absolutePath}"
@@ -110,12 +115,8 @@ class App : JavaPlugin(), Listener {
         walletDB = Wallet.getInstance(dbManager, this, functionsDiscord)
         userDB = User.getInstance(dbManager, this, functionsDiscord)
         historyDB = History.getInstance(dbManager, this)
-        reportsDB = Reports(dbManager, functionsDiscord, this)
+        reportsDB = Reports(dbManager, this)
 
-        // Localisation
-        localizationManager = LocalisationManager(this)
-        val language = configPlugin.getString("locale")
-        copyConfigFile("locales/messages_$language.yml")
 
         //Commands
         getCommand("wallet")?.setExecutor(WalletCommands(config))

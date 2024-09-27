@@ -44,7 +44,7 @@ class RemoveBalanceCommandHandler {
 
                 val balance = walletDB.getWalletBalance(walletDefault) ?: 0
                 if (balance < amount) {
-                    player.sendMessage("localisation.messages.out.wallet.not-balance".localized())
+                    player.sendMessage("localisation.messages.out.wallet.not-balance".localized("balance" to balance.toString()))
                     return@thenAccept
                 }
 

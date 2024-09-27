@@ -23,7 +23,7 @@ class WalletMenuInventory : InventoryCreator {
         val successful = walletDB.getVerificationWallet(walletDefault)
         val inventory: Inventory = when (successful) {
             0 -> createFailureInventory()
-            1 -> createSuccessInventory()
+            1 -> createSuccessInventory(player)
             else -> createDefaultInventory()
         }
         player.openInventory(inventory)
@@ -31,7 +31,7 @@ class WalletMenuInventory : InventoryCreator {
     }
 
     private fun createDefaultInventory(): Inventory {
-        val inventory = Bukkit.createInventory(null, 54, title) //todo: если не создан
+        val inventory = Bukkit.createInventory(null, 54, title)
         // Кнопка для профиля
         val profile = systemGUI.createItem(
             Material.PLAYER_HEAD,
@@ -90,13 +90,15 @@ class WalletMenuInventory : InventoryCreator {
         return inventory
     }
 
-    private fun createSuccessInventory(): Inventory {
+    private fun createSuccessInventory(player: Player): Inventory {
         val inventory = Bukkit.createInventory(null, 54, title) //todo: если создан
+        val walletDefault = userDB.getDefaultWalletByUUID(player.uniqueId.toString())
+        val balance = walletDB.getWalletBalance(walletDefault!!.toInt())
         // Кнопка для профиля
         val profile = systemGUI.createItem(
             Material.PLAYER_HEAD,
             "localisation.inventory.item.profile".localized(),
-            listOf("localisation.inventory.lore.profile.menu".localized( "amount" to "[todo AMOUNT]")),
+            listOf("localisation.inventory.lore.profile.menu".localized( "walletDefault" to walletDefault.toString(), "balance" to balance.toString())),
             1
         )
         val closeWallet = systemGUI.createItem(
@@ -228,11 +230,12 @@ class WalletMenuInventory : InventoryCreator {
 
     private fun createFailureInventory(): Inventory {
         val inventory = Bukkit.createInventory(null, 27, title) //todo: если ожидание
+
         // Кнопка профиля
         val profile = systemGUI.createItem(
             Material.PLAYER_HEAD,
             "localisation.inventory.item.profile".localized(),
-            listOf("localisation.inventory.lore.profile.menu".localized()),
+            listOf("localisation.inventory.lore.profile.menu.empty".localized()),
             1
         )
         // Информация ожидания

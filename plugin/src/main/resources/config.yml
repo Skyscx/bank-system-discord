@@ -30,3 +30,9 @@ price-account: 15
 wallet-limit: 1000000000
 # Ссылка на гайд по плагину
 guid-link: "https://google.com"
+# Имена для дефолтных блоков.
+# (Они будут отображаться во всех сообщениях банка. Уведомления & GUI) !!!В ГЕНЕРИРУЕМЫХ СООБЩЕНИЯХ
+# Названия также необходимо заменить в файлах локализации:
+# localisation.diamond_ore & localisation.deepslate_diamond_ore
+name-diamond-ore: "Алмазная руда"
+name-deepslate-diamond-ore: "Нигерская алмазная руда"

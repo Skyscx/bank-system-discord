@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.entities.EmbedType
 import net.dv8tion.jda.api.entities.MessageEmbed
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent
 import org.bukkit.configuration.file.FileConfiguration
+import java.text.SimpleDateFormat
+import java.util.*
 
 class ReportWalletButtonsHandler(config: FileConfiguration) {
 
@@ -23,10 +25,14 @@ class ReportWalletButtonsHandler(config: FileConfiguration) {
         val discordUserID = event.user.id
         val bankerPermission = "skybank.banker"
         val typeReport = reportsDB.getType(id) ?: return
-        val textReport = reportsDB.getResponseText(id) ?: return
-        val dateResponse = reportsDB.getDateResponse(id) ?: return
+        val textReport = reportsDB.getReason(id) ?: return
+        var dateResponse = reportsDB.getDateResponse(id) ?: return
         val dateDispatch = reportsDB.getDateDispatch(id) ?: return
-
+        if (dateResponse == "unavailable"){
+            val dateFormat = SimpleDateFormat("dd:MM:yyyy HH:mm:ss").format(Date())
+            reportsDB.setDateResponse(id, dateFormat)
+            dateResponse = reportsDB.getDateResponse(id) ?: return
+        }
 
         event.deferEdit().queue()
 
@@ -58,8 +64,8 @@ class ReportWalletButtonsHandler(config: FileConfiguration) {
                 embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.date-dispath".localized(), dateDispatch, false))
                 embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-type".localized(), typeReport, false))
                 embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-text".localized(), textReport, false))
-                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-sender.localized()", senderName, false))
-                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.inspector", event.user.asMention, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.report-sender".localized(), senderName, false))
+                embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.inspector".localized(), event.user.asMention, false))
                 embedFields.add(MessageEmbed.Field("localisation.discord.embed.report.field.reportID".localized(), "$reportID", false))
                 0x00FF00
             }

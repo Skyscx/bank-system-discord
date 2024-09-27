@@ -122,8 +122,8 @@ class WalletHistoryInventory : InventoryCreator, Listener {
                         val backMenu = systemGUI.createItem(
                             Material.DARK_OAK_DOOR,
                             "localisation.inventory.item.back-wallet-menu".localized(),
-                            listOf("localisation.inventory.lore.wallet.back-wallet-menu".localized()),
-                            1
+                            customModelData = 1
+
                         )
                         inventory.setItem(0, backMenu)
                         inventory.setItem(index + 1, icon)

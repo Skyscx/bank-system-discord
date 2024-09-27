@@ -124,7 +124,7 @@ class BankerVerificationsButtonsHandler(config: FileConfiguration) {
         }
 
         val newEmbed = discordNotifier.createEmbedMessage(
-            title = "localisation.discord.embed.report.title.verification".localized(),
+            title = "localisation.discord.embed.title.verification".localized(),
             embedType = EmbedType.RICH,
             color = color,
             fields = embedFields
