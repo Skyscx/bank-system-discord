@@ -32,7 +32,7 @@ localisation.messages.out.wallet.open.is-max: "У вас уже максимал
 localisation.messages.out.wallet.open.cancel: "Открытие кошелька было прервано."
 localisation.messages.out.wallet.overflow.target: "§4Операция невозможна. §7Максимальная сумма для перевода на этот счет: §f$free"
 localisation.messages.out.wallet.overflow.sender: "§4Операция невозможна. §7Максимальная сумма для пополнения вашего счета: §f$free"
-localisation.messages.out.wallet.balance: "§7Ваш баланс - §b$balance"
+localisation.messages.out.wallet.balance.show: "§7Ваш баланс - §b$balance"
 localisation.messages.out.wallet.balance.overflow: "§4Операция невозможна. §7Максимальная сумма для пополнения этого счета: §f$free"
 localisation.messages.out.wallet.balance.get: "§7Вы сняли §b$amount $currency"
 localisation.messages.out.wallet.spent: "Вы потратили $amount x $item"
@@ -132,7 +132,7 @@ localisation.messages.generate.wallet-data: "* Кошелек '$name' (#$walletI
 
 localisation.messages.usage.account:
 localisation.messages.usage.account.open:
-localisation.messages.usage.account.remove: "§7Используйте: §f/wallet remove <id/name> true"
+#localisation.messages.usage.account.remove: "§7Используйте: §f/wallet remove <id/name> true"
 localisation.messages.usage.account.remove.boolean: "§7Необходимо подтвердить: §f/wallet remove <id/name> true"
 localisation.messages.usage.account.remove.all: "§7Используйте: §f/wallet remove all true"
 localisation.messages.usage.account.remove.all.boolean: "§7Необходимо подтвердить: §f/wallet remove all true"
@@ -198,7 +198,7 @@ localisation.discord.out.wallet.transfer-successfully.target: "Ваш кошел
 
 localisation.discord.embed.title.report: "Жалоба от игрока"
 localisation.discord.embed.title.report-response: "Рассмотрение жалобы!"
-localisation.discord.embed.title.verification: "Рассмотрение заявки!"
+localisation.discord.embed.title.verification.show: "Рассмотрение заявки!"
 localisation.discord.embed.title.verification.dispatch: "Заявка на открытие кошелька!"
 
 ## descr
@@ -252,7 +252,7 @@ localisation.inventory.title.select-amount-transfer: "Транзакция | В�
 localisation.inventory.title.confirm-transfer: "Транзакция | Подтверждение"
 localisation.inventory.title.add-comment: "Транзакция | Комментарий"
 localisation.inventory.title.history: "История транзакций"
-localisation.inventory.title.convert.type: "Конвертация блоков | Выбор блока"
+localisation.inventory.title.convert.type: "Конвертация блоков"
 localisation.inventory.title.convert.amount: "Конвертация блоков | Выбор количества"
 
 
@@ -284,7 +284,7 @@ localisation.inventory.item.pay-bill: "Оплатить счет [В разра�
 localisation.inventory.item.put-bill: "Выставить счет [В разработке]"
 localisation.inventory.item.history: "История транзакций"
 localisation.inventory.item.wait-banker: "Ожидание банкира"
-localisation.inventory.item.info: "Информация [В разработке]"
+localisation.inventory.item.info.button: "Информация [В разработке]"
 localisation.inventory.item.convert: "Конвертация блоков"
 
 ## Действия с аккаунтом (+/ -)
@@ -311,7 +311,7 @@ localisation.inventory.item.info.amount: "Конвертация блоков"
 
 ## Общие
 localisation.inventory.lore: "{LoreItem}"
-localisation.inventory.lore.profile.menu: "§7- Основной счет: §b$walletDefault \n§7-- Баланс: §b$balance"
+localisation.inventory.lore.profile.menu.info: "§7- Основной счет: §b$walletDefault \n§7-- Баланс: §b$balance"
 localisation.inventory.lore.profile.menu.empty: "§7Вы не зарегистрированы!"
 localisation.inventory.lore.wallet.back-wallet-menu: "§fВернуться в главное меню"
 localisation.inventory.lore.next-page: "§fПерейти на следующую страницу"
@@ -326,7 +326,7 @@ localisation.inventory.lore.accept.close-wallet: ""
 localisation.inventory.lore.reject.close-wallet: ""
 
 ## Основное меню
-localisation.inventory.lore.open-wallet.menu: "§fОформите банковскую карту нашего банка на выгодных условиях!\nСтоимость открытия: $amount"
+localisation.inventory.lore.open-wallet.menu: "§fОформите банковскую карту нашего банка на выгодных условиях!\nСтоимость открытия: $amount $currency"
 localisation.inventory.lore.close-wallet.menu: "Вы упускаете много возможностей, закрывая кошелек :("
 localisation.inventory.lore.guid-book.menu: "Сборник информационных статей"
 localisation.inventory.lore.report.menu: "Возникли проблемы? - Пишите!"

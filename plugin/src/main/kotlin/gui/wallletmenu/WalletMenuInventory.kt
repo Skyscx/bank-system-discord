@@ -9,41 +9,52 @@ import gui.SystemGUI
 import net.kyori.adventure.text.Component
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
+import java.util.*
 
 class WalletMenuInventory : InventoryCreator {
     private val systemGUI = SystemGUI()
     private val title = Component.text("localisation.inventory.title.menu-wallet".localized())
     private val priceDefaultWallet = configPlugin.getInt("price-account").toString()
+    private val currencyDefaultWallet = configPlugin.getString("currency-block-default") ?: "ERROR"
     override fun createInventory(player: Player): Inventory {
-
+        val offlinePlayer = Bukkit.getOfflinePlayer(UUID.fromString(player.uniqueId.toString()))
         val uuid = player.uniqueId.toString()
         val walletDefault = userDB.getDefaultWalletByUUID(uuid) ?: -1
         val successful = walletDB.getVerificationWallet(walletDefault)
         val inventory: Inventory = when (successful) {
-            0 -> createFailureInventory()
-            1 -> createSuccessInventory(player)
-            else -> createDefaultInventory()
+            0 -> createFailureInventory(offlinePlayer)
+            1 -> createSuccessInventory(player, offlinePlayer)
+            else -> createDefaultInventory(offlinePlayer)
         }
         player.openInventory(inventory)
         return inventory
     }
 
-    private fun createDefaultInventory(): Inventory {
+    private fun createDefaultInventory(offlinePlayer: OfflinePlayer): Inventory {
         val inventory = Bukkit.createInventory(null, 54, title)
         // Кнопка для профиля
-        val profile = systemGUI.createItem(
-            Material.PLAYER_HEAD,
-            "localisation.inventory.item.profile".localized(),
-            listOf("localisation.inventory.lore.profile.menu.empty".localized()),
-            1
+        val profile = systemGUI.createPlayerHead(
+            offlinePlayer,
+            "localisation.inventory.lore.profile.menu.empty".localized()
         )
         // Кнопка для создания кошелька
         val openWallet = systemGUI.createItem(
             Material.GREEN_WOOL,
             "localisation.inventory.item.open-wallet".localized(),
-            listOf("localisation.inventory.lore.open-wallet.menu".localized( "amount" to priceDefaultWallet)),
+            listOf("localisation.inventory.lore.open-wallet.menu".localized(
+                "amount" to priceDefaultWallet,
+                "currency" to currencyDefaultWallet)),
+            1
+        )
+
+        // Кнопка конвертации
+        val convert = systemGUI.createItem(
+            Material.BAMBOO_BLOCK,
+            "localisation.inventory.item.convert".localized(),
+            listOf("localisation.inventory.lore.convert.menu".localized()),
             1
         )
 //        TODO: Перенести в отдельное меню -> INFO
@@ -77,8 +88,8 @@ class WalletMenuInventory : InventoryCreator {
         // Кнопка информации
         val info = systemGUI.createItem(
             Material.TORCH,
-            "localisation.inventory.item.info".localized(),
-            listOf("localisation.inventory.lore.wait-banker.menu".localized()),
+            "localisation.inventory.item.info.button".localized(),
+            listOf("localisation.inventory.lore.info.menu".localized()),
             1
         )
 
@@ -86,20 +97,21 @@ class WalletMenuInventory : InventoryCreator {
         inventory.setItem(12, filler)
         inventory.setItem(13, openWallet)
         inventory.setItem(14, filler)
-        inventory.setItem(16, info)
+        inventory.setItem(16, convert)
         return inventory
     }
 
-    private fun createSuccessInventory(player: Player): Inventory {
+    private fun createSuccessInventory(player: Player, offlinePlayer: OfflinePlayer): Inventory {
         val inventory = Bukkit.createInventory(null, 54, title) //todo: если создан
         val walletDefault = userDB.getDefaultWalletByUUID(player.uniqueId.toString())
         val balance = walletDB.getWalletBalance(walletDefault!!.toInt())
         // Кнопка для профиля
-        val profile = systemGUI.createItem(
-            Material.PLAYER_HEAD,
-            "localisation.inventory.item.profile".localized(),
-            listOf("localisation.inventory.lore.profile.menu".localized( "walletDefault" to walletDefault.toString(), "balance" to balance.toString())),
-            1
+        val profile = systemGUI.createPlayerHead(
+            offlinePlayer,
+            "localisation.inventory.lore.profile.menu.info".localized(
+                "walletDefault" to walletDefault.toString(),
+                "balance" to balance.toString()
+            )
         )
         val closeWallet = systemGUI.createItem(
             Material.RED_WOOL,
@@ -127,7 +139,6 @@ class WalletMenuInventory : InventoryCreator {
             "localisation.inventory.item.convert".localized(),
             listOf("localisation.inventory.lore.convert.menu".localized()),
             1
-
         )
         //Кнопка связи с банкиром
         val sendMessageBanker = systemGUI.createItem(
@@ -228,15 +239,13 @@ class WalletMenuInventory : InventoryCreator {
         return inventory
     }
 
-    private fun createFailureInventory(): Inventory {
+    private fun createFailureInventory(offlinePlayer: OfflinePlayer): Inventory {
         val inventory = Bukkit.createInventory(null, 27, title) //todo: если ожидание
 
         // Кнопка профиля
-        val profile = systemGUI.createItem(
-            Material.PLAYER_HEAD,
-            "localisation.inventory.item.profile".localized(),
-            listOf("localisation.inventory.lore.profile.menu.empty".localized()),
-            1
+        val profile = systemGUI.createPlayerHead(
+            offlinePlayer,
+            "localisation.inventory.lore.profile.menu.empty".localized()
         )
         // Информация ожидания
         val waitBanker = systemGUI.createItem(
@@ -254,7 +263,7 @@ class WalletMenuInventory : InventoryCreator {
         // Кнопка информации
         val info = systemGUI.createItem(
             Material.TORCH,
-            "localisation.inventory.item.info".localized(),
+            "localisation.inventory.item.info.button".localized(),
             listOf("localisation.inventory.lore.info.menu".localized()),
             1
         )

@@ -19,7 +19,7 @@ class RemoveCommandHandler(config: FileConfiguration) {
         val playerUUID = player.uniqueId
         userDB.isPlayerExists(playerUUID).thenAccept { exists ->
             if (exists) {
-                if (!functions.checkArguments(player, 3, args, "localisation.messages.usage.account.remove".localized())) return@thenAccept
+                if (!functions.checkArguments(player, 3, args, "localisation.messages.usage.account.remove.boolean".localized())) return@thenAccept
                 val bool = args[2].toBooleanStrictOrNull() ?: false
                 if (!bool) {
                     player.sendMessage("localisation.messages.usage.account.remove.boolean".localized())

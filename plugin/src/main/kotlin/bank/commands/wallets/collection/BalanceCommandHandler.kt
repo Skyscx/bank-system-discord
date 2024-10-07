@@ -12,7 +12,7 @@ class BalanceCommandHandler {
             if (exists) {
                 val id = userDB.getDefaultWalletByUUID(playerUUID.toString()) ?: return@thenAccept
                 val balance = walletDB.getWalletBalance(id).toString()
-                player.sendMessage("localisation.messages.out.wallet.balance".localized("balance" to balance))
+                player.sendMessage("localisation.messages.out.wallet.balance.show".localized("balance" to balance))
             } else {
                 player.sendMessage("localisation.error.not-search-target".localized())
             }

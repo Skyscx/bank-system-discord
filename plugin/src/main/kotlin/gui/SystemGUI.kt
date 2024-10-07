@@ -79,10 +79,9 @@ class SystemGUI {
 
         meta.displayName(nameComponent)
 
-        // Установка уникального описания (lore) с различными стилями текста
-        val loreComponents = listOf(
-            Component.text(lore)
-        )
+        val loreComponents = lore.split("\n").map {
+            Component.text(it)
+        }
         meta.lore(loreComponents)
 
         item.setItemMeta(meta)
